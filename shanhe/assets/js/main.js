@@ -269,6 +269,7 @@ renderSongWall();
     { file: '遇敌.mp3',     name: '遇敌',     dur: '1:48' },
     { file: '渡江1.mp3',    name: '渡江 Ⅰ',   dur: '2:42' },
     { file: '渡江2.mp3',    name: '渡江 Ⅱ',   dur: '2:05' },
+    { file: '等你回来（乐思）.mp3', name: '等你回来（乐思）', dur: '2:48' },
     { file: '山河之光.mp3', name: '山河之光', dur: '7:37' },
   ];
 
