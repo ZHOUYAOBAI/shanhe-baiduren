@@ -1,0 +1,16 @@
+# macOS
+.DS_Store
+
+# 依赖与构建产物
+node_modules/
+.next/
+out/
+build/
+
+# 日志
+npm-debug.log*
+yarn-error.log*
+
+# 编辑器
+.vscode/
+.idea/
