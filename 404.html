@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>页面不存在 ｜ 山河摆渡人</title>
+<style>
+  :root { --ink:#14100C; --red:#C8102E; --paper:#EDE4D6; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    min-height:100vh; display:flex; align-items:center; justify-content:center;
+    background:var(--ink); color:var(--paper);
+    font-family:"Songti SC","SimSun",serif; text-align:center; padding:24px;
+  }
+  .wrap { max-width:560px; }
+  .mark {
+    width:88px; height:88px; margin:0 auto 32px; border-radius:50%;
+    border:2px solid var(--red); display:flex; align-items:center; justify-content:center;
+    font-size:40px; color:var(--red); letter-spacing:2px;
+  }
+  h1 { font-size:30px; font-weight:400; letter-spacing:8px; margin-bottom:18px; }
+  p { font-size:15px; line-height:2; opacity:.72; letter-spacing:2px; }
+  a {
+    display:inline-block; margin-top:36px; padding:13px 34px;
+    border:1px solid var(--red); color:var(--red); text-decoration:none;
+    font-size:14px; letter-spacing:4px; transition:.25s;
+  }
+  a:hover { background:var(--red); color:var(--paper); }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="mark">渡</div>
+    <h1>此路不通</h1>
+    <p>你要找的页面不在此处。<br>渡口只有一条，回起点去吧。</p>
+    <a href="./">回到《山河摆渡人》</a>
+  </div>
+</body>
+</html>
