@@ -3,41 +3,83 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>页面不存在 ｜ 山河摆渡人</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<title>页面不存在 ｜ Nocturne</title>
 <style>
-  :root { --ink:#2B0A0F; --ink-2:#3D1116; --red:#D62038; --red-lit:#FF6B57; --paper:#F7EDE2; }
+  :root {
+    --curtain: #B00000;
+    --paper: #E0D9D6;
+    --ink: #08080A;
+    --ink-soft: #3A342E;
+  }
   * { margin:0; padding:0; box-sizing:border-box; }
   body {
     min-height:100vh; display:flex; align-items:center; justify-content:center;
-    background:
-      radial-gradient(ellipse 80% 60% at 50% 42%, rgba(214,32,56,.22) 0%, transparent 70%),
-      linear-gradient(180deg, var(--ink-2) 0%, var(--ink) 60%);
-    color:var(--paper);
-    font-family:"Songti SC","SimSun",serif; text-align:center; padding:24px;
+    background: var(--curtain); color: var(--paper);
+    font-family:"Noto Serif SC","Songti SC","SimSun",serif;
+    text-align:center; padding:24px; position:relative; overflow:hidden;
   }
-  .wrap { max-width:560px; position:relative; }
+  /* 铜版画排线背景：45° 平行刻线 */
+  body::before {
+    content:""; position:absolute; inset:0; pointer-events:none;
+    background-image: repeating-linear-gradient(
+      45deg,
+      rgba(224,217,214,.07) 0 1px,
+      rgba(224,217,214,0) 1px 9px
+    );
+  }
+  .wrap { max-width:560px; position:relative; z-index:1; }
   .mark {
-    width:88px; height:88px; margin:0 auto 32px; border-radius:50%;
-    border:2px solid var(--red); display:flex; align-items:center; justify-content:center;
-    font-size:40px; color:var(--red-lit); letter-spacing:2px;
-    box-shadow:0 0 40px rgba(214,32,56,.45), inset 0 0 24px rgba(214,32,56,.22);
+    width:96px; height:96px; margin:0 auto 36px; border-radius:50%;
+    border:1px solid var(--paper); opacity:.9;
+    display:flex; align-items:center; justify-content:center;
+    position:relative;
   }
-  h1 { font-size:30px; font-weight:400; letter-spacing:8px; margin-bottom:18px; }
-  p { font-size:15px; line-height:2; opacity:.72; letter-spacing:2px; }
+  .mark::after {
+    content:""; position:absolute; inset:12px;
+    border-radius:50%; border:.5px solid var(--paper); opacity:.4;
+  }
+  .mark span {
+    font-family:"Noto Serif SC",serif; font-weight:900; font-size:38px;
+    letter-spacing:2px; line-height:1;
+  }
+  .kicker {
+    font-family:"Noto Sans SC",sans-serif; font-size:11px;
+    letter-spacing:.28em; opacity:.72; margin-bottom:18px;
+  }
+  h1 {
+    font-size:clamp(30px,6vw,52px); font-weight:900;
+    letter-spacing:.04em; margin-bottom:20px; line-height:1.15;
+  }
+  p {
+    font-size:15px; line-height:2; opacity:.78; letter-spacing:2px;
+    font-weight:300;
+  }
+  .acts { margin-top:40px; display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
   a {
-    display:inline-block; margin-top:36px; padding:13px 34px;
-    border:1px solid var(--red); color:var(--red-lit); text-decoration:none;
-    font-size:14px; letter-spacing:4px; transition:.25s;
+    display:inline-block; padding:13px 32px;
+    border:1px solid var(--paper); color:var(--paper); text-decoration:none;
+    font-family:"Noto Sans SC",sans-serif; font-size:11px;
+    letter-spacing:.28em; transition:.25s cubic-bezier(.16,1,.3,1);
   }
-  a:hover { background:var(--red); color:var(--paper); }
+  a:hover { background:var(--paper); color:var(--curtain); }
+  .fin {
+    margin-top:44px; font-family:"Bodoni Moda",Didot,serif;
+    font-size:13px; letter-spacing:.7em; opacity:.5; padding-left:.7em;
+  }
 </style>
 </head>
 <body>
   <div class="wrap">
-    <div class="mark">渡</div>
+    <div class="mark"><span>夜</span></div>
+    <p class="kicker">NOCTURNE · 剧 作 集</p>
     <h1>此路不通</h1>
-    <p>你要找的页面不在此处。<br>渡口只有一条，回起点去吧。</p>
-    <a href="./">回到《山河摆渡人》</a>
+    <p>你要找的页面不在此处。<br>信写好了，却没寄到。</p>
+    <div class="acts">
+      <a href="./">回到首页</a>
+      <a href="shanhe/">《山河摆渡人》</a>
+    </div>
+    <p class="fin">FINIS</p>
   </div>
 </body>
 </html>

@@ -1,0 +1,1260 @@
+@charset "UTF-8";
+/* ============================================================
+   《山河摆渡人》剧本站
+   视觉语言：朱砂红 / 暖米白 / 彝金 / 钢笔排线
+   —— 红色是本剧的血色，故以朱砂为底，宣纸为字，金作点睛
+   ============================================================ */
+
+:root {
+  /* ── 色 ── */
+  --ink:        #2B0A0F;   /* 深朱砂：主底色（夜、江、屋影） */
+  --ink-2:      #3D1116;   /* 朱砂次层 */
+  --ink-3:      #541A20;   /* 朱砂三层 */
+  --paper:      #F7EDE2;   /* 暖米白（宣纸） */
+  --paper-2:    #EADFD0;   /* 米白暗部 */
+  --paper-3:    #D6C7B2;   /* 米白再暗 */
+  --red:        #D62038;   /* 正红：火塘、彝锦、凤凰 */
+  --red-lit:    #FF6B57;   /* 火光高亮（橙调，与红底拉开明度） */
+  --red-deep:   #8E0A20;   /* 红之深（阴影） */
+  --gold:       #E0B040;   /* 彝金：骨哨、碑字 */
+  --jade:       #2E8C74;   /* 苍青：江水、夜雾 */
+  --ash:        #A89685;   /* 灰褐：辅助文字 */
+
+  /* ── 字体 ── */
+  --serif: "Songti SC", "STSong", "SimSun", "Noto Serif SC", "Source Han Serif SC", serif;
+  --sans:  "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+
+  /* ── 尺度 ── */
+  --rail: 74px;           /* 左侧幕次导航轨宽 */
+  --measure: 40rem;       /* 正文栏宽 */
+  --gut: 24px;
+}
+
+/* ============================================================
+   基础
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.85;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection { background: var(--red); color: var(--paper); }
+
+a { color: inherit; text-decoration: none; }
+
+:focus-visible {
+  outline: 2px solid var(--red-lit);
+  outline-offset: 3px;
+}
+
+/* 排线纹理层：钢笔手绘感 */
+.hatch {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: .5;
+}
+
+/* ============================================================
+   3D 火塘（首页）
+   ============================================================ */
+#stage {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* 火塘光晕（覆盖在 canvas 之上，给文字留出可读区） */
+.vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 78% 62% at 50% 58%, transparent 0%, rgba(43,10,15,.34) 74%, rgba(43,10,15,.82) 100%),
+    linear-gradient(to bottom, rgba(43,10,15,.62) 0%, transparent 24%, transparent 58%, rgba(43,10,15,.88) 90%);
+}
+
+/* ============================================================
+   顶部导航
+   ============================================================ */
+.topbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 60;
+  height: 58px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 0 22px;
+  background: rgba(43,10,15,.82);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(247,237,226,.13);
+}
+
+.brand {
+  font-family: var(--serif);
+  font-size: 19px;
+  letter-spacing: .22em;
+  color: var(--paper);
+  white-space: nowrap;
+}
+.brand em {
+  font-style: normal;
+  color: var(--red-lit);
+}
+
+.topnav {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.topnav::-webkit-scrollbar { display: none; }
+
+.topnav a {
+  font-size: 13px;
+  letter-spacing: .14em;
+  padding: 7px 13px;
+  color: var(--ash);
+  border: 1px solid transparent;
+  white-space: nowrap;
+  transition: color .18s, border-color .18s, background .18s;
+}
+.topnav a:hover { color: var(--paper); }
+.topnav a.on {
+  color: var(--paper);
+  border-color: rgba(214,32,56,.6);
+  background: rgba(214,32,56,.14);
+}
+
+/* ============================================================
+   左侧幕次轨
+   ============================================================ */
+.rail {
+  position: fixed;
+  top: 58px; left: 0; bottom: 0;
+  z-index: 50;
+  width: var(--rail);
+  border-right: 1px solid rgba(247,237,226,.11);
+  background: rgba(43,10,15,.55);
+  backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 0 20px;
+  gap: 4px;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+.rail::-webkit-scrollbar { display: none; }
+
+.rail-item {
+  font-family: var(--serif);
+  font-size: 14px;
+  letter-spacing: .3em;
+  color: var(--ash);
+  padding: 14px 6px;
+  border-left: 2px solid transparent;
+  cursor: pointer;
+  background: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  transition: color .18s, border-color .18s, background .18s;
+  white-space: nowrap;
+}
+.rail-item:hover { color: var(--paper); }
+.rail-item.on {
+  color: var(--paper);
+  border-left-color: var(--red);
+  background: linear-gradient(to right, rgba(214,32,56,.2), transparent);
+}
+
+.rail-no {
+  writing-mode: vertical-rl;
+  font-size: 14px;
+  letter-spacing: .3em;
+  line-height: 1.1;
+}
+.rail-sub {
+  font-size: 9.5px;
+  line-height: 1.35;
+  letter-spacing: .02em;
+  color: rgba(168,150,133,.62);
+  width: 46px;
+  white-space: normal;
+  word-break: break-all;
+  text-align: center;
+}
+.rail-item.on .rail-sub { color: rgba(255,107,87,.85); }
+
+.rail-sep {
+  width: 22px; height: 1px;
+  background: rgba(247,237,226,.2);
+  margin: 7px 0;
+  flex: none;
+}
+
+/* ============================================================
+   通用版心
+   ============================================================ */
+.page {
+  position: relative;
+  z-index: 10;
+  margin-left: var(--rail);
+}
+
+.band {
+  padding: 96px 0;
+  position: relative;
+}
+.band.dark { background: var(--ink); }
+.band.paper {
+  background: var(--paper);
+  color: var(--ink);
+}
+.band.red {
+  background: var(--red);
+  color: var(--paper);
+}
+
+.wrap {
+  width: min(var(--measure), calc(100% - 2 * var(--gut)));
+  margin: 0 auto;
+}
+
+/* 宽版心：歌单 / 人物 / 伏笔等需要横向铺陈的区块 */
+.wrap.wide {
+  width: min(72rem, calc(100% - 2 * var(--gut)));
+}
+
+/* ============================================================
+   Hero
+   ============================================================ */
+.hero {
+  min-height: 100vh;
+  display: grid;
+  place-items: start center;
+  position: relative;
+  text-align: center;
+  padding: 15vh 24px 60px;
+}
+
+.hero-mark {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+.hero-mark span {
+  font-family: var(--serif);
+  font-size: clamp(200px, 44vw, 520px);
+  line-height: .8;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(247,237,226,.09);
+  letter-spacing: .06em;
+  user-select: none;
+}
+
+.hero-inner { position: relative; z-index: 2; }
+
+.hero-inner::before {
+  content: "";
+  position: absolute;
+  left: 50%; top: -14vh;
+  width: min(880px, 116vw); height: 122%;
+  transform: translateX(-50%);
+  background: radial-gradient(ellipse 54% 50% at 50% 42%,
+    rgba(43,10,15,.88) 0%, rgba(43,10,15,.62) 46%, transparent 74%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.hero-kicker {
+  font-size: 12px;
+  letter-spacing: .5em;
+  color: var(--red-lit);
+  margin-bottom: 26px;
+  text-indent: .5em;
+}
+
+.hero-title {
+  font-family: var(--serif);
+  font-size: clamp(52px, 11vw, 132px);
+  line-height: .96;
+  letter-spacing: .1em;
+  margin: 0;
+  text-indent: .1em;
+  text-shadow: 0 2px 40px rgba(25,5,8,.7);
+}
+
+.hero-sub {
+  font-family: var(--serif);
+  font-size: clamp(15px, 2.2vw, 21px);
+  letter-spacing: .34em;
+  color: rgba(247,237,226,.72);
+  margin: 30px 0 0;
+  text-indent: .34em;
+}
+
+.hero-meta {
+  margin-top: 44px;
+  display: flex;
+  gap: 12px 26px;
+  justify-content: center;
+  flex-wrap: wrap;
+  font-size: 13px;
+  letter-spacing: .1em;
+  color: var(--ash);
+}
+.hero-meta span { position: relative; }
+.hero-meta span + span::before {
+  content: "";
+  position: absolute;
+  left: -14px; top: .62em;
+  width: 3px; height: 3px;
+  background: var(--red);
+  border-radius: 50%;
+}
+
+.hero-cta {
+  margin-top: 52px;
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 13px;
+  letter-spacing: .3em;
+  padding: 15px 34px;
+  border: 1px solid rgba(247,237,226,.34);
+  background: rgba(43,10,15,.4);
+  color: var(--paper);
+  cursor: pointer;
+  transition: background .22s, border-color .22s, gap .22s;
+}
+.hero-cta:hover { background: var(--red); border-color: var(--red); gap: 22px; }
+
+.scroll-hint {
+  position: absolute;
+  bottom: 30px; left: 50%;
+  transform: translateX(-50%);
+  font-size: 11px;
+  letter-spacing: .34em;
+  color: rgba(247,237,226,.42);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  pointer-events: none;
+}
+.scroll-hint i {
+  display: block;
+  width: 1px; height: 40px;
+  background: linear-gradient(to bottom, transparent, rgba(247,237,226,.5));
+  animation: drip 2.4s ease-in-out infinite;
+}
+@keyframes drip {
+  0%, 100% { opacity: .3; transform: scaleY(.6); transform-origin: top; }
+  50%      { opacity: 1;  transform: scaleY(1);  transform-origin: top; }
+}
+
+/* ============================================================
+   章节标题
+   ============================================================ */
+.sec-head { margin-bottom: 56px; }
+
+.sec-num {
+  font-family: var(--serif);
+  font-size: 13px;
+  letter-spacing: .4em;
+  color: var(--red);
+  margin-bottom: 14px;
+}
+.band.paper .sec-num { color: var(--red); }
+
+.sec-title {
+  font-family: var(--serif);
+  font-size: clamp(30px, 5vw, 50px);
+  line-height: 1.24;
+  letter-spacing: .06em;
+  margin: 0 0 18px;
+}
+
+.sec-desc {
+  font-size: 15px;
+  line-height: 2;
+  color: rgba(247,237,226,.6);
+  max-width: 34rem;
+}
+.band.paper .sec-desc { color: rgba(43,10,15,.62); }
+
+/* ============================================================
+   核心主线（时间轴）
+   ============================================================ */
+.spine { position: relative; padding: 20px 0 8px; }
+
+.spine-line {
+  position: absolute;
+  left: 0; right: 0; top: 30px;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(247,237,226,.32) 8%, rgba(247,237,226,.32) 92%, transparent);
+}
+
+.spine-items {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(140px, 1fr);
+  gap: 18px;
+  position: relative;
+  overflow-x: auto;
+  padding-bottom: 12px;
+  scrollbar-width: thin;
+}
+
+.spine-item { text-align: left; padding-top: 46px; position: relative; }
+
+.spine-dot {
+  position: absolute;
+  top: 22px; left: 0;
+  width: 17px; height: 17px;
+  border-radius: 50%;
+  background: var(--ink);
+  border: 1px solid var(--red);
+  display: grid;
+  place-items: center;
+}
+.spine-dot::after {
+  content: "";
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--red);
+  transition: transform .2s;
+}
+.spine-item:hover .spine-dot::after { transform: scale(1.7); }
+
+.spine-date {
+  font-family: var(--serif);
+  font-size: 15px;
+  letter-spacing: .1em;
+  color: var(--red-lit);
+  margin-bottom: 7px;
+}
+.spine-label {
+  font-size: 13px;
+  line-height: 1.7;
+  color: rgba(247,237,226,.66);
+}
+
+/* ============================================================
+   幕次：剧目页
+   ============================================================ */
+.act { position: relative; scroll-margin-top: 76px; }
+
+.act-head {
+  display: flex;
+  align-items: flex-end;
+  gap: 26px;
+  flex-wrap: wrap;
+  padding-bottom: 26px;
+  border-bottom: 1px solid rgba(247,237,226,.16);
+  margin-bottom: 40px;
+}
+
+.act-no {
+  font-family: var(--serif);
+  font-size: clamp(48px, 8vw, 92px);
+  line-height: .82;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(214,32,56,.75);
+  flex: none;
+}
+
+.act-title {
+  font-family: var(--serif);
+  font-size: clamp(26px, 4.4vw, 42px);
+  letter-spacing: .1em;
+  margin: 0;
+  line-height: 1.24;
+}
+
+.act-facts {
+  margin-left: auto;
+  display: grid;
+  gap: 5px;
+  font-size: 12.5px;
+  letter-spacing: .05em;
+  color: var(--ash);
+  text-align: right;
+}
+.act-facts b { color: rgba(247,237,226,.88); font-weight: 400; }
+
+/* 幕内资料卡 */
+.act-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1px;
+  background: rgba(247,237,226,.13);
+  border: 1px solid rgba(247,237,226,.13);
+  margin-bottom: 44px;
+}
+.act-meta div {
+  background: var(--ink);
+  padding: 16px 18px;
+}
+.act-meta dt {
+  font-size: 11px;
+  letter-spacing: .28em;
+  color: var(--red-lit);
+  margin-bottom: 7px;
+}
+.act-meta dd {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.8;
+  color: rgba(247,237,226,.8);
+}
+
+/* 场次 */
+.scene { margin: 40px 0 44px; scroll-margin-top: 76px; }
+
+.scene-head {
+  font-family: var(--serif);
+  font-size: 17px;
+  letter-spacing: .16em;
+  color: var(--paper);
+  padding-left: 15px;
+  border-left: 3px solid var(--red);
+  margin-bottom: 20px;
+}
+
+/* 舞台提示 */
+.sd {
+  font-family: var(--serif);
+  font-size: 14.5px;
+  line-height: 2.05;
+  color: rgba(247,237,226,.55);
+  margin: 16px 0;
+  padding-left: 15px;
+  border-left: 1px solid rgba(247,237,226,.15);
+}
+.sd em { font-style: normal; color: rgba(247,237,226,.76); }
+
+/* 动作/说明 */
+.act-line {
+  font-size: 14.5px;
+  line-height: 2;
+  color: rgba(247,237,226,.72);
+  margin: 12px 0;
+}
+
+/* 角色名 */
+.spk {
+  font-family: var(--serif);
+  text-align: center;
+  font-size: 15px;
+  letter-spacing: .28em;
+  text-indent: .28em;
+  color: var(--paper);
+  margin: 30px 0 10px;
+}
+.act-line.mood-line {
+  color: rgba(247,237,226,.44);
+  font-size: 13.5px;
+  font-style: italic;
+  line-height: 2.05;
+  border-left: 1px solid rgba(247,237,226,.14);
+  padding-left: 14px;
+}
+
+.act-line.note-line {
+  color: rgba(214,32,56,.82);
+  font-size: 13px;
+  letter-spacing: .1em;
+  font-family: var(--serif);
+  border-left: 2px solid rgba(214,32,56,.4);
+  padding-left: 12px;
+}
+
+.cue-line {
+  margin: 18px 0 4px;
+  text-align: center;
+  font-size: 14px;
+  color: rgba(247,237,226,.5);
+}
+.cue-line .cue {
+  font-style: italic;
+  margin-right: 8px;
+  color: rgba(214,32,56,.8);
+}
+
+.spk::before, .spk::after {
+  content: "";
+  display: inline-block;
+  width: 16px; height: 1px;
+  background: rgba(214,32,56,.62);
+  vertical-align: .42em;
+  margin: 0 12px;
+}
+
+/* 台词 */
+.dlg {
+  max-width: 32rem;
+  margin: 0 auto 6px;
+  text-align: center;
+  font-size: 16px;
+  line-height: 2.05;
+  color: var(--paper);
+}
+.dlg .cue {
+  display: block;
+  font-size: 12.5px;
+  color: var(--ash);
+  font-style: italic;
+  margin-bottom: 3px;
+}
+.dlg .who {
+  display: block;
+  font-size: 11.5px;
+  letter-spacing: .24em;
+  color: rgba(214,32,56,.9);
+  margin-bottom: 4px;
+}
+
+/* ============================================================
+   曲目块
+   ============================================================ */
+.song {
+  margin: 44px 0;
+  border: 1px solid rgba(247,237,226,.15);
+  background: linear-gradient(180deg, rgba(84,26,32,.62), rgba(43,10,15,.35));
+}
+
+.song-head {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: 17px 22px;
+  background: rgba(214,32,56,.13);
+  border-bottom: 1px solid rgba(247,237,226,.14);
+  cursor: pointer;
+  user-select: none;
+}
+.song-no {
+  font-family: var(--serif);
+  font-size: 12px;
+  letter-spacing: .2em;
+  color: var(--red-lit);
+  border: 1px solid rgba(214,32,56,.5);
+  padding: 3px 9px;
+  flex: none;
+}
+.song-name {
+  font-family: var(--serif);
+  font-size: 19px;
+  letter-spacing: .16em;
+}
+.song-perf {
+  font-size: 12px;
+  letter-spacing: .12em;
+  color: var(--ash);
+  margin-left: auto;
+}
+.song-toggle {
+  font-size: 12px;
+  color: var(--ash);
+  transition: transform .25s;
+  flex: none;
+}
+.song.open .song-toggle { transform: rotate(180deg); }
+
+.song-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height .45s cubic-bezier(.4,0,.2,1);
+}
+.song.open .song-body { max-height: 3200px; }
+
+.song-inner { padding: 24px 22px 28px; }
+
+.lyric {
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 2.3;
+  color: rgba(247,237,226,.9);
+  text-align: center;
+  max-width: 30rem;
+  margin: 0 auto;
+}
+.lyric .who {
+  display: block;
+  font-size: 11px;
+  letter-spacing: .24em;
+  color: rgba(214,32,56,.85);
+  margin-top: 20px;
+}
+.lyric .who:first-child { margin-top: 0; }
+
+.lyric .ly {
+  display: block;
+  line-height: 2.15;
+  max-width: 34em;
+  margin-left: auto;
+  margin-right: auto;
+}
+.lyric .ly:first-child { margin-top: 0; }
+
+.lyric .who + .ly { margin-top: 0; }
+.lyric .who {
+  text-align: center;
+  margin-top: 22px;
+}
+.lyric .who:first-child { margin-top: 4px; }
+
+/* ── 曲内小节标题 / 声部 / 舞台提示 ── */
+p.song-sec {
+  font-family: var(--serif);
+  font-size: 13.5px;
+  letter-spacing: .12em;
+  color: rgba(214,32,56,.9);
+  text-align: center;
+  margin: 26px 0 12px;
+  text-indent: 0;
+  position: relative;
+}
+p.song-sec::before,
+p.song-sec::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 34px;
+  height: 1px;
+  background: rgba(214,32,56,.3);
+}
+p.song-sec::before { left: calc(50% - 74px); }
+p.song-sec::after  { right: calc(50% - 74px); }
+
+p.song-part {
+  font-size: 12px;
+  letter-spacing: .18em;
+  color: rgba(255,107,87,.85);
+  text-align: center;
+  margin: 16px 0 2px;
+  text-indent: 0;
+}
+
+p.song-stage {
+  font-size: 13px;
+  font-style: italic;
+  line-height: 1.95;
+  color: rgba(247,237,226,.46);
+  text-align: center;
+  margin: 12px auto;
+  text-indent: 0;
+  max-width: 88%;
+}
+
+.song-stages { margin-bottom: 18px; }
+
+/* ============================================================
+   曲目总览（卡片墙）
+   ============================================================ */
+.songwall {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(258px, 1fr));
+  gap: 1px;
+  background: rgba(247,237,226,.13);
+  border: 1px solid rgba(247,237,226,.13);
+}
+
+.songcard {
+  background: var(--ink);
+  padding: 20px 20px 22px;
+  cursor: pointer;
+  transition: background .2s;
+  position: relative;
+  overflow: hidden;
+}
+.songcard::after {
+  content: "";
+  position: absolute;
+  left: 0; bottom: 0;
+  width: 100%; height: 2px;
+  background: var(--red);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .3s;
+}
+.songcard:hover { background: var(--ink-2); }
+.songcard:hover::after { transform: scaleX(1); }
+
+.songcard .no {
+  font-family: var(--serif);
+  font-size: 11px;
+  letter-spacing: .2em;
+  color: var(--red-lit);
+}
+.songcard .nm {
+  font-family: var(--serif);
+  font-size: 19px;
+  letter-spacing: .1em;
+  margin: 9px 0 6px;
+}
+.songcard .pf {
+  font-size: 12px;
+  color: var(--ash);
+  line-height: 1.7;
+}
+.songcard .ac {
+  font-size: 11px;
+  color: rgba(214,32,56,.8);
+  letter-spacing: .1em;
+  margin-top: 10px;
+}
+
+/* ============================================================
+   人物
+   ============================================================ */
+.cast {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(272px, 1fr));
+  gap: 22px;
+}
+
+.person {
+  border: 1px solid rgba(247,237,226,.15);
+  padding: 24px 22px;
+  position: relative;
+  transition: border-color .22s, transform .22s;
+}
+.person:hover { border-color: rgba(214,32,56,.55); transform: translateY(-3px); }
+
+.person-role {
+  font-family: var(--serif);
+  font-size: 24px;
+  letter-spacing: .14em;
+  margin-bottom: 12px;
+  color: var(--paper);
+}
+.person-desc {
+  font-size: 13.5px;
+  line-height: 2;
+  color: rgba(247,237,226,.66);
+}
+.person-tag {
+  position: absolute;
+  top: 0; right: 0;
+  width: 34px; height: 34px;
+  display: grid;
+  place-items: center;
+  font-family: var(--serif);
+  font-size: 15px;
+  color: rgba(214,32,56,.42);
+  border-left: 1px solid rgba(247,237,226,.12);
+  border-bottom: 1px solid rgba(247,237,226,.12);
+  transition: color .22s, background .22s;
+}
+.person:hover .person-tag {
+  color: var(--paper);
+  background: var(--red);
+}
+
+/* ============================================================
+   伏笔闭环
+   ============================================================ */
+.threads { display: grid; gap: 1px; background: rgba(247,237,226,.13); border: 1px solid rgba(247,237,226,.13); }
+
+.thread {
+  background: var(--ink);
+  display: grid;
+  grid-template-columns: 1.1fr 1fr 1fr;
+  gap: 20px;
+  padding: 22px 24px;
+  align-items: start;
+  position: relative;
+}
+.thread:hover { background: var(--ink-2); }
+
+.thread-name {
+  font-family: var(--serif);
+  font-size: 20px;
+  letter-spacing: .12em;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+.thread-chip {
+  width: 11px; height: 11px;
+  flex: none;
+  transform: rotate(45deg);
+}
+
+.thread-col dt {
+  font-size: 10.5px;
+  letter-spacing: .26em;
+  color: var(--red-lit);
+  margin-bottom: 6px;
+}
+.thread-col dd {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.85;
+  color: rgba(247,237,226,.66);
+}
+.thread-note {
+  grid-column: 1 / -1;
+  font-family: var(--serif);
+  font-size: 13.5px;
+  color: rgba(247,237,226,.42);
+  padding-top: 12px;
+  border-top: 1px dashed rgba(247,237,226,.14);
+  margin-top: 2px;
+}
+
+/* ============================================================
+   页脚
+   ============================================================ */
+.foot {
+  background: var(--ink);
+  border-top: 1px solid rgba(247,237,226,.12);
+  padding: 66px 0 40px;
+}
+.foot-title {
+  font-family: var(--serif);
+  font-size: clamp(30px, 5vw, 52px);
+  letter-spacing: .16em;
+  text-align: center;
+  margin-bottom: 18px;
+}
+.foot-note {
+  max-width: 36rem;
+  margin: 0 auto 44px;
+  font-size: 13px;
+  line-height: 2;
+  color: var(--ash);
+  text-align: center;
+}
+.foot-line {
+  width: 46px; height: 1px;
+  background: var(--red);
+  margin: 0 auto 26px;
+}
+.foot-meta {
+  display: flex;
+  justify-content: center;
+  gap: 10px 24px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  letter-spacing: .14em;
+  color: rgba(247,237,226,.4);
+}
+
+/* 署名（编剧 / 音乐）：成组排列，不与其他页脚元信息混排 */
+#footAuthor {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 5px;
+  align-items: center;
+  color: rgba(247,237,226,.62);
+  letter-spacing: .18em;
+  text-align: center;
+}
+#footAuthor span {
+  display: block;
+  white-space: nowrap;
+}
+
+/* 首页署名 */
+.hero-credits {
+  display: flex;
+  justify-content: center;
+  gap: 8px 30px;
+  flex-wrap: wrap;
+  margin: 18px 0 4px;
+  font-size: 13px;
+  letter-spacing: .16em;
+  color: rgba(247,237,226,.6);
+}
+.hero-credits span {
+  position: relative;
+  padding-left: 0;
+}
+.hero-credits span + span::before {
+  content: "";
+  position: absolute;
+  left: -15px; top: 50%;
+  width: 1px; height: 12px;
+  transform: translateY(-50%);
+  background: rgba(214,32,56,.45);
+}
+
+/* ============================================================
+   响应式
+   ============================================================ */
+@media (max-width: 900px) {
+  :root { --rail: 0px; --measure: 100%; }
+
+  .rail {
+    top: auto; bottom: 0; left: 0; right: 0;
+    width: auto; height: 52px;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 0 10px;
+    border-right: none;
+    border-top: 1px solid rgba(247,237,226,.13);
+    overflow-x: auto;
+  }
+  .rail-item {
+    writing-mode: horizontal-tb;
+    flex-direction: row;
+    padding: 8px 13px;
+    border-left: none;
+    border-bottom: 2px solid transparent;
+    font-size: 13px;
+    letter-spacing: .1em;
+    gap: 0;
+  }
+  .rail-item.on { border-left: none; border-bottom-color: var(--red); background: none; }
+  .rail-sub { display: none; }
+  .rail-sep { width: 1px; height: 20px; margin: 0 4px; }
+
+  .page { margin-left: 0; padding-bottom: 52px; }
+
+  .band { padding: 66px 0; }
+  .hero { padding: 100px 20px 90px; }
+  .act-head { gap: 16px; }
+  .act-facts { margin-left: 0; text-align: left; width: 100%; }
+  .thread { grid-template-columns: 1fr; gap: 13px; }
+  .topbar { padding: 0 14px; gap: 10px; }
+  .brand { font-size: 16px; letter-spacing: .14em; }
+  .spine-items { grid-auto-columns: 168px; }
+  .hero-meta { font-size: 12px; }
+  .foot { padding-bottom: 76px; }
+}
+
+@media (max-width: 560px) {
+  .hero-title { letter-spacing: .06em; }
+  .songcard { padding: 17px 16px 19px; }
+  .person { padding: 20px 17px; }
+}
+
+/* 减少动效 */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+/* 打印：剧目单 */
+@media print {
+  .song-head { break-inside: avoid; }
+}
+@media print {
+  #stage, .vignette, .rail, .topbar, .scroll-hint, .hero-cta { display: none !important; }
+  body { background: #fff; color: #000; }
+  .page { margin-left: 0; }
+  .band { padding: 18px 0; }
+  .song-body { max-height: none !important; }
+  .song { break-inside: avoid; border-color: #999; }
+}
+
+/* ============================================================
+   剧本阅读权限门
+   未解锁：公开剧目概况（幕头/资料卡）+ 歌单目录 + 人物 + 伏笔
+   已解锁：六幕正文与全部唱段歌词
+   ============================================================ */
+
+/* 未解锁时：六幕正文尚未解密进 DOM，
+   这里只做「仅概况」的版面收束 —— 幕次区块更紧凑 */
+body:not(.unlocked) .act {
+  padding: 44px 0;
+  border-bottom: 1px solid rgba(247,237,226,.1);
+}
+body:not(.unlocked) .act:last-child {
+  border-bottom: 0;
+}
+
+/* 幕次资料卡在未解锁时更醒目（这是公开信息） */
+body:not(.unlocked) .act-meta {
+  border-color: rgba(214,32,56,.28);
+}
+
+/* 剧目区整体淡出感 */
+body:not(.unlocked) #acts {
+  opacity: .92;
+}
+
+/* ── 门卡 ── */
+.gate {
+  display: none;
+}
+body:not(.unlocked) .gate {
+  display: block;
+}
+
+.gate-card {
+  max-width: 640px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 58px 40px 46px;
+  border: 1px solid rgba(214,32,56,.32);
+  background:
+    radial-gradient(ellipse 90% 70% at 50% 0%, rgba(214,32,56,.12) 0%, transparent 70%),
+    rgba(43,10,15,.6);
+  position: relative;
+}
+
+.gate-mark {
+  width: 74px; height: 74px; margin: 0 auto 28px;
+  border: 2px solid var(--red);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--serif);
+  font-size: 34px;
+  color: var(--red-lit);
+  letter-spacing: 2px;
+  box-shadow: 0 0 36px rgba(214,32,56,.4), inset 0 0 22px rgba(214,32,56,.2);
+}
+
+.gate-title {
+  font-family: var(--serif);
+  font-size: clamp(22px, 3.4vw, 30px);
+  font-weight: 400;
+  letter-spacing: .18em;
+  margin: 0 0 18px;
+  color: var(--paper);
+}
+
+.gate-desc {
+  font-size: 14.5px;
+  line-height: 2.1;
+  letter-spacing: .04em;
+  color: rgba(247,237,226,.68);
+  margin: 0 0 34px;
+}
+
+.gate-form {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  align-items: stretch;
+  flex-wrap: wrap;
+}
+
+.gate-label {
+  position: absolute;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.gate-input {
+  flex: 1 1 220px;
+  min-width: 200px;
+  max-width: 300px;
+  padding: 13px 18px;
+  font-family: var(--sans);
+  font-size: 16px;
+  letter-spacing: .5em;
+  text-align: center;
+  color: var(--paper);
+  background: rgba(43,10,15,.75);
+  border: 1px solid rgba(247,237,226,.24);
+  border-radius: 0;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+}
+.gate-input::placeholder {
+  color: rgba(247,237,226,.32);
+  letter-spacing: .12em;
+  font-size: 14px;
+}
+.gate-input:focus {
+  border-color: var(--red);
+  box-shadow: 0 0 0 1px rgba(214,32,56,.4), 0 0 22px rgba(214,32,56,.22);
+}
+
+.gate-btn {
+  flex: 0 0 auto;
+  padding: 13px 38px;
+  font-family: var(--serif);
+  font-size: 15px;
+  letter-spacing: .3em;
+  color: var(--paper);
+  background: var(--red);
+  border: 1px solid var(--red);
+  border-radius: 0;
+  cursor: pointer;
+  transition: background .22s, transform .12s, box-shadow .22s;
+}
+.gate-btn:hover {
+  background: var(--red-lit);
+  border-color: var(--red-lit);
+  box-shadow: 0 6px 26px rgba(214,32,56,.42);
+}
+.gate-btn:active { transform: translateY(1px); }
+
+.gate-msg {
+  min-height: 22px;
+  margin: 16px 0 0;
+  font-size: 13px;
+  letter-spacing: .1em;
+  color: var(--red-lit);
+}
+.gate-msg.ok { color: var(--gold); }
+
+.gate-tip {
+  margin: 26px 0 0;
+  font-size: 12px;
+  letter-spacing: .12em;
+  color: rgba(247,237,226,.38);
+}
+
+/* 已解锁：门卡隐藏 */
+body.unlocked .gate { display: none !important; }
+
+/* 提示：歌单卡片在未解锁时不可点（歌词不可见） */
+body:not(.unlocked) .songcard {
+  cursor: default;
+  opacity: .85;
+}
+body:not(.unlocked) .songcard .no::after {
+  content: " 🔒";
+  font-size: 10px;
+  opacity: .55;
+  letter-spacing: 0;
+}
+
+/* 同名曲目的段落标记（如尾幕主题歌各段） */
+.songcard .nm-part {
+  display: inline-block;
+  margin-left: 7px;
+  padding: 1px 7px;
+  font-style: normal;
+  font-size: 10.5px;
+  letter-spacing: .08em;
+  color: var(--red-lit);
+  border: 1px solid rgba(214,32,56,.42);
+  vertical-align: middle;
+}

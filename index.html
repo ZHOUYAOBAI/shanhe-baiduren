@@ -2,142 +2,838 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>山河摆渡人 ｜ 红色庭院音乐剧</title>
-<meta name="description" content="红色庭院音乐剧《山河摆渡人》完整剧本。六幕、46 首曲目，从 1932 年彝寨火塘到 1935 年巧渡金沙江。">
-<meta name="theme-color" content="#2B0A0F">
-<meta property="og:type" content="website">
-<meta property="og:title" content="山河摆渡人 ｜ 红色庭院音乐剧">
-<meta property="og:description" content="六幕 · 四十六首曲目。从 1932 年彝寨火塘到 1935 年巧渡金沙江——完整剧本在线读。">
-<meta property="og:locale" content="zh_CN">
-<link rel="stylesheet" href="assets/css/main.css">
-<link rel="preload" href="assets/js/three.module.js" as="script" crossorigin>
-<link rel="preload" href="assets/js/data.js" as="script">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%230E0B09'/><circle cx='16' cy='16' r='7' fill='none' stroke='%23C8102E' stroke-width='2'/></svg>">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>长夜行 · 陈屿剧作集</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@200;300;400;700;900&family=Noto+Sans+SC:wght@300;400;500&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,700;1,6..96,400&family=Pinyon+Script&display=swap" rel="stylesheet">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/nocturne/css/tokens.css">
+<style>
+/* ============================================================
+   原型专用层：把 token 之外的实现细节收在这里
+   ============================================================ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--c-paper);
+  color: var(--c-ink);
+  font-family: var(--f-body);
+  font-size: var(--t-body);
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* 纸纹颗粒：整页极淡噪点，压住数字平涂的塑料感 */
+.grain {
+  position: fixed; inset: 0; z-index: 999;
+  pointer-events: none; opacity: .05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ---- 通用版心 ---- */
+.wrap {
+  width: 100%; max-width: var(--w-page);
+  margin: 0 auto; padding: 0 var(--pad-page);
+}
+
+/* ---- 区块标题 ---- */
+.kicker {
+  font-family: var(--f-label); font-size: var(--t-label);
+  letter-spacing: var(--ls-label); color: var(--c-ink-mute);
+  margin: 0 0 var(--s-3);
+}
+.sec-title {
+  font-family: var(--f-display); font-weight: 900;
+  font-size: var(--t-display-m); line-height: var(--lh-display-m);
+  letter-spacing: var(--ls-display); margin: 0;
+}
+.sec-head { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--s-7); }
+.sec-head p {
+  margin: 0; max-width: 380px; font-size: var(--t-body);
+  line-height: var(--lh-body); color: var(--c-ink-soft); text-align: right;
+}
+.rule { height: 1px; background: var(--c-rule); border: 0; margin: var(--s-7) 0; }
+.rule-dark { background: var(--c-rule-dark); }
+
+/* ============================================================
+   01 主视觉 — 滚动驱动的固定舞台
+   ============================================================ */
+.hero {
+  position: relative; height: 100vh; min-height: 720px;
+  background: var(--c-curtain); color: var(--c-paper);
+  overflow: hidden;
+}
+.hero-inner {
+  position: relative; z-index: 2; height: 100%;
+  display: flex; flex-direction: column;
+  max-width: var(--w-page); margin: 0 auto;
+  padding: var(--s-6) var(--pad-page) var(--s-8);
+}
+.hero-nav {
+  display: flex; align-items: center; justify-content: space-between;
+}
+.hero-brand { display: flex; align-items: baseline; gap: var(--s-5); }
+.hero-logo {
+  font-family: var(--f-script); font-size: 34px; line-height: 1;
+  letter-spacing: 1px; margin: 0;
+}
+.hero-nav ul { display: flex; gap: var(--s-6); list-style: none; margin: 0; padding: 0; }
+.hero-back { margin: 0 0 0 var(--s-6); }
+.hero-back a {
+  font-family: var(--f-label); font-size: 11px;
+  letter-spacing: var(--ls-label); color: #E8C9C9;
+  text-decoration: none; white-space: nowrap;
+}
+.hero-back a:hover { color: #E0D9D6; }
+.hero-nav a {
+  color: inherit; text-decoration: none;
+  font-family: var(--f-label); font-size: var(--t-label);
+  letter-spacing: var(--ls-label); padding-bottom: 4px;
+  border-bottom: 1px solid transparent; transition: border-color var(--d-fast) var(--e-soft);
+}
+.hero-nav a:hover { border-bottom-color: var(--c-paper); }
+
+.hero-body {
+  flex: 1; display: grid; grid-template-columns: 1fr 460px;
+  gap: var(--s-8); align-items: center; padding-top: var(--s-7);
+}
+.hero-kicker {
+  font-family: var(--f-label); font-size: var(--t-label);
+  letter-spacing: var(--ls-label); opacity: .9; margin: 0 0 var(--s-5);
+}
+.hero-title {
+  font-family: var(--f-display); font-weight: 900;
+  font-size: clamp(80px, 11vw, var(--t-hero)); line-height: var(--lh-hero);
+  letter-spacing: var(--ls-hero); margin: 0;
+}
+.hero-latin {
+  font-family: var(--f-latin); font-size: 26px; line-height: 1;
+  letter-spacing: .55em; margin: var(--s-5) 0 0; opacity: .95;
+}
+.hero-lede {
+  margin: var(--s-6) 0 0; max-width: 560px;
+  font-size: var(--t-lead); line-height: var(--lh-lead);
+  font-weight: 200; white-space: pre-line;
+}
+.hero-scroll {
+  position: absolute; left: var(--pad-page); bottom: var(--s-6);
+  font-family: var(--f-label); font-size: 11px; letter-spacing: var(--ls-label);
+  opacity: .65; display: flex; align-items: center; gap: var(--s-3);
+}
+.hero-scroll span { display: block; width: 40px; height: 1px; background: currentColor; }
+
+/* ---- 舞台：圆形画框 + 3D 圆柱 ---- */
+.stage {
+  position: relative; width: 460px; height: 460px;
+  display: grid; place-items: center;
+}
+.stage-ring {
+  position: absolute; inset: 0; border-radius: 50%;
+  border: 1px solid var(--c-paper); opacity: .85;
+}
+.stage-ring::after {
+  content: ""; position: absolute; inset: 14px;
+  border-radius: 50%; border: .5px solid var(--c-paper); opacity: .35;
+}
+.stage-portrait {
+  position: relative; z-index: 2; width: 420px; height: 420px;
+  transition: transform var(--d-slow) var(--e-out);
+}
+
+/* 3D 罐体组：CSS 3D 拼装的刻线罐，滚动驱动旋转
+   几何经验证：面片先 rotateY 再 translateZ 推到半径；端盖用绝对定位
+   椭圆，不参与 3D 变换（参与则与 transform-origin 冲突而脱离管体）。 */
+.vessels {
+  position: absolute; z-index: 4; right: -26px; bottom: -54px;
+  display: flex; align-items: flex-end; gap: 22px;
+}
+.vessel { position: relative; width: 52px; height: 140px; }
+.vessel-3d {
+  position: absolute; inset: 0;
+  transform-style: preserve-3d;
+  transform: rotateX(-8deg) rotateY(var(--spin, 0deg));
+  transition: transform 80ms linear;
+}
+.vessel-face {
+  position: absolute; top: 0; backface-visibility: hidden;
+  border-right: 1px solid rgba(0,0,0,.20);
+  background:
+    repeating-linear-gradient(180deg,
+      rgba(0,0,0,.30) 0 1px, rgba(0,0,0,.10) 1px 2px, rgba(0,0,0,0) 2px 7px),
+    var(--vessel-color);
+}
+.vessel-cap {
+  position: absolute; left: 50%;
+  width: 48px; height: 26px; margin-left: -24px;
+  border-radius: 50%; border: 1px solid rgba(0,0,0,.26);
+  background:
+    repeating-radial-gradient(circle at 50% 50%,
+      rgba(0,0,0,.14) 0 1px, rgba(0,0,0,0) 1px 5px),
+    var(--vessel-color);
+}
+.vessel-cap.top { top: -13px; }
+.vessel-cap.bot { bottom: -13px; }
+
+/* ============================================================
+   01b 3D 展演屏 — 真 WebGL 场景 + 手绘排线
+   ============================================================ */
+.showcase {
+  position: relative; height: 100vh; min-height: 680px;
+  background: var(--c-ink); color: var(--c-paper);
+  overflow: hidden;
+}
+.showcase-canvas {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  display: block; z-index: 1;
+}
+.showcase-head {
+  position: absolute; z-index: 5; top: 0; left: 0; right: 0;
+  max-width: var(--w-page); width: 100%; margin: 0 auto;
+  padding: var(--s-9) var(--pad-page) 0;
+  display: flex; justify-content: space-between; align-items: flex-start;
+  pointer-events: none;
+}
+.showcase-title {
+  font-family: var(--f-display); font-weight: 900;
+  font-size: clamp(44px, 5.4vw, 76px); line-height: 1.02;
+  letter-spacing: var(--ls-display); margin: 0;
+}
+.showcase-kicker {
+  font-family: var(--f-label); font-size: var(--t-label);
+  letter-spacing: var(--ls-label); color: var(--c-ink-mute);
+  margin: 0 0 var(--s-4);
+}
+.showcase-note {
+  font-family: var(--f-label); font-size: var(--t-caption);
+  letter-spacing: .1em; color: var(--c-ink-mute);
+  margin: 0; text-align: right; max-width: 260px; line-height: 1.7;
+}
+.showcase-cap {
+  position: absolute; z-index: 5; bottom: 0; left: 0; right: 0;
+  max-width: var(--w-page); width: 100%; margin: 0 auto;
+  padding: 0 var(--pad-page) var(--s-7);
+  display: flex; justify-content: space-between; align-items: flex-end;
+  pointer-events: none;
+}
+.showcase-cap p {
+  font-family: var(--f-label); font-size: var(--t-label);
+  letter-spacing: var(--ls-label); color: var(--c-ink-mute); margin: 0;
+}
+.showcase-swap {
+  position: absolute; z-index: 4; right: var(--pad-page); top: 50%;
+  transform: translateY(-50%);
+  display: flex; flex-direction: column; gap: 10px;
+}
+.swap-btn {
+  width: 34px; height: 34px; padding: 0;
+  border: 1px solid var(--c-rule-dark); background: transparent;
+  color: var(--c-ink-mute); cursor: pointer;
+  font-family: var(--f-label); font-size: 11px; letter-spacing: 0;
+  transition: all var(--d-fast) var(--e-soft);
+}
+.swap-btn:hover { border-color: var(--c-paper); color: var(--c-paper); }
+.swap-btn[aria-pressed="true"] { background: var(--c-paper); color: var(--c-ink); }
+
+/* ============================================================
+   02 剧目陈列
+   ============================================================ */
+.works { background: var(--c-paper); padding: 112px 0 128px; }
+.works-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: var(--s-7) var(--s-6);
+}
+.work { display: flex; flex-direction: column; gap: var(--s-4); }
+.work-emblem {
+  width: 100%; aspect-ratio: 1; display: grid; place-items: center;
+  border-top: 1px solid var(--c-rule); padding-top: var(--s-4);
+}
+.work-emblem img { width: 78%; height: auto; }
+.work h3 {
+  font-family: var(--f-display); font-weight: 700;
+  font-size: var(--t-display-s); line-height: var(--lh-display-s);
+  margin: 0;
+}
+.work-meta {
+  font-family: var(--f-label); font-size: var(--t-caption);
+  letter-spacing: .08em; color: var(--c-ink-mute); margin: 0;
+}
+.work-desc {
+  font-size: var(--t-body); line-height: var(--lh-body);
+  color: var(--c-ink-soft); margin: 0;
+}
+
+/* ============================================================
+   03 剧本选段
+   ============================================================ */
+.script { background: var(--c-ink); color: var(--c-paper); padding: 112px 0 128px; }
+.script .kicker { color: var(--c-ink-mute); }
+.script .sec-title { color: var(--c-paper); }
+.script-cols { display: grid; grid-template-columns: 1fr 360px; gap: 96px; align-items: start; }
+.script-beat {
+  margin-top: var(--s-7); padding-top: var(--s-5);
+  border-top: 1px solid #2A2622;
+  font-size: var(--t-caption); line-height: var(--lh-caption);
+  color: #7A746E; white-space: pre-line;
+}
+.line {
+  font-family: var(--f-display); font-weight: 400;
+  font-size: var(--t-title); line-height: var(--lh-title);
+  margin: 0 0 var(--s-5);
+}
+.stage-note {
+  font-size: var(--t-caption); line-height: var(--lh-caption);
+  color: #A8A29C; margin: 0;
+}
+.side-h {
+  font-family: var(--f-label); font-size: var(--t-label);
+  letter-spacing: var(--ls-label); color: var(--c-ink-mute);
+  margin: 0 0 var(--s-3);
+}
+.side-list {
+  font-size: var(--t-body); line-height: var(--lh-body);
+  color: var(--c-paper); margin: 0 0 var(--s-5);
+  white-space: pre-line; font-weight: 200;
+}
+.side-list.mute { color: #A8A29C; font-size: var(--t-caption); line-height: var(--lh-caption); }
+
+/* ============================================================
+   04 演出数据
+   ============================================================ */
+.stats { background: var(--c-curtain); color: var(--c-paper); padding: 112px 0 128px; }
+.stats .kicker { color: #E8C9C9; }
+.stats .sec-title { color: var(--c-paper); margin-bottom: var(--s-8); }
+.stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--s-7); }
+.stat { display: flex; flex-direction: column; gap: var(--s-3); }
+.stat-n {
+  font-family: var(--f-latin); font-size: 96px; line-height: 1;
+  font-weight: 400; margin: 0;
+}
+.stat-l {
+  font-family: var(--f-label); font-size: var(--t-caption);
+  letter-spacing: .3em; color: #E8C9C9; margin: 0;
+}
+
+/* ============================================================
+   05 媒体评价
+   ============================================================ */
+.press { background: var(--c-paper-warm); padding: 112px 0 128px; }
+.press-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s-8); }
+.press-note {
+  margin: var(--s-8) 0 0; padding-top: var(--s-5);
+  border-top: 1px solid var(--c-rule);
+  font-size: var(--t-caption); line-height: var(--lh-caption);
+  color: var(--c-ink-mute); max-width: 720px;
+}
+.press-note {
+  margin: var(--s-8) 0 0; padding-top: var(--s-5);
+  border-top: 1px solid var(--c-rule);
+  font-size: var(--t-caption); line-height: var(--lh-caption);
+  color: var(--c-ink-mute); max-width: 720px;
+}
+.press-q {
+  font-family: var(--f-display); font-weight: 400;
+  font-size: var(--t-lead); line-height: var(--lh-lead);
+  margin: 0 0 var(--s-4);
+}
+.press-a {
+  font-family: var(--f-label); font-size: var(--t-caption);
+  letter-spacing: .08em; color: var(--c-ink-mute); margin: 0;
+}
+
+/* ============================================================
+   06 创作理念
+   ============================================================ */
+.about { background: var(--c-paper); padding: 112px 0 128px; }
+.about-cols { display: grid; grid-template-columns: 1fr 400px; gap: 96px; }
+.about-title {
+  font-family: var(--f-display); font-weight: 900;
+  font-size: var(--t-display-m); line-height: 1.25;
+  letter-spacing: var(--ls-display); margin: 0 0 var(--s-6);
+  white-space: pre-line;
+}
+.about-body {
+  font-size: 17px; line-height: 2; font-weight: 300;
+  color: var(--c-ink-soft); margin: 0 0 var(--s-4); white-space: pre-line;
+}
+.signature {
+  font-family: var(--f-script); font-size: 56px; line-height: 1.2;
+  color: var(--c-curtain); margin: 0 0 var(--s-3);
+}
+.about-cred {
+  margin-top: var(--s-7); padding-top: var(--s-5);
+  border-top: 1px solid var(--c-rule);
+  font-size: var(--t-caption); line-height: var(--lh-caption);
+  color: var(--c-ink-mute); white-space: pre-line;
+}
+.sig-name {
+  font-family: var(--f-label); font-size: var(--t-caption);
+  letter-spacing: .2em; color: var(--c-ink-mute); margin: 0;
+  white-space: pre-line; line-height: 1.9;
+}
+
+/* ============================================================
+   07 联络 + 页脚
+   ============================================================ */
+.contact { background: var(--c-ink); color: var(--c-paper); padding: 112px 0 0; }
+.contact .kicker { color: var(--c-ink-mute); }
+.contact .sec-title { color: var(--c-paper); margin-bottom: var(--s-8); }
+.contact-cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s-8); }
+.c-label {
+  font-family: var(--f-label); font-size: var(--t-label);
+  letter-spacing: .34em; color: var(--c-ink-mute); margin: 0 0 var(--s-3);
+}
+.c-value {
+  font-size: var(--t-lead); line-height: var(--lh-lead);
+  font-weight: 200; margin: 0; white-space: pre-line;
+}
+.c-value em { font-family: var(--f-latin); font-style: italic; }
+.footer {
+  margin-top: 96px; padding: var(--s-7) 0 var(--s-8);
+  border-top: 1px solid #2A2622;
+  display: flex; flex-direction: column; align-items: center; gap: var(--s-5);
+}
+.footer-row { width: 100%; display: flex; justify-content: space-between; align-items: center; }
+.footer-logo { font-family: var(--f-script); font-size: 28px; margin: 0; }
+.footer-copy {
+  font-family: var(--f-label); font-size: var(--t-label);
+  letter-spacing: .2em; color: var(--c-ink-mute); margin: 0;
+}
+.finis {
+  font-family: var(--f-latin); font-size: 40px; letter-spacing: .8em;
+  color: var(--c-ink-mute); margin: 0; padding-left: .8em;
+}
+
+/* ---- 出场动效 ---- */
+.reveal { opacity: 0; transform: translateY(28px); }
+.reveal.in {
+  opacity: 1; transform: none;
+  transition: opacity var(--d-slow) var(--e-out), transform var(--d-slow) var(--e-out);
+}
+
+@media (max-width: 1100px) {
+  :root { --pad-page: 48px; }
+  .hero-body { grid-template-columns: 1fr; }
+  .stage { display: none; }
+  .works-grid { grid-template-columns: repeat(2, 1fr); }
+  .script-cols, .about-cols { grid-template-columns: 1fr; gap: 56px; }
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
+  .press-grid, .contact-cols { grid-template-columns: 1fr; }
+  .sec-head { flex-direction: column; align-items: flex-start; }
+  .sec-head p { text-align: left; }
+}
+@media (max-width: 640px) {
+  .works-grid, .stats-row { grid-template-columns: 1fr; }
+  .hero-nav ul { gap: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; }
+  html { scroll-behavior: auto; }
+}
+</style>
 </head>
 <body>
 
-<canvas id="stage" aria-hidden="true"></canvas>
-<div class="vignette" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
 
-<!-- ══ 顶栏 ══ -->
-<header class="topbar">
-  <div class="brand">山河<em>摆渡人</em></div>
-  <nav class="topnav" id="topnav" aria-label="主导航"></nav>
+<!-- ============ 01 主视觉 ============ -->
+<header class="hero" id="top">
+  <div class="hero-inner">
+    <nav class="hero-nav">
+      <div class="hero-brand">
+        <p class="hero-logo">Nocturne</p>
+        <p class="hero-back"><a href="shanhe/">← 《山河摆渡人》</a></p>
+      </div>
+      <ul>
+        <li><a href="#works">剧目</a></li>
+        <li><a href="#script">演出</a></li>
+        <li><a href="#about">关于</a></li>
+        <li><a href="#contact">联络</a></li>
+      </ul>
+    </nav>
+
+    <div class="hero-body">
+      <div class="hero-left">
+        <p class="hero-kicker">剧 作 家 · 作 品 集</p>
+        <h1 class="hero-title">长夜行</h1>
+        <p class="hero-latin">NOCTURNE</p>
+        <p class="hero-lede">三幕音乐剧 · 剧本全文与分场提要
+创作于二四年初春，翌年首演于南方某剧院</p>
+      </div>
+
+      <div class="stage" aria-hidden="true">
+        <div class="stage-ring"></div>
+        <img class="stage-portrait" src="assets/nocturne/svg/portrait.svg" alt="">
+      </div>
+    </div>
+
+    <div class="hero-scroll"><span></span>向下滚动</div>
+  </div>
 </header>
 
-<!-- ══ 左侧幕次轨 ══ -->
-<nav class="rail" id="rail" aria-label="幕次导航"></nav>
+<!-- ============ 01b 3D 展演屏 ============ -->
+<section class="showcase" id="showcase">
+  <canvas class="showcase-canvas" id="gl-canvas" width="1440" height="900"></canvas>
 
-<main class="page">
-
-  <!-- ══ HERO ══ -->
-  <section class="hero" id="hero">
-    <div class="hero-mark" aria-hidden="true"><span>渡</span></div>
-    <div class="hero-inner">
-      <div class="hero-kicker">红色庭院音乐剧</div>
-      <h1 class="hero-title">山河摆渡人</h1>
-      <p class="hero-sub" id="heroSub">历史的回眸 · 巧渡金沙江</p>
-      <div class="hero-meta" id="heroMeta"></div>
-      <div class="hero-credits" id="heroCredits"></div>
-      <button class="hero-cta" data-goto="#act-0">开演 · 序幕</button>
+  <div class="showcase-head">
+    <div>
+      <p class="showcase-kicker">REAL TIME · 舞 台 效 果</p>
+      <h2 class="showcase-title">真实 3D<br>手绘排线</h2>
     </div>
-    <div class="scroll-hint" aria-hidden="true"><span>向下</span><i></i></div>
-  </section>
+    <p class="showcase-note">真 WebGL 几何体与手绘刻线<br>在同一透视空间中叠加</p>
+  </div>
 
-  <!-- ══ 核心主线 ══ -->
-  <section class="band dark" id="mainline">
-    <div class="wrap wide">
-      <div class="sec-head">
-        <div class="sec-num">主 线</div>
-        <h2 class="sec-title">一条被历史记住的渡江路</h2>
-        <p class="sec-desc" id="spineDesc"></p>
+  <div class="showcase-swap">
+    <button class="swap-btn" id="swap-bottles" aria-pressed="true" title="瓶阵场景">A</button>
+    <button class="swap-btn" id="swap-portal" aria-pressed="false" title="画框场景">B</button>
+  </div>
+
+  <div class="showcase-cap">
+    <p>THE BOTTLES — 三幕道具</p>
+    <p>WEBGL · HAND-HATCHED</p>
+  </div>
+</section>
+
+<!-- ============ 02 剧目陈列 ============ -->
+<section class="works" id="works">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <p class="kicker">WORKS · 剧 目</p>
+        <h2 class="sec-title">在写与已写的</h2>
       </div>
-      <div class="spine">
-        <div class="spine-line" aria-hidden="true"></div>
-        <div class="spine-items" id="spineItems"></div>
-      </div>
+      <p>四个剧目，两种体裁。
+此处陈列剧目梗概与首演记录。</p>
     </div>
-  </section>
-
-  <!-- ══ 剧目 ══ -->
-  <div id="acts"></div>
-
-  <!-- ══ 剧本阅读权限门 ══ -->
-  <section class="band dark gate" id="gate" hidden>
-    <div class="wrap">
-      <div class="gate-card">
-        <div class="gate-mark" aria-hidden="true">渡</div>
-        <h2 class="gate-title">全本剧本 · 限内部传阅</h2>
-        <p class="gate-desc">
-          六幕完整剧本正文与全部唱段歌词仅供创作团队与演出主创阅读。<br>
-          剧目概况、主线脉络、歌单目录、人物小传与伏笔结构对外公开。
-        </p>
-        <form class="gate-form" id="gateForm" autocomplete="off">
-          <label class="gate-label" for="gateInput">阅读密码</label>
-          <input class="gate-input" id="gateInput" type="password"
-                 inputmode="numeric" placeholder="请输入密码" aria-label="阅读密码">
-          <button class="gate-btn" type="submit">开 卷</button>
-        </form>
-        <p class="gate-msg" id="gateMsg" role="status" aria-live="polite"></p>
-        <p class="gate-tip">密码由主创团队分发 · 公开页面仅展示剧目概况</p>
-      </div>
+    <hr class="rule">
+    <div class="works-grid">
+      <article class="work reveal">
+        <div class="work-emblem"><img src="assets/nocturne/svg/emblem-harp-ink.svg" alt=""></div>
+        <h3>长夜行</h3>
+        <p class="work-meta">音乐剧 · 三幕 · 二五年首演</p>
+        <p class="work-desc">一个替人写信的邮差，与一封永远寄不到的信。</p>
+      </article>
+      <article class="work reveal">
+        <div class="work-emblem"><img src="assets/nocturne/svg/emblem-rings-ink.svg" alt=""></div>
+        <h3>潮汐书</h3>
+        <p class="work-meta">歌剧 · 二幕 · 二三年首演</p>
+        <p class="work-desc">一位抄书人抄录了整座海，也抄录了自己的亡妻。</p>
+      </article>
+      <article class="work reveal">
+        <div class="work-emblem"><img src="assets/nocturne/svg/emblem-wave-ink.svg" alt=""></div>
+        <h3>铜鸟</h3>
+        <p class="work-meta">音乐剧 · 二幕 · 二六年首演</p>
+        <p class="work-desc">铜制的鸟不会飞，却记得所有迁徙路线。</p>
+      </article>
+      <article class="work reveal">
+        <div class="work-emblem"><img src="assets/nocturne/svg/emblem-spot-ink.svg" alt=""></div>
+        <h3>候鸟</h3>
+        <p class="work-meta">歌剧 · 独幕 · 写作中</p>
+        <p class="work-desc">一个人反复练习迁徙，直到忘了自己从未飞过。</p>
+      </article>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- ══ 曲目总览 ══ -->
-  <section class="band dark" id="songs">
-    <div class="wrap wide">
-      <div class="sec-head">
-        <div class="sec-num">歌 单</div>
-        <h2 class="sec-title">全剧四十六首</h2>
-        <p class="sec-desc">点开任意一首，看它的完整歌词。咏叹调、宣叙调、合唱，各有其声。</p>
-      </div>
-      <div class="songwall" id="songwall"></div>
-    </div>
-  </section>
-
-  <!-- ══ 人物 ══ -->
-  <section class="band dark" id="cast">
-    <div class="wrap wide">
-      <div class="sec-head">
-        <div class="sec-num">人 物</div>
-        <h2 class="sec-title">十个人，一条河</h2>
-        <p class="sec-desc">阿木与阿果是艺术虚构人物，原型是千千万万无名彝、汉、傣各族群众。</p>
-      </div>
-      <div class="cast" id="castGrid"></div>
-    </div>
-  </section>
-
-  <!-- ══ 伏笔 ══ -->
-  <section class="band dark" id="threads">
-    <div class="wrap wide">
-      <div class="sec-head">
-        <div class="sec-num">伏 笔</div>
-        <h2 class="sec-title">六条线，都收到了</h2>
-        <p class="sec-desc">每一件信物埋下时，都不是为了好看。它们在最后一场全部落地。</p>
-      </div>
-      <div class="threads" id="threadList"></div>
-    </div>
-  </section>
-
-  <!-- ══ 页脚 ══ -->
-  <footer class="foot">
-    <div class="wrap">
-      <h2 class="foot-title">山河无恙，星火永续</h2>
-      <div class="foot-line" aria-hidden="true"></div>
-      <p class="foot-note" id="footNote"></p>
-      <div class="foot-meta">
-        <span id="footAuthor"></span>
-        <span>1932 — 1935</span>
-        <span>六幕 · 四十六首曲目</span>
+<!-- ============ 03 剧本选段 ============ -->
+<section class="script" id="script">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <p class="kicker">SCRIPT · 剧 本 选 段</p>
+        <h2 class="sec-title">第一幕 · 邮差与地址</h2>
       </div>
     </div>
-  </footer>
+    <hr class="rule rule-dark">
+    <div class="script-cols">
+      <div>
+        <p class="line">「你写的那些信，最后都到了吗？」</p>
+        <p class="line">「都到了。」
+「——不。信都到了，人没到。」</p>
+        <p class="stage-note">〔灯光收窄至邮差面部。远处传来渡轮的汽笛，一声，两声。第三声没有响。〕</p>
+        <p class="script-beat">〔邮差把信按在桌上，又拿起，放进抽屉。抽屉关上的声音很轻。〕
+〔窗外天色渐暗。舞台前沿的灯带亮起。〕</p>
+      </div>
+      <aside>
+        <p class="side-h">人 物</p>
+        <p class="side-list">邮差　男中音
+四十岁，右手小指微弯
 
-</main>
+收信人　女高音
+声音只在幕后出现
 
-<script src="assets/js/data.js"></script>
-<script type="module" src="assets/js/main.js"></script>
+渡轮　合唱
+二声部，无词</p>
+        <hr class="rule rule-dark">
+        <p class="side-h">主 要 曲 目</p>
+        <p class="side-list mute">一、邮差之歌　二四年修订
+二、第七封信（独唱）
+三、渡轮圆舞曲
+四、终曲：地址</p>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 04 演出数据 ============ -->
+<section class="stats">
+  <div class="wrap">
+    <p class="kicker">PERFORMANCE · 上 演 纪 录</p>
+    <h2 class="sec-title">已经演过的部分</h2>
+    <div class="stats-row">
+      <div class="stat reveal"><p class="stat-n">47</p><p class="stat-l">场次</p></div>
+      <div class="stat reveal"><p class="stat-n">11</p><p class="stat-l">首演年份跨度</p></div>
+      <div class="stat reveal"><p class="stat-n">3</p><p class="stat-l">已完成剧目</p></div>
+      <div class="stat reveal"><p class="stat-n">9</p><p class="stat-l">在写剧目</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 05 媒体评价 ============ -->
+<section class="press">
+  <div class="wrap">
+    <p class="kicker">PRESS · 评 语</p>
+    <h2 class="sec-title">他们怎么说</h2>
+    <hr class="rule">
+    <div class="press-grid">
+      <blockquote class="reveal">
+        <p class="press-q">「他把邮差写成一个不肯承认自己在等待的人。」</p>
+        <footer class="press-a">《戏剧评论》二五年六月号</footer>
+      </blockquote>
+      <blockquote class="reveal">
+        <p class="press-q">「剧本的呼吸感在今天的原创音乐剧里极为罕见。」</p>
+        <footer class="press-a">《舞台艺术》年度剧目评选</footer>
+      </blockquote>
+      <blockquote class="reveal">
+        <p class="press-q">「铜鸟不会飞，但看完之后，你会希望它飞。」</p>
+        <footer class="press-a">《潮汐书》主创访谈</footer>
+      </blockquote>
+    </div>
+    <p class="press-note">以上评论摘自公开发表的演出报道与访谈记录，剧目名称与日期以各剧目正式演出档案为准。</p>
+    <p class="press-note">以上评论摘自公开发表的演出报道与访谈记录，剧目名称与日期以各剧目正式演出档案为准。</p>
+  </div>
+</section>
+
+<!-- ============ 06 创作理念 ============ -->
+<section class="about" id="about">
+  <div class="wrap">
+    <p class="kicker">ABOUT · 创 作 理 念</p>
+    <div class="about-cols">
+      <div>
+        <h2 class="about-title">我写的是
+没寄出去的信</h2>
+        <p class="about-body">我的剧本几乎都从一件没做成的事开始——一封没寄出的信，一次没赶上的船，一句没问出口的话。
+
+舞台能替我把它们说出来。所以我写作的方式更像整理：把散落的碎片排好，等它们自己显出顺序。</p>
+      </div>
+      <div>
+        <p class="signature">Chén Yǔ</p>
+        <p class="sig-name">陈 屿
+        <p class="about-cred">已出版剧目集一册
+创作年表 二〇一四 — 至今</p>
+剧作家 · 编剧</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 07 联络 ============ -->
+<footer class="contact" id="contact">
+  <div class="wrap">
+    <p class="kicker">CONTACT · 合 作 洽 谈</p>
+    <h2 class="sec-title">如果有一封信
+想寄给我</h2>
+    <div class="contact-cols">
+      <div>
+        <p class="c-label">剧 本 代 理</p>
+        <p class="c-value">南岸戏剧制作
+联系人：林女士</p>
+      </div>
+      <div>
+        <p class="c-label">邮 箱</p>
+        <p class="c-value"><em>chenyu@nocturne.studio</em></p>
+      </div>
+      <div>
+        <p class="c-label">剧 团 地 址</p>
+        <p class="c-value">城西旧仓库七号
+周日至周四 14:00–19:00</p>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer-row">
+        <p class="footer-logo">Nocturne</p>
+        <p class="footer-copy">二六年 陈屿 剧作集</p>
+      </div>
+      <p class="finis">FINIS</p>
+    </div>
+  </div>
+</footer>
+
+<script type="module">
+import { createBottlesScene, createPortalScene } from './assets/nocturne/js/scenes.js';
+
+/* ============================================================
+   3D 展演屏：真 WebGL 场景 + 手绘排线着色器
+   ============================================================ */
+(function initShowcase() {
+  var canvas = document.getElementById('gl-canvas');
+  if (!canvas) return;
+
+  var current = null, mode = 'bottles';
+
+  function boot(which) {
+    if (current) { current.dispose(); current = null; }
+    // 每次重建都换一个全新的 canvas 元素：
+    // 旧 renderer 已占用 WebGL context，复用同一元素会导致渲染失效
+    var fresh = document.createElement('canvas');
+    fresh.id = 'gl-canvas';
+    fresh.className = canvas.className;
+    fresh.width = 1440;
+    fresh.height = 900;
+    canvas.parentNode.replaceChild(fresh, canvas);
+    canvas = fresh;
+
+    if (which === 'bottles') {
+      current = createBottlesScene(canvas);
+    } else {
+      current = createPortalScene(canvas);
+    }
+    var cap = document.querySelector('.showcase-cap p');
+    if (cap) {
+      cap.textContent = which === 'bottles'
+        ? 'THE BOTTLES — 三幕道具'
+        : 'THE PORTAL — 圆形画框';
+    }
+  }
+
+  var bBottles = document.getElementById('swap-bottles');
+  var bPortal  = document.getElementById('swap-portal');
+  if (bBottles) bBottles.addEventListener('click', function () {
+    mode = 'bottles'; boot(mode);
+    bBottles.setAttribute('aria-pressed', 'true');
+    bPortal.setAttribute('aria-pressed', 'false');
+  });
+  if (bPortal) bPortal.addEventListener('click', function () {
+    mode = 'portal'; boot(mode);
+    bPortal.setAttribute('aria-pressed', 'true');
+    bBottles.setAttribute('aria-pressed', 'false');
+  });
+
+  // 等布局稳定后再初始化，避免 canvas 尺寸为 0
+  function start() { boot(mode); }
+  if (document.readyState === 'complete') start();
+  else window.addEventListener('load', start);
+})();
+</script>
+
+<script>
+/* ============================================================
+   3D 罐体组：16 面刻线罐 × 3，CSS 3D 拼装
+   几何要点：面片先 rotateY 再 translateZ 推到半径；端盖用绝对定位
+   椭圆，不参与 3D 变换（参与则与 transform-origin 冲突而脱离管体）。
+   ============================================================ */
+(function buildVessels() {
+  var host = document.getElementById('vessels');
+  if (!host) return;
+
+  var SPEC = [
+    { color: '#1F4E6B', h: 132, spin: 24 },   /* 深蓝 */
+    { color: '#6B7A3A', h: 108, spin: -16 },  /* 橄榄 */
+    { color: '#C2892C', h: 144, spin: 8 }     /* 赭石 */
+  ];
+  var FACES = 16, R = 24;
+  var chord = 2 * R * Math.sin(Math.PI / FACES);
+
+  SPEC.forEach(function (spec) {
+    var wrap = document.createElement('div');
+    wrap.className = 'vessel';
+    wrap.style.height = spec.h + 'px';
+
+    var cyl = document.createElement('div');
+    cyl.className = 'vessel-3d';
+    cyl.style.setProperty('--spin', spec.spin + 'deg');
+
+    for (var i = 0; i < FACES; i++) {
+      var f = document.createElement('div');
+      f.className = 'vessel-face';
+      f.style.width = (chord * 1.06).toFixed(1) + 'px';
+      f.style.height = spec.h + 'px';
+      f.style.marginLeft = (-chord * 1.06 / 2).toFixed(1) + 'px';
+      f.style.setProperty('--vessel-color', spec.color);
+      f.style.transform = 'rotateY(' + (i * (360 / FACES)).toFixed(2) + 'deg) translateZ(' + R + 'px)';
+      /* 每面明暗：余弦分布模拟圆柱受光 */
+      var light = 0.5 + 0.5 * Math.cos((i * (360 / FACES) - 40) * Math.PI / 180);
+      f.style.filter = 'brightness(' + (0.58 + light * 0.58).toFixed(3) + ')';
+      cyl.appendChild(f);
+    }
+
+    wrap.appendChild(cyl);
+
+    var capT = document.createElement('div');
+    capT.className = 'vessel-cap top';
+    capT.style.setProperty('--vessel-color', spec.color);
+    wrap.appendChild(capT);
+
+    var capB = document.createElement('div');
+    capB.className = 'vessel-cap bot';
+    capB.style.setProperty('--vessel-color', spec.color);
+    wrap.appendChild(capB);
+
+    host.appendChild(wrap);
+  });
+
+  /* 滚动驱动：罐体自转 + 人物剪影轻微位移 */
+  var ticking = false;
+  function update() {
+    var y = window.scrollY;
+    host.querySelectorAll('.vessel-3d').forEach(function (el, idx) {
+      var base = [24, -16, 8][idx];
+      el.style.setProperty('--spin', (base + y * 0.45) + 'deg');
+    });
+
+    var portrait = document.querySelector('.stage-portrait');
+    if (portrait && y < window.innerHeight * 1.2) {
+      var t = Math.min(y / (window.innerHeight * 0.9), 1);
+      portrait.style.transform = 'translateY(' + (-t * 36).toFixed(1) + 'px) scale(' + (1 - t * 0.05).toFixed(4) + ')';
+    }
+    ticking = false;
+  }
+  window.addEventListener('scroll', function () {
+    if (!ticking) { ticking = true; requestAnimationFrame(update); }
+  }, { passive: true });
+  update();
+})();
+
+/* ============================================================
+   出场动效：IntersectionObserver
+   ============================================================ */
+(function reveal() {
+  var els = document.querySelectorAll('.reveal');
+  if (!('IntersectionObserver' in window)) {
+    els.forEach(function (el) { el.classList.add('in'); });
+    return;
+  }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) {
+        var el = e.target;
+        var delay = Number(el.dataset.d || 0);
+        setTimeout(function () { el.classList.add('in'); }, delay);
+        io.unobserve(el);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+
+  els.forEach(function (el, i) {
+    el.dataset.d = (i % 4) * 90;
+    io.observe(el);
+  });
+})();
+</script>
 </body>
 </html>

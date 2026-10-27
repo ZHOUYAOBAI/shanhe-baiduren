@@ -1,12 +1,124 @@
-# 《山河摆渡人》剧本站
+# NOCTURNE ｜ 剧作集视觉体系
 
-红色庭院音乐剧《山河摆渡人》官方网站。
+> 铜版画蚀刻 × 幕布正红 —— 一套为音乐剧／歌剧剧本展演而生的视觉系统
+
+本仓库收录两套同源的剧目站点，共用「手绘钢笔排线 + 真 3D 几何体」的技术路线。
 
 ## 线上地址
 
-https://zhouyaobai.github.io/shanhe-baiduren/
+| 站点 | 地址 |
+|---|---|
+| **NOCTURNE 剧作集**（首页） | https://zhouyaobai.github.io/shanhe-baiduren/ |
+| 《山河摆渡人》 | https://zhouyaobai.github.io/shanhe-baiduren/shanhe/ |
 
-## 这是一个什么站
+---
+
+## 一、NOCTURNE 剧作集（首页）
+
+音乐剧与歌剧剧本的线上展演站。视觉基底取自一支抖音样片，逐帧取样后提炼出「手绘钢笔排线 + 正红满版 + Didone 巨标题」的视觉语言，并延展为可执行的 token 体系。
+
+### 快速开始
+
+纯静态，无构建步骤，无外部依赖：
+
+```bash
+python3 -m http.server 8777
+# 打开 http://127.0.0.1:8777
+```
+
+### 四套载体
+
+| 载体 | 路径 | 说明 |
+|---|---|---|
+| **Token 真源** | `assets/nocturne/css/tokens.css`<br>`assets/nocturne/css/tokens.json` | 色彩 / 字体 / 间距 / 纹理 / 动效的唯一真源 |
+| **可运行原型** | `index.html` | 8 屏，滚动驱动 + WebGL 3D |
+| **规范文档** | `assets/nocturne/docs/视觉规范.md` | 完整规则、参数速查与踩坑记录 |
+| **画布设计稿** | Ardot（不在本仓库） | 首页七屏 + 视觉规范板，层级可重组 |
+
+**改动规则**：任何色值、字号、间距的调整，先改 `tokens.css`，再同步到原型与画布。三者不得各自为政。
+
+### 页面结构
+
+```
+01 主视觉（红面）      →  巨标题 + 圆形画框剪影 + 手写体 logo
+02 3D 展演屏（墨面）   →  真 WebGL 场景，A/B 可切换
+03 剧目陈列（米白）    →  四部剧目，蚀刻徽记卡片
+04 剧本选段（墨面）    →  台词 / 舞台提示 / 人物 / 曲目
+05 演出数据（红面）    →  大字数字排版
+06 媒体评价（浅米白）  →  三栏引文
+07 创作理念（米白）    →  自述 + 手写签名
+08 联络（墨面）        →  合作洽谈 + FINIS 落款
+```
+
+### 视觉语言
+
+| 项 | 值 |
+|---|---|
+| 主色 | `#B00000` 幕布红 |
+| 反白 | `#E0D9D6` 米白 |
+| 正文 | `#08080A` 墨黑 |
+| 巨标题 | Noto Serif SC 900 |
+| 拉丁副题 | Bodoni Moda 400 |
+| 手写签名 | Pinyon Script 400 |
+| 眉标导航 | Noto Sans SC 11px / 0.28em 字距 |
+| 圆角 | 全站 0（仅描边块 2px） |
+| 间距阶 | 4 的倍数：4 → 160 |
+
+**三色封顶**：全站只用红／米白／墨黑，不出现第四色相。唯一例外是 3D 实物用彩色（面积极小）。
+
+> **中文「〇」（U+3007）在 Noto Serif SC 缺字形**，年份请用汉字数字（`二五年` 而非 `二〇二五`），否则渲染为豆腐块。
+
+### 核心：排线着色器
+
+3D 场景里让曲面呈现手绘钢笔质感的 GLSL 材质（`assets/nocturne/js/hatch.js`）。四步：
+
+1. **屏幕空间刻线**（非贴图）—— 线条不随曲面拉伸变形
+2. **手绘扰动** —— `inkNoise()` 让线条弯曲、粗细随位置波动
+3. **强度由曲面转折驱动** —— `turn = 1 - abs(dot(N, V))`
+   圆柱正对处排线淡、轮廓转折处排线浓，这正是铜版画处理圆柱体的手法
+4. **交叉排线仅出现在暗部**
+
+> 若改用光照驱动排线，正对处受光会完全无排线，物体退化为平涂色块 —— 这是实现中最容易踩的坑。
+
+完整原理与参数见 `assets/nocturne/docs/视觉规范.md` 第 5 章。
+
+### 3D 场景
+
+| 场景 | 构成 |
+|---|---|
+| **A · 瓶阵** | 瓶身走排线着色器（斜向交叉线网）、瓶盖走 PBR 金属、黑色标签带 |
+| **B · 圆形画框** | 红球排线 + 侧身长发剪影 + 双层画框 |
+
+两个场景共享同一套排线材质与描边材质。金属瓶盖需自建等距柱状投影环境贴图，否则 `metalness=1` 会渲染成纯黑。
+
+### 目录
+
+```
+assets/nocturne/
+├── css/tokens.css          # CSS 变量（可执行真源）
+├── css/tokens.json         # 机读版（含纹理/动效参数）
+├── js/hatch.js             # GLSL 排线着色器 + 金属材质 + 描边材质
+├── js/scenes.js            # 两个 3D 场景
+├── svg/                    # 程序化生成的铜版画线稿（ink / paper 双版本）
+├── vendor/three.module.js  # Three.js（本地化，零外链）
+├── docs/视觉规范.md
+└── tools/gen_svg.py        # 线稿资产生成器
+```
+
+### 工具
+
+```bash
+# 重新生成线稿资产（改 gen_svg.py 后）
+python3 assets/nocturne/tools/gen_svg.py
+```
+
+---
+
+## 二、《山河摆渡人》剧本站
+
+红色庭院音乐剧《山河摆渡人》官方网站。
+
+### 这是一个什么站
 
 六幕完整剧本 + 46 首曲目完整歌词 + 10 位人物 + 6 条伏笔闭环。
 
@@ -17,7 +129,7 @@ https://zhouyaobai.github.io/shanhe-baiduren/
 - **人物卡**：10 位主要角色
 - **伏笔闭环**：骨哨、凤凰帕子、银镯、真假油布包、杀父之鞭、夜不渡皎平
 
-## 视觉系统
+### 视觉系统
 
 | 角色 | 色值 | 用途 |
 |---|---|---|
@@ -30,7 +142,7 @@ https://zhouyaobai.github.io/shanhe-baiduren/
 
 红色为本剧血色，故以朱砂为底、宣纸为字、金作点睛；3D 火塘用金橙火焰，在红底上靠明度分层。
 
-## 剧本阅读权限
+### 剧本阅读权限
 
 **公开可见**：剧目概况（幕名 / 时间 / 地点 / 舞台氛围 / 出场人物）、核心主线、歌单目录、人物小传、伏笔结构。
 
@@ -45,24 +157,7 @@ https://zhouyaobai.github.io/shanhe-baiduren/
 
 > 密码通过环境变量 `READ_PASS` 传入生成脚本，不写死在仓库里。
 
-## 技术结构
-
-纯静态站点，无构建步骤，无外部依赖（不引用 CDN 字体与图片）。
-
-```
-index.html                入口
-404.html                  GitHub Pages 404 页
-deploy.sh                 一键提交推送脚本
-.nojekyll                 禁用 Jekyll
-assets/css/main.css       视觉系统（朱砂/米白/彝金）+ 权限门样式
-assets/js/data.js         公开层数据 + 剧透密文块
-assets/js/crypto.js       浏览器端解密模块（PBKDF2 + AES-GCM）
-assets/js/main.js         页面渲染、交互、权限门
-assets/js/scene.js        Three.js 3D 火塘场景
-assets/js/three.module.js Three.js 本地副本（1.3MB，为避免 CDN 依赖）
-```
-
-## 数据来源与更新
+### 数据来源与更新
 
 **关键约定：不要另写解析器。** 解析层与数据映射层必须分离。
 
@@ -84,14 +179,37 @@ python3 extract_script.py "outputs/红色庭院音乐剧《山河摆渡人》(�
                          output/typeset-20261028-0215/working/script_struct.json
 # 3. 生成（密码走环境变量，不入库）
 READ_PASS=你的密码 python3 gen_site_data4.py
-# 4. 同步并推送
-rsync -a --delete site/ /path/to/repo/ --exclude .git
+# 4. 同步并推送（注意：站点产物在 shanhe/ 子目录）
+rsync -a --delete site/ /path/to/repo/shanhe/ --exclude .git
 ./deploy.sh
 ```
 
-## 史实与虚构声明
+### 史实与虚构声明
 
-阿木、阿果为艺术虚构人物，原型是千千万万无名彝、汉、傣各族群众。
-剧中真实地名、渡口、里程、船工姓名均依史实。
+阿木、阿果为艺术虚构人物，原型是千千万万无名彝、汉、傣各族群众。 剧中真实地名、渡口、里程、船工姓名均依史实。
 
 编剧：孙子岚 白耀洲 李思颖　｜　音乐：彭侠影 白耀洲 孙子岚
+
+---
+
+## 仓库结构
+
+```
+index.html                      NOCTURNE 剧作集（首页）
+404.html                        NOCTURNE 风格 404 页
+deploy.sh                       一键提交推送脚本
+.nojekyll                       禁用 Jekyll
+assets/
+├── css/main.css                《山河摆渡人》视觉系统
+├── js/{main,scene,crypto,data}.js
+├── js/three.module.js
+└── nocturne/                   NOCTURNE 体系全部资源
+shanhe/
+├── index.html                  《山河摆渡人》主页
+├── 404.html
+└── assets/                     同上
+```
+
+---
+
+*NOCTURNE 视觉基底源自抖音样片（作者：Motdes AI阿峰），为其视觉语言的延展实现。*
