@@ -2,8 +2,13 @@
    《山河摆渡人》剧本站 · 交互
    ============================================================ */
 import { createStage } from './scene.js';
+import { decryptSecret } from './crypto.js';
 
-const D = window.SCRIPT;
+/* D：公开层数据（剧目概况 / 歌单目录 / 人物 / 伏笔）
+   解锁后由 mergeSecret() 补入六幕正文与全部歌词 */
+let D = window.SCRIPT;
+const SECRET = window.SCRIPT_SECRET || null;
+
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 
@@ -30,9 +35,22 @@ try {
     '1932 — 1935',
   ].filter(Boolean).map(t => `<span>${esc(t)}</span>`).join('');
 
+  /* 署名：编剧 / 音乐 */
+  const credits = [];
+  if (D.cover.author) credits.push(`编剧：${D.cover.author}`);
+  if (D.cover.music) credits.push(`音乐：${D.cover.music}`);
+  if (credits.length) {
+    const el = $('#heroCredits');
+    if (el) el.innerHTML = credits.map(t => `<span>${esc(t)}</span>`).join('');
+  }
+
   $('#spineDesc').textContent = D.cover.mainline.join(' → ');
   $('#footNote').textContent = D.cover.note;
-  $('#footAuthor').textContent = D.cover.author;
+
+  const fa = $('#footAuthor');
+  if (fa) {
+    fa.innerHTML = credits.map(t => `<span>${esc(t)}</span>`).join('');
+  }
 }
 
 /* ── 时间轴 ────────────────────────────────────────────── */
@@ -54,7 +72,12 @@ try {
 /* ── 幕次渲染 ──────────────────────────────────────────── */
 const ACT_LABELS = ['序幕', '第一幕', '第二幕', '第三幕', '第四幕', '尾幕'];
 const songByNo = {};
-D.songs.forEach(s => { songByNo[s.no] = s; });
+/* 解锁后密文数据并入 D，需重建曲目索引 */
+function reindexSongs() {
+  for (const k of Object.keys(songByNo)) delete songByNo[k];
+  D.songs.forEach(s => { songByNo[s.no] = s; });
+}
+reindexSongs();
 
 function renderSong(s, full) {
   // full = D.songs 中对应的完整曲目（含歌词）
@@ -196,19 +219,37 @@ function renderAct(a, ai) {
     </section>`;
 }
 
-$('#acts').innerHTML = D.acts.map(renderAct).join('');
+/* ── 剧目区（解锁后会重渲染）──────────────────────────── */
+function renderActs() {
+  $('#acts').innerHTML = D.acts.map(renderAct).join('');
+}
+renderActs();
 
-/* ── 曲目总览 ──────────────────────────────────────────── */
-{
+/* ── 曲目总览（解锁后会重渲染）────────────────────────── */
+function renderSongWall() {
   const wall = $('#songwall');
-  wall.innerHTML = D.songs.map(s => `
+  /* 尾幕 40–46 首为同名主题歌的各段落，从 label 里取出段落标记以便区分 */
+  const partOf = (s) => {
+    const m = String(s.label || '').match(/《[^》]+》\s*（(.+?)）/);
+    return m ? m[1] : '';
+  };
+  wall.innerHTML = D.songs.map(s => {
+    const part = partOf(s);
+    /* 同名曲目（如尾幕主题歌各段）才显示段落标记 */
+    const sameName = D.songs.filter(x => x.name === s.name).length > 1;
+    return `
     <div class="songcard" data-goto-song="${s.no}" tabindex="0" role="button">
       <div class="no">曲目 ${String(s.no).padStart(2, '0')}</div>
-      <div class="nm">《${esc(s.name)}》</div>
+      <div class="nm">《${esc(s.name)}》${sameName && part ? `<em class="nm-part">${esc(part)}</em>` : ''}</div>
       <div class="pf">${esc(s.performer || '')}</div>
       <div class="ac">${esc(ACT_LABELS[s.act] || '')}</div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
+}
+renderSongWall();
 
+{
+  const wall = $('#songwall');
   wall.addEventListener('click', (e) => {
     const c = e.target.closest('[data-goto-song]');
     if (c) jumpToSong(+c.dataset.gotoSong);
@@ -354,3 +395,104 @@ if (stage) {
 window.addEventListener('beforeprint', () => {
   $$('.song').forEach(s => s.classList.add('open'));
 });
+
+/* ============================================================
+   剧本阅读权限门
+   公开可见：剧目概况（幕头/幕内资料）、主线、歌单目录、人物、伏笔
+   需密码  ：六幕剧本正文（台词/舞台提示/歌词）
+
+   剧透正文在 data.js 中以 AES-256-GCM 密文存储，
+   只有输入正确密码才能在浏览器端解密还原；
+   直接查看网页源码只能得到 base64 密文。
+   ============================================================ */
+(() => {
+  const KEY = 'shb_read_ok';
+  const body = document.body;
+  const form = $('#gateForm');
+  const input = $('#gateInput');
+  const msg = $('#gateMsg');
+
+  const showMsg = (text, ok) => {
+    if (!msg) return;
+    msg.textContent = text;
+    msg.classList.toggle('ok', !!ok);
+  };
+
+  /* 把解密出的正文合并进公开层数据 */
+  function mergeSecret(payload) {
+    // 1. 六幕正文块：按 act 序号回填
+    const byAct = {};
+    (payload.acts || []).forEach(x => { byAct[x.act] = x.blocks || []; });
+    D.acts.forEach((a, i) => {
+      if (byAct[i]) a.blocks = byAct[i];
+    });
+    // 2. 歌词与唱段有序流：按曲目号回填
+    const bySong = {};
+    (payload.songs || []).forEach(x => { bySong[x.no] = x; });
+    D.songs.forEach(s => {
+      const sec = bySong[s.no];
+      if (!sec) return;
+      if (sec.lyrics) s.lyrics = sec.lyrics;
+      if (sec.items) s.items = sec.items;
+      if (sec.stage) s.stage = sec.stage;
+    });
+    reindexSongs();
+  }
+
+  /* 解锁：解密 → 合并 → 重渲染 */
+  async function unlock(password) {
+    if (!SECRET) { showMsg('本站未启用加密内容，请刷新重试'); return false; }
+    try {
+      const payload = await decryptSecret(password, SECRET.iv, SECRET.cipher);
+      mergeSecret(payload);
+      renderActs();
+      renderSongWall();
+      body.classList.add('unlocked');
+      try { sessionStorage.setItem(KEY, '1'); } catch {}
+      showMsg('已解锁 · 全本剧本正文与歌词现已展开', true);
+      setTimeout(() => showMsg(''), 2800);
+      const first = document.querySelector('.act');
+      if (first) first.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return true;
+    } catch (e) {
+      console.warn('解密失败:', e);
+      showMsg('密码不正确，请向主创团队索取');
+      if (input) input.select();
+      return false;
+    }
+  }
+
+  /* 刷新页面时用 sessionStorage 里的标记重试解密（密码未存，仅存解锁态） */
+  async function restore() {
+    let ok = false;
+    try { ok = sessionStorage.getItem(KEY) === '1'; } catch {}
+    if (!ok) return;
+    // 重新提示输入密码（密文需密码才能解密，标记只省一次点击）
+    body.classList.remove('unlocked');
+  }
+
+  body.classList.remove('unlocked');
+  restore();
+
+  if (form) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const v = String(input.value || '').trim();
+      if (!v) { showMsg('请输入阅读密码'); return; }
+      showMsg('正在解密…');
+      const ok = await unlock(v);
+      if (ok && input) input.value = '';
+    });
+  }
+
+  /* 未解锁时，歌单目录不可点（跳转到歌词） */
+  document.addEventListener('click', (e) => {
+    if (body.classList.contains('unlocked')) return;
+    const c = e.target.closest('[data-goto-song]');
+    if (c) {
+      e.preventDefault();
+      e.stopPropagation();
+      showMsg('完整唱段歌词需凭阅读密码查看');
+    }
+  }, true);
+})();

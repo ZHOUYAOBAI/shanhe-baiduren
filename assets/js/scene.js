@@ -30,6 +30,7 @@ uniform vec3  uLightDir;
 uniform vec3  uInk;        // 墨线色
 uniform vec3  uPaper;      // 留白色
 uniform vec3  uGlow;       // 火光色
+uniform vec3  uFog;        // 景深雾色（远山淡出）
 uniform float uGlowPower;  // 火光影响半径
 uniform float uLineScale;  // 排线密度
 uniform float uAngle;      // 排线角度
@@ -98,9 +99,9 @@ void main() {
   float grain = hash(sp * 0.7) - 0.5;
   col += grain * 0.035;
 
-  // 景深雾：远处淡出
+  // 景深雾：远处淡出（雾色随底色改为朱砂，避免远山发黑）
   float fog = smoothstep(16.0, 46.0, vDepth);
-  col = mix(col, vec3(0.055, 0.043, 0.035), fog * 0.88);
+  col = mix(col, uFog, fog * 0.88);
 
   gl_FragColor = vec4(col, uOpacity);
 }
@@ -181,10 +182,10 @@ export function createStage(canvas) {
   });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setClearColor(0x0e0b09, 1);
+  renderer.setClearColor(0x2b0a0f, 1);
 
   const scene = new THREE.Scene();
-  scene.fog = new THREE.FogExp2(0x0e0b09, 0.028);
+  scene.fog = new THREE.FogExp2(0x2b0a0f, 0.028);
 
   const camera = new THREE.PerspectiveCamera(
     50, window.innerWidth / window.innerHeight, 0.1, 160);
@@ -197,9 +198,10 @@ export function createStage(canvas) {
     fragmentShader: HATCH_FRAG,
     uniforms: {
       uLightDir:   { value: new THREE.Vector3(-0.55, 0.72, 0.42).normalize() },
-      uInk:        { value: new THREE.Color(opts.ink ?? 0x120e0b) },
-      uPaper:      { value: new THREE.Color(opts.paper ?? 0xe9e0d0) },
-      uGlow:       { value: new THREE.Color(opts.glow ?? 0xc8102e) },
+      uInk:        { value: new THREE.Color(opts.ink ?? 0x3a1216) },
+      uPaper:      { value: new THREE.Color(opts.paper ?? 0xefd9c4) },
+      uGlow:       { value: new THREE.Color(opts.glow ?? 0xd62038) },
+      uFog:        { value: new THREE.Color(opts.fog ?? 0x3d1116) },
       uGlowPower:  { value: opts.glowPower ?? 9.5 },
       uLineScale:  { value: opts.lineScale ?? 0.13 },
       uAngle:      { value: opts.angle ?? 0.62 },
@@ -242,8 +244,9 @@ export function createStage(canvas) {
     const geo = new THREE.ShapeGeometry(shape);
     const mat = hatchMat({
       lineScale: r.line, angle: r.angle,
-      glow: 0xc8102e, glowPower: 11 + i * 4,
-      ink: 0x0a0806, paper: 0x2b2118,
+      glow: 0xd62038, glowPower: 11 + i * 4,
+      ink: 0x5e1a20, paper: 0x8e2b30,
+      fog: 0x3d1116,
       opacity: r.op,
     });
     const mesh = new THREE.Mesh(geo, mat);
@@ -258,8 +261,9 @@ export function createStage(canvas) {
     const g = new THREE.PlaneGeometry(90, 70, 40, 40);
     const m = hatchMat({
       lineScale: 0.19, angle: 1.02,
-      glow: 0xc8102e, glowPower: 3.4,
-      ink: 0x0b0806, paper: 0x1e160f,
+      glow: 0xd62038, glowPower: 3.4,
+      ink: 0x4a1419, paper: 0x66212a,
+      fog: 0x2b0a0f,
     });
     const floor = new THREE.Mesh(g, m);
     floor.rotation.x = -Math.PI / 2;
@@ -271,8 +275,8 @@ export function createStage(canvas) {
   const stones = new THREE.Group();
   const stoneMat = hatchMat({
     lineScale: 0.30, angle: 0.34,
-    glow: 0xc8102e, glowPower: 3.4,
-    ink: 0x0d0906, paper: 0x3a2a1e,
+    glow: 0xd62038, glowPower: 3.4,
+    ink: 0x51191e, paper: 0x8c4034,
   });
   for (let i = 0; i < 13; i++) {
     const a = (i / 13) * Math.PI * 2;
@@ -280,7 +284,7 @@ export function createStage(canvas) {
     const s = 0.36 + Math.abs(Math.sin(i * 1.9)) * 0.26;
     const geo = new THREE.DodecahedronGeometry(s, 0);
     const st = new THREE.Mesh(geo, stoneMat);
-    st.position.set(Math.cos(a) * rad, s * 0.42, Math.sin(a) * rad);
+    st.position.set(Math.cos(a) * rad, s * 0.42 + 0.55, Math.sin(a) * rad);
     st.rotation.set(i * 0.7, i * 1.3, i * 0.4);
     st.scale.set(1, 0.78, 1);
     stones.add(st);
@@ -315,21 +319,22 @@ export function createStage(canvas) {
     uniforms: {
       uTime: { value: 0 },
       uPixelRatio: { value: Math.min(window.devicePixelRatio, 2) },
-      uHot: { value: new THREE.Color(0xffd28a) },
-      uCool: { value: new THREE.Color(0xc8102e) },
+      uHot: { value: new THREE.Color(0xfff6d8) },
+      uCool: { value: new THREE.Color(0xff8a3c) },
     },
     transparent: true,
     depthWrite: false,
     blending: THREE.AdditiveBlending,
   });
   const flames = new THREE.Points(flameGeo, flameMat);
+  flames.position.y = 0.55;
   scene.add(flames);
 
   /* ── 火塘正上方的"月/日"圆盘：远景焦点 ── */
   const moonMat = hatchMat({
     lineScale: 0.30, angle: 0.9,
-    glow: 0xc8102e, glowPower: 2.4,
-    ink: 0x14090a, paper: 0xb08a78,
+    glow: 0xd62038, glowPower: 2.4,
+    ink: 0x4a1218, paper: 0xd99a68,
   });
   const moon = new THREE.Mesh(new THREE.CircleGeometry(1.9, 64), moonMat);
   moon.position.set(0, 12.8, -34);

@@ -1,23 +1,24 @@
 @charset "UTF-8";
 /* ============================================================
    《山河摆渡人》剧本站
-   视觉语言：正红 / 墨黑 / 宣纸白 / 钢笔排线
+   视觉语言：朱砂红 / 暖米白 / 彝金 / 钢笔排线
+   —— 红色是本剧的血色，故以朱砂为底，宣纸为字，金作点睛
    ============================================================ */
 
 :root {
   /* ── 色 ── */
-  --ink:        #0E0B09;   /* 墨黑：夜、江、屋影 */
-  --ink-2:      #171310;   /* 墨黑次层 */
-  --ink-3:      #241D18;   /* 墨黑三层 */
-  --paper:      #F2EDE4;   /* 宣纸白 */
-  --paper-2:    #E6DFD2;   /* 宣纸暗部 */
-  --paper-3:    #D6CCBA;   /* 宣纸再暗 */
-  --red:        #C8102E;   /* 正红：火塘、彝锦、凤凰 */
-  --red-lit:    #E8465C;   /* 火光高亮 */
-  --red-deep:   #7A0A1C;   /* 红之深（阴影） */
-  --gold:       #C9A227;   /* 彝金：骨哨、碑字 */
-  --jade:       #1F6F5C;   /* 苍青：江水、夜雾 */
-  --ash:        #8A7F72;   /* 灰褐：辅助文字 */
+  --ink:        #2B0A0F;   /* 深朱砂：主底色（夜、江、屋影） */
+  --ink-2:      #3D1116;   /* 朱砂次层 */
+  --ink-3:      #541A20;   /* 朱砂三层 */
+  --paper:      #F7EDE2;   /* 暖米白（宣纸） */
+  --paper-2:    #EADFD0;   /* 米白暗部 */
+  --paper-3:    #D6C7B2;   /* 米白再暗 */
+  --red:        #D62038;   /* 正红：火塘、彝锦、凤凰 */
+  --red-lit:    #FF6B57;   /* 火光高亮（橙调，与红底拉开明度） */
+  --red-deep:   #8E0A20;   /* 红之深（阴影） */
+  --gold:       #E0B040;   /* 彝金：骨哨、碑字 */
+  --jade:       #2E8C74;   /* 苍青：江水、夜雾 */
+  --ash:        #A89685;   /* 灰褐：辅助文字 */
 
   /* ── 字体 ── */
   --serif: "Songti SC", "STSong", "SimSun", "Noto Serif SC", "Source Han Serif SC", serif;
@@ -83,8 +84,8 @@ a { color: inherit; text-decoration: none; }
   z-index: 1;
   pointer-events: none;
   background:
-    radial-gradient(ellipse 70% 55% at 50% 62%, transparent 0%, rgba(14,11,9,.55) 72%, rgba(14,11,9,.94) 100%),
-    linear-gradient(to bottom, rgba(14,11,9,.82) 0%, transparent 22%, transparent 55%, rgba(14,11,9,.96) 88%);
+    radial-gradient(ellipse 78% 62% at 50% 58%, transparent 0%, rgba(43,10,15,.34) 74%, rgba(43,10,15,.82) 100%),
+    linear-gradient(to bottom, rgba(43,10,15,.62) 0%, transparent 24%, transparent 58%, rgba(43,10,15,.88) 90%);
 }
 
 /* ============================================================
@@ -99,9 +100,9 @@ a { color: inherit; text-decoration: none; }
   align-items: center;
   gap: 18px;
   padding: 0 22px;
-  background: rgba(14,11,9,.82);
+  background: rgba(43,10,15,.82);
   backdrop-filter: blur(14px);
-  border-bottom: 1px solid rgba(242,237,228,.13);
+  border-bottom: 1px solid rgba(247,237,226,.13);
 }
 
 .brand {
@@ -137,8 +138,8 @@ a { color: inherit; text-decoration: none; }
 .topnav a:hover { color: var(--paper); }
 .topnav a.on {
   color: var(--paper);
-  border-color: rgba(200,16,46,.6);
-  background: rgba(200,16,46,.14);
+  border-color: rgba(214,32,56,.6);
+  background: rgba(214,32,56,.14);
 }
 
 /* ============================================================
@@ -149,8 +150,8 @@ a { color: inherit; text-decoration: none; }
   top: 58px; left: 0; bottom: 0;
   z-index: 50;
   width: var(--rail);
-  border-right: 1px solid rgba(242,237,228,.11);
-  background: rgba(14,11,9,.55);
+  border-right: 1px solid rgba(247,237,226,.11);
+  background: rgba(43,10,15,.55);
   backdrop-filter: blur(10px);
   display: flex;
   flex-direction: column;
@@ -182,7 +183,7 @@ a { color: inherit; text-decoration: none; }
 .rail-item.on {
   color: var(--paper);
   border-left-color: var(--red);
-  background: linear-gradient(to right, rgba(200,16,46,.2), transparent);
+  background: linear-gradient(to right, rgba(214,32,56,.2), transparent);
 }
 
 .rail-no {
@@ -195,17 +196,17 @@ a { color: inherit; text-decoration: none; }
   font-size: 9.5px;
   line-height: 1.35;
   letter-spacing: .02em;
-  color: rgba(138,127,114,.62);
+  color: rgba(168,150,133,.62);
   width: 46px;
   white-space: normal;
   word-break: break-all;
   text-align: center;
 }
-.rail-item.on .rail-sub { color: rgba(232,70,92,.85); }
+.rail-item.on .rail-sub { color: rgba(255,107,87,.85); }
 
 .rail-sep {
   width: 22px; height: 1px;
-  background: rgba(242,237,228,.2);
+  background: rgba(247,237,226,.2);
   margin: 7px 0;
   flex: none;
 }
@@ -267,7 +268,7 @@ a { color: inherit; text-decoration: none; }
   font-size: clamp(200px, 44vw, 520px);
   line-height: .8;
   color: transparent;
-  -webkit-text-stroke: 1px rgba(242,237,228,.09);
+  -webkit-text-stroke: 1px rgba(247,237,226,.09);
   letter-spacing: .06em;
   user-select: none;
 }
@@ -281,7 +282,7 @@ a { color: inherit; text-decoration: none; }
   width: min(880px, 116vw); height: 122%;
   transform: translateX(-50%);
   background: radial-gradient(ellipse 54% 50% at 50% 42%,
-    rgba(14,11,9,.88) 0%, rgba(14,11,9,.62) 46%, transparent 74%);
+    rgba(43,10,15,.88) 0%, rgba(43,10,15,.62) 46%, transparent 74%);
   pointer-events: none;
   z-index: -1;
 }
@@ -301,14 +302,14 @@ a { color: inherit; text-decoration: none; }
   letter-spacing: .1em;
   margin: 0;
   text-indent: .1em;
-  text-shadow: 0 2px 40px rgba(0,0,0,.7);
+  text-shadow: 0 2px 40px rgba(25,5,8,.7);
 }
 
 .hero-sub {
   font-family: var(--serif);
   font-size: clamp(15px, 2.2vw, 21px);
   letter-spacing: .34em;
-  color: rgba(242,237,228,.72);
+  color: rgba(247,237,226,.72);
   margin: 30px 0 0;
   text-indent: .34em;
 }
@@ -341,8 +342,8 @@ a { color: inherit; text-decoration: none; }
   font-size: 13px;
   letter-spacing: .3em;
   padding: 15px 34px;
-  border: 1px solid rgba(242,237,228,.34);
-  background: rgba(14,11,9,.4);
+  border: 1px solid rgba(247,237,226,.34);
+  background: rgba(43,10,15,.4);
   color: var(--paper);
   cursor: pointer;
   transition: background .22s, border-color .22s, gap .22s;
@@ -355,7 +356,7 @@ a { color: inherit; text-decoration: none; }
   transform: translateX(-50%);
   font-size: 11px;
   letter-spacing: .34em;
-  color: rgba(242,237,228,.42);
+  color: rgba(247,237,226,.42);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -365,7 +366,7 @@ a { color: inherit; text-decoration: none; }
 .scroll-hint i {
   display: block;
   width: 1px; height: 40px;
-  background: linear-gradient(to bottom, transparent, rgba(242,237,228,.5));
+  background: linear-gradient(to bottom, transparent, rgba(247,237,226,.5));
   animation: drip 2.4s ease-in-out infinite;
 }
 @keyframes drip {
@@ -398,10 +399,10 @@ a { color: inherit; text-decoration: none; }
 .sec-desc {
   font-size: 15px;
   line-height: 2;
-  color: rgba(242,237,228,.6);
+  color: rgba(247,237,226,.6);
   max-width: 34rem;
 }
-.band.paper .sec-desc { color: rgba(14,11,9,.62); }
+.band.paper .sec-desc { color: rgba(43,10,15,.62); }
 
 /* ============================================================
    核心主线（时间轴）
@@ -412,7 +413,7 @@ a { color: inherit; text-decoration: none; }
   position: absolute;
   left: 0; right: 0; top: 30px;
   height: 1px;
-  background: linear-gradient(to right, transparent, rgba(242,237,228,.32) 8%, rgba(242,237,228,.32) 92%, transparent);
+  background: linear-gradient(to right, transparent, rgba(247,237,226,.32) 8%, rgba(247,237,226,.32) 92%, transparent);
 }
 
 .spine-items {
@@ -457,7 +458,7 @@ a { color: inherit; text-decoration: none; }
 .spine-label {
   font-size: 13px;
   line-height: 1.7;
-  color: rgba(242,237,228,.66);
+  color: rgba(247,237,226,.66);
 }
 
 /* ============================================================
@@ -471,7 +472,7 @@ a { color: inherit; text-decoration: none; }
   gap: 26px;
   flex-wrap: wrap;
   padding-bottom: 26px;
-  border-bottom: 1px solid rgba(242,237,228,.16);
+  border-bottom: 1px solid rgba(247,237,226,.16);
   margin-bottom: 40px;
 }
 
@@ -480,7 +481,7 @@ a { color: inherit; text-decoration: none; }
   font-size: clamp(48px, 8vw, 92px);
   line-height: .82;
   color: transparent;
-  -webkit-text-stroke: 1px rgba(200,16,46,.75);
+  -webkit-text-stroke: 1px rgba(214,32,56,.75);
   flex: none;
 }
 
@@ -501,15 +502,15 @@ a { color: inherit; text-decoration: none; }
   color: var(--ash);
   text-align: right;
 }
-.act-facts b { color: rgba(242,237,228,.88); font-weight: 400; }
+.act-facts b { color: rgba(247,237,226,.88); font-weight: 400; }
 
 /* 幕内资料卡 */
 .act-meta {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 1px;
-  background: rgba(242,237,228,.13);
-  border: 1px solid rgba(242,237,228,.13);
+  background: rgba(247,237,226,.13);
+  border: 1px solid rgba(247,237,226,.13);
   margin-bottom: 44px;
 }
 .act-meta div {
@@ -526,7 +527,7 @@ a { color: inherit; text-decoration: none; }
   margin: 0;
   font-size: 13.5px;
   line-height: 1.8;
-  color: rgba(242,237,228,.8);
+  color: rgba(247,237,226,.8);
 }
 
 /* 场次 */
@@ -547,18 +548,18 @@ a { color: inherit; text-decoration: none; }
   font-family: var(--serif);
   font-size: 14.5px;
   line-height: 2.05;
-  color: rgba(242,237,228,.55);
+  color: rgba(247,237,226,.55);
   margin: 16px 0;
   padding-left: 15px;
-  border-left: 1px solid rgba(242,237,228,.15);
+  border-left: 1px solid rgba(247,237,226,.15);
 }
-.sd em { font-style: normal; color: rgba(242,237,228,.76); }
+.sd em { font-style: normal; color: rgba(247,237,226,.76); }
 
 /* 动作/说明 */
 .act-line {
   font-size: 14.5px;
   line-height: 2;
-  color: rgba(242,237,228,.72);
+  color: rgba(247,237,226,.72);
   margin: 12px 0;
 }
 
@@ -573,20 +574,20 @@ a { color: inherit; text-decoration: none; }
   margin: 30px 0 10px;
 }
 .act-line.mood-line {
-  color: rgba(242,237,228,.44);
+  color: rgba(247,237,226,.44);
   font-size: 13.5px;
   font-style: italic;
   line-height: 2.05;
-  border-left: 1px solid rgba(242,237,228,.14);
+  border-left: 1px solid rgba(247,237,226,.14);
   padding-left: 14px;
 }
 
 .act-line.note-line {
-  color: rgba(200,16,46,.82);
+  color: rgba(214,32,56,.82);
   font-size: 13px;
   letter-spacing: .1em;
   font-family: var(--serif);
-  border-left: 2px solid rgba(200,16,46,.4);
+  border-left: 2px solid rgba(214,32,56,.4);
   padding-left: 12px;
 }
 
@@ -594,19 +595,19 @@ a { color: inherit; text-decoration: none; }
   margin: 18px 0 4px;
   text-align: center;
   font-size: 14px;
-  color: rgba(242,237,228,.5);
+  color: rgba(247,237,226,.5);
 }
 .cue-line .cue {
   font-style: italic;
   margin-right: 8px;
-  color: rgba(200,16,46,.8);
+  color: rgba(214,32,56,.8);
 }
 
 .spk::before, .spk::after {
   content: "";
   display: inline-block;
   width: 16px; height: 1px;
-  background: rgba(200,16,46,.62);
+  background: rgba(214,32,56,.62);
   vertical-align: .42em;
   margin: 0 12px;
 }
@@ -631,7 +632,7 @@ a { color: inherit; text-decoration: none; }
   display: block;
   font-size: 11.5px;
   letter-spacing: .24em;
-  color: rgba(200,16,46,.9);
+  color: rgba(214,32,56,.9);
   margin-bottom: 4px;
 }
 
@@ -640,8 +641,8 @@ a { color: inherit; text-decoration: none; }
    ============================================================ */
 .song {
   margin: 44px 0;
-  border: 1px solid rgba(242,237,228,.15);
-  background: linear-gradient(180deg, rgba(36,29,24,.62), rgba(14,11,9,.35));
+  border: 1px solid rgba(247,237,226,.15);
+  background: linear-gradient(180deg, rgba(84,26,32,.62), rgba(43,10,15,.35));
 }
 
 .song-head {
@@ -650,8 +651,8 @@ a { color: inherit; text-decoration: none; }
   gap: 14px;
   flex-wrap: wrap;
   padding: 17px 22px;
-  background: rgba(200,16,46,.13);
-  border-bottom: 1px solid rgba(242,237,228,.14);
+  background: rgba(214,32,56,.13);
+  border-bottom: 1px solid rgba(247,237,226,.14);
   cursor: pointer;
   user-select: none;
 }
@@ -660,7 +661,7 @@ a { color: inherit; text-decoration: none; }
   font-size: 12px;
   letter-spacing: .2em;
   color: var(--red-lit);
-  border: 1px solid rgba(200,16,46,.5);
+  border: 1px solid rgba(214,32,56,.5);
   padding: 3px 9px;
   flex: none;
 }
@@ -696,7 +697,7 @@ a { color: inherit; text-decoration: none; }
   font-family: var(--serif);
   font-size: 17px;
   line-height: 2.3;
-  color: rgba(242,237,228,.9);
+  color: rgba(247,237,226,.9);
   text-align: center;
   max-width: 30rem;
   margin: 0 auto;
@@ -705,7 +706,7 @@ a { color: inherit; text-decoration: none; }
   display: block;
   font-size: 11px;
   letter-spacing: .24em;
-  color: rgba(200,16,46,.85);
+  color: rgba(214,32,56,.85);
   margin-top: 20px;
 }
 .lyric .who:first-child { margin-top: 0; }
@@ -731,7 +732,7 @@ p.song-sec {
   font-family: var(--serif);
   font-size: 13.5px;
   letter-spacing: .12em;
-  color: rgba(200,16,46,.9);
+  color: rgba(214,32,56,.9);
   text-align: center;
   margin: 26px 0 12px;
   text-indent: 0;
@@ -744,7 +745,7 @@ p.song-sec::after {
   top: 50%;
   width: 34px;
   height: 1px;
-  background: rgba(200,16,46,.3);
+  background: rgba(214,32,56,.3);
 }
 p.song-sec::before { left: calc(50% - 74px); }
 p.song-sec::after  { right: calc(50% - 74px); }
@@ -752,7 +753,7 @@ p.song-sec::after  { right: calc(50% - 74px); }
 p.song-part {
   font-size: 12px;
   letter-spacing: .18em;
-  color: rgba(232,70,92,.85);
+  color: rgba(255,107,87,.85);
   text-align: center;
   margin: 16px 0 2px;
   text-indent: 0;
@@ -762,7 +763,7 @@ p.song-stage {
   font-size: 13px;
   font-style: italic;
   line-height: 1.95;
-  color: rgba(242,237,228,.46);
+  color: rgba(247,237,226,.46);
   text-align: center;
   margin: 12px auto;
   text-indent: 0;
@@ -778,8 +779,8 @@ p.song-stage {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(258px, 1fr));
   gap: 1px;
-  background: rgba(242,237,228,.13);
-  border: 1px solid rgba(242,237,228,.13);
+  background: rgba(247,237,226,.13);
+  border: 1px solid rgba(247,237,226,.13);
 }
 
 .songcard {
@@ -822,7 +823,7 @@ p.song-stage {
 }
 .songcard .ac {
   font-size: 11px;
-  color: rgba(200,16,46,.8);
+  color: rgba(214,32,56,.8);
   letter-spacing: .1em;
   margin-top: 10px;
 }
@@ -837,12 +838,12 @@ p.song-stage {
 }
 
 .person {
-  border: 1px solid rgba(242,237,228,.15);
+  border: 1px solid rgba(247,237,226,.15);
   padding: 24px 22px;
   position: relative;
   transition: border-color .22s, transform .22s;
 }
-.person:hover { border-color: rgba(200,16,46,.55); transform: translateY(-3px); }
+.person:hover { border-color: rgba(214,32,56,.55); transform: translateY(-3px); }
 
 .person-role {
   font-family: var(--serif);
@@ -854,7 +855,7 @@ p.song-stage {
 .person-desc {
   font-size: 13.5px;
   line-height: 2;
-  color: rgba(242,237,228,.66);
+  color: rgba(247,237,226,.66);
 }
 .person-tag {
   position: absolute;
@@ -864,9 +865,9 @@ p.song-stage {
   place-items: center;
   font-family: var(--serif);
   font-size: 15px;
-  color: rgba(200,16,46,.42);
-  border-left: 1px solid rgba(242,237,228,.12);
-  border-bottom: 1px solid rgba(242,237,228,.12);
+  color: rgba(214,32,56,.42);
+  border-left: 1px solid rgba(247,237,226,.12);
+  border-bottom: 1px solid rgba(247,237,226,.12);
   transition: color .22s, background .22s;
 }
 .person:hover .person-tag {
@@ -877,7 +878,7 @@ p.song-stage {
 /* ============================================================
    伏笔闭环
    ============================================================ */
-.threads { display: grid; gap: 1px; background: rgba(242,237,228,.13); border: 1px solid rgba(242,237,228,.13); }
+.threads { display: grid; gap: 1px; background: rgba(247,237,226,.13); border: 1px solid rgba(247,237,226,.13); }
 
 .thread {
   background: var(--ink);
@@ -914,15 +915,15 @@ p.song-stage {
   margin: 0;
   font-size: 13px;
   line-height: 1.85;
-  color: rgba(242,237,228,.66);
+  color: rgba(247,237,226,.66);
 }
 .thread-note {
   grid-column: 1 / -1;
   font-family: var(--serif);
   font-size: 13.5px;
-  color: rgba(242,237,228,.42);
+  color: rgba(247,237,226,.42);
   padding-top: 12px;
-  border-top: 1px dashed rgba(242,237,228,.14);
+  border-top: 1px dashed rgba(247,237,226,.14);
   margin-top: 2px;
 }
 
@@ -931,7 +932,7 @@ p.song-stage {
    ============================================================ */
 .foot {
   background: var(--ink);
-  border-top: 1px solid rgba(242,237,228,.12);
+  border-top: 1px solid rgba(247,237,226,.12);
   padding: 66px 0 40px;
 }
 .foot-title {
@@ -961,7 +962,46 @@ p.song-stage {
   flex-wrap: wrap;
   font-size: 12px;
   letter-spacing: .14em;
-  color: rgba(242,237,228,.4);
+  color: rgba(247,237,226,.4);
+}
+
+/* 署名（编剧 / 音乐）：成组排列，不与其他页脚元信息混排 */
+#footAuthor {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 5px;
+  align-items: center;
+  color: rgba(247,237,226,.62);
+  letter-spacing: .18em;
+  text-align: center;
+}
+#footAuthor span {
+  display: block;
+  white-space: nowrap;
+}
+
+/* 首页署名 */
+.hero-credits {
+  display: flex;
+  justify-content: center;
+  gap: 8px 30px;
+  flex-wrap: wrap;
+  margin: 18px 0 4px;
+  font-size: 13px;
+  letter-spacing: .16em;
+  color: rgba(247,237,226,.6);
+}
+.hero-credits span {
+  position: relative;
+  padding-left: 0;
+}
+.hero-credits span + span::before {
+  content: "";
+  position: absolute;
+  left: -15px; top: 50%;
+  width: 1px; height: 12px;
+  transform: translateY(-50%);
+  background: rgba(214,32,56,.45);
 }
 
 /* ============================================================
@@ -978,7 +1018,7 @@ p.song-stage {
     align-items: center;
     padding: 0 10px;
     border-right: none;
-    border-top: 1px solid rgba(242,237,228,.13);
+    border-top: 1px solid rgba(247,237,226,.13);
     overflow-x: auto;
   }
   .rail-item {
@@ -1036,4 +1076,185 @@ p.song-stage {
   .band { padding: 18px 0; }
   .song-body { max-height: none !important; }
   .song { break-inside: avoid; border-color: #999; }
+}
+
+/* ============================================================
+   剧本阅读权限门
+   未解锁：公开剧目概况（幕头/资料卡）+ 歌单目录 + 人物 + 伏笔
+   已解锁：六幕正文与全部唱段歌词
+   ============================================================ */
+
+/* 未解锁时：六幕正文尚未解密进 DOM，
+   这里只做「仅概况」的版面收束 —— 幕次区块更紧凑 */
+body:not(.unlocked) .act {
+  padding: 44px 0;
+  border-bottom: 1px solid rgba(247,237,226,.1);
+}
+body:not(.unlocked) .act:last-child {
+  border-bottom: 0;
+}
+
+/* 幕次资料卡在未解锁时更醒目（这是公开信息） */
+body:not(.unlocked) .act-meta {
+  border-color: rgba(214,32,56,.28);
+}
+
+/* 剧目区整体淡出感 */
+body:not(.unlocked) #acts {
+  opacity: .92;
+}
+
+/* ── 门卡 ── */
+.gate {
+  display: none;
+}
+body:not(.unlocked) .gate {
+  display: block;
+}
+
+.gate-card {
+  max-width: 640px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 58px 40px 46px;
+  border: 1px solid rgba(214,32,56,.32);
+  background:
+    radial-gradient(ellipse 90% 70% at 50% 0%, rgba(214,32,56,.12) 0%, transparent 70%),
+    rgba(43,10,15,.6);
+  position: relative;
+}
+
+.gate-mark {
+  width: 74px; height: 74px; margin: 0 auto 28px;
+  border: 2px solid var(--red);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--serif);
+  font-size: 34px;
+  color: var(--red-lit);
+  letter-spacing: 2px;
+  box-shadow: 0 0 36px rgba(214,32,56,.4), inset 0 0 22px rgba(214,32,56,.2);
+}
+
+.gate-title {
+  font-family: var(--serif);
+  font-size: clamp(22px, 3.4vw, 30px);
+  font-weight: 400;
+  letter-spacing: .18em;
+  margin: 0 0 18px;
+  color: var(--paper);
+}
+
+.gate-desc {
+  font-size: 14.5px;
+  line-height: 2.1;
+  letter-spacing: .04em;
+  color: rgba(247,237,226,.68);
+  margin: 0 0 34px;
+}
+
+.gate-form {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  align-items: stretch;
+  flex-wrap: wrap;
+}
+
+.gate-label {
+  position: absolute;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.gate-input {
+  flex: 1 1 220px;
+  min-width: 200px;
+  max-width: 300px;
+  padding: 13px 18px;
+  font-family: var(--sans);
+  font-size: 16px;
+  letter-spacing: .5em;
+  text-align: center;
+  color: var(--paper);
+  background: rgba(43,10,15,.75);
+  border: 1px solid rgba(247,237,226,.24);
+  border-radius: 0;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+}
+.gate-input::placeholder {
+  color: rgba(247,237,226,.32);
+  letter-spacing: .12em;
+  font-size: 14px;
+}
+.gate-input:focus {
+  border-color: var(--red);
+  box-shadow: 0 0 0 1px rgba(214,32,56,.4), 0 0 22px rgba(214,32,56,.22);
+}
+
+.gate-btn {
+  flex: 0 0 auto;
+  padding: 13px 38px;
+  font-family: var(--serif);
+  font-size: 15px;
+  letter-spacing: .3em;
+  color: var(--paper);
+  background: var(--red);
+  border: 1px solid var(--red);
+  border-radius: 0;
+  cursor: pointer;
+  transition: background .22s, transform .12s, box-shadow .22s;
+}
+.gate-btn:hover {
+  background: var(--red-lit);
+  border-color: var(--red-lit);
+  box-shadow: 0 6px 26px rgba(214,32,56,.42);
+}
+.gate-btn:active { transform: translateY(1px); }
+
+.gate-msg {
+  min-height: 22px;
+  margin: 16px 0 0;
+  font-size: 13px;
+  letter-spacing: .1em;
+  color: var(--red-lit);
+}
+.gate-msg.ok { color: var(--gold); }
+
+.gate-tip {
+  margin: 26px 0 0;
+  font-size: 12px;
+  letter-spacing: .12em;
+  color: rgba(247,237,226,.38);
+}
+
+/* 已解锁：门卡隐藏 */
+body.unlocked .gate { display: none !important; }
+
+/* 提示：歌单卡片在未解锁时不可点（歌词不可见） */
+body:not(.unlocked) .songcard {
+  cursor: default;
+  opacity: .85;
+}
+body:not(.unlocked) .songcard .no::after {
+  content: " 🔒";
+  font-size: 10px;
+  opacity: .55;
+  letter-spacing: 0;
+}
+
+/* 同名曲目的段落标记（如尾幕主题歌各段） */
+.songcard .nm-part {
+  display: inline-block;
+  margin-left: 7px;
+  padding: 1px 7px;
+  font-style: normal;
+  font-size: 10.5px;
+  letter-spacing: .08em;
+  color: var(--red-lit);
+  border: 1px solid rgba(214,32,56,.42);
+  vertical-align: middle;
 }
