@@ -262,6 +262,67 @@ renderSongWall();
   });
 }
 
+/* ── 配乐试听（纯器乐 demo）───────────────────────────── */
+{
+  /* 剧目配乐样带：纯器乐，无唱词，不与曲目歌词挂钩 */
+  const SCORING = [
+    { file: '遇敌.mp3',     name: '遇敌',     dur: '1:48' },
+    { file: '渡江1.mp3',    name: '渡江 Ⅰ',   dur: '2:42' },
+    { file: '渡江2.mp3',    name: '渡江 Ⅱ',   dur: '2:05' },
+    { file: '山河之光.mp3', name: '山河之光', dur: '7:37' },
+  ];
+
+  const list = $('#scoringList');
+  if (list) {
+    list.innerHTML = SCORING.map(s => `
+      <div class="scoring-item">
+        <button class="scoring-play" type="button"
+                data-audio="assets/audio/${encodeURIComponent(s.file)}"
+                aria-label="播放《${esc(s.name)}》">▶</button>
+        <div class="scoring-name">${esc(s.name)}</div>
+        <audio class="scoring-audio" preload="none" controls
+               src="assets/audio/${encodeURIComponent(s.file)}"></audio>
+        <div class="scoring-dur">${esc(s.dur)}</div>
+      </div>`).join('');
+
+    /* 单曲播放：点播放键切换，播完复位 */
+    let current = null;
+    list.addEventListener('click', (e) => {
+      const btn = e.target.closest('.scoring-play');
+      if (!btn) return;
+      const audio = btn.parentElement.querySelector('audio');
+      if (!audio) return;
+      if (current && current !== audio) {
+        current.pause();
+        current.currentTime = 0;
+        current.parentElement.querySelector('.scoring-play')
+          ?.classList.remove('playing');
+        current.parentElement.querySelector('.scoring-play').textContent = '▶';
+      }
+      if (audio.paused) {
+        audio.play();
+        btn.classList.add('playing');
+        btn.textContent = '❚❚';
+        current = audio;
+      } else {
+        audio.pause();
+        btn.classList.remove('playing');
+        btn.textContent = '▶';
+        current = null;
+      }
+    });
+
+    list.addEventListener('ended', (e) => {
+      const a = e.target;
+      if (!a.tagName || a.tagName !== 'AUDIO') return;
+      a.currentTime = 0;
+      const btn = a.parentElement.querySelector('.scoring-play');
+      if (btn) { btn.classList.remove('playing'); btn.textContent = '▶'; }
+      current = null;
+    }, true);
+  }
+}
+
 /* ── 人物 ──────────────────────────────────────────────── */
 {
   const rows = D.charTable.slice(1);
