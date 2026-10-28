@@ -102,7 +102,10 @@ await send('Emulation.setDeviceMetricsOverride',
 
 const SUB = process.env.SUB_PATH || '';
 const TARGET = process.env.TARGET_URL || `http://127.0.0.1:${PORT}${SUB}`;
-await send('Page.navigate', { url: TARGET }, sessionId);
+// 清缓存：避免 CDN / 磁盘缓存导致误判
+await send('Network.enable', {}, sessionId);
+await send('Network.setCacheDisabled', { cacheDisabled: true }, sessionId);
+await send('Page.navigate', { url: TARGET + (TARGET.includes('?') ? '&' : '?') + '_=' + Date.now() }, sessionId);
 await sleep(9000);
 
 const shots = [];
