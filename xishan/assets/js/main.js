@@ -171,6 +171,53 @@ function renderSpine() {
      </div>`).join('');
 }
 
+/* ── 故事概述 ───────────────────────────────────────────
+   首页顶部的「故事」段：先讲清这部剧讲了什么，
+   再给观众进正文前的完整预期。                          */
+function renderStory() {
+  const box = $('#storyBox');
+  if (!box) return;
+  const st = D.story || {};
+
+  const layers = (st.layers || []).map(l => `
+    <div class="story-layer">
+      <div class="story-layer-head">
+        <span class="story-layer-label">${esc(l.label)}</span>
+        <span class="story-layer-hint">${esc(l.hint || '')}</span>
+      </div>
+      <ul class="story-layer-list">
+        ${(l.items || []).map(x => `<li>${esc(x)}</li>`).join('')}
+      </ul>
+    </div>`).join('');
+
+  const thesis = (st.thesis || []).map(t => `
+    <article class="thesis">
+      <div class="thesis-n">${esc(t.n)}</div>
+      <h3 class="thesis-t">${esc(t.t)}</h3>
+      <p class="thesis-d">${esc(t.d)}</p>
+    </article>`).join('');
+
+  const coda = st.coda || {};
+  const codaLines = (coda.lines || []).map((x, i) =>
+    `<p class="coda-line${i === (coda.lines.length - 1) ? ' coda-line-last' : ''}">${esc(x)}</p>`
+  ).join('');
+
+  box.innerHTML = `
+    <div class="story-lead">
+      <p class="story-logline">${esc(st.logline || '')}</p>
+      <p class="story-leadtext">${esc(st.lead || '')}</p>
+    </div>
+    <div class="story-layers">${layers}</div>
+    <div class="story-thesis">${thesis}</div>
+    <div class="story-coda">
+      <div class="coda-mark" aria-hidden="true">开</div>
+      <div class="coda-body">
+        <h3 class="coda-title">${esc(coda.title || '')}</h3>
+        <div class="coda-lines">${codaLines}</div>
+      </div>
+    </div>`;
+}
+
 function renderCast() {
   const grid = $('#castGrid');
   if (!grid) return;
@@ -257,7 +304,8 @@ function renderNav() {
   const acts = D.acts || [];
   const nav = $('#topnav');
   if (nav) {
-    nav.innerHTML = acts.map((a, i) =>
+    // 「故事」为幕外的独立入口，不带 data-nav —— 否则会与滚动高亮的索引冲突
+    nav.innerHTML = `<a href="#story" class="nav-story">故事</a>` + acts.map((a, i) =>
       `<a href="#act-${i}" data-nav="${i}">${esc(a.title)}</a>`).join('');
   }
   const rail = $('#rail');
@@ -277,6 +325,7 @@ function renderNav() {
 /* ── 首次渲染 ───────────────────────────────────────── */
 renderHero();
 renderNav();
+renderStory();
 renderSpine();
 renderMechanism();
 renderMotifs();

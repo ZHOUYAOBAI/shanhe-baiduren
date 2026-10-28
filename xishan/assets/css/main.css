@@ -140,6 +140,7 @@ body.no-3d::before {
 }
 .topnav a:hover { color: var(--paper); }
 .topnav a.on { color: var(--paper); border-bottom-color: var(--red); }
+.topnav a.nav-story { color: var(--red-lit); }
 
 /* 返回剧作集 */
 .topnav-home {
@@ -461,6 +462,177 @@ body.no-3d::before {
   font-size: var(--fs-body);
   line-height: var(--lh-body);
   color: rgba(242,238,230,.84);
+}
+
+/* ── 故事概述 ─────────────────────────────────────────── */
+.band.story {
+  background:
+    radial-gradient(ellipse 120% 80% at 12% 0%, rgba(194,55,47,.045) 0%, transparent 58%),
+    radial-gradient(ellipse 90% 70% at 88% 100%, rgba(16,21,28,.05) 0%, transparent 60%),
+    var(--paper);
+  color: var(--ink);
+}
+.band.story .sec-title { max-width: 22em; }
+
+/* 导语：一句一句地压下来 */
+.story-lead {
+  padding: var(--s6) 0 var(--s8);
+  border-top: 1px solid var(--rule);
+}
+.story-logline {
+  font-family: var(--ff-display);
+  font-size: var(--fs-display-s);
+  line-height: 1.42;
+  letter-spacing: .01em;
+  color: var(--ink);
+  margin: 0 0 var(--s5);
+  max-width: 20em;
+}
+.story-leadtext {
+  font-family: var(--ff-body);
+  font-size: var(--fs-lead);
+  line-height: var(--lh-lead);
+  color: rgba(16,21,28,.74);
+  margin: 0;
+  max-width: 46em;
+}
+
+/* 两栏对照：传说里 / 其实是 */
+.story-layers {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s7);
+  padding-bottom: var(--s8);
+}
+.story-layer {
+  padding: var(--s6);
+  border: 1px solid var(--rule);
+  background: rgba(255,255,255,.42);
+  position: relative;
+}
+.story-layer::before {
+  content: '';
+  position: absolute;
+  left: -1px; top: -1px;
+  width: 34px; height: 2px;
+  background: var(--red);
+}
+.story-layer-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s3);
+  margin-bottom: var(--s5);
+  padding-bottom: var(--s3);
+  border-bottom: 1px solid var(--rule);
+}
+.story-layer-label {
+  font-family: var(--ff-label);
+  font-size: var(--fs-label);
+  letter-spacing: var(--tr-label);
+  color: var(--ink);
+}
+.story-layer-hint {
+  font-family: var(--ff-label);
+  font-size: 10px;
+  letter-spacing: .18em;
+  color: rgba(16,21,28,.42);
+}
+.story-layer-list {
+  list-style: none;
+  margin: 0; padding: 0;
+}
+.story-layer-list li {
+  font-family: var(--ff-body);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  color: rgba(16,21,28,.80);
+  padding: var(--s3) 0 var(--s3) var(--s5);
+  border-bottom: 1px solid rgba(199,192,180,.42);
+  position: relative;
+}
+.story-layer-list li:last-child { border-bottom: 0; padding-bottom: 0; }
+.story-layer-list li::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 1.05em;
+  width: 12px; height: 1px;
+  background: var(--red);
+  opacity: .7;
+}
+
+/* 三条论点 */
+.story-thesis {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--s7);
+  padding: var(--s8) 0;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+.thesis { position: relative; padding-top: var(--s5); }
+.thesis-n {
+  font-family: var(--ff-label);
+  font-size: var(--fs-label);
+  letter-spacing: var(--tr-label);
+  color: var(--red);
+  margin-bottom: var(--s3);
+}
+.thesis-t {
+  font-family: var(--ff-display);
+  font-size: 21px;
+  line-height: 1.46;
+  font-weight: 500;
+  color: var(--ink);
+  margin: 0 0 var(--s4);
+}
+.thesis-d {
+  font-family: var(--ff-body);
+  font-size: var(--fs-caption);
+  line-height: var(--lh-caption);
+  color: rgba(16,21,28,.62);
+  margin: 0;
+}
+
+/* 结尾那一夜 */
+.story-coda {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--s7);
+  align-items: start;
+  padding-top: var(--s8);
+}
+.coda-mark {
+  width: 52px; height: 52px;
+  display: grid;
+  place-items: center;
+  font-family: var(--ff-display);
+  font-size: 26px;
+  color: var(--paper);
+  background: var(--red);
+}
+.coda-title {
+  font-family: var(--ff-label);
+  font-size: var(--fs-label);
+  letter-spacing: var(--tr-label);
+  color: var(--muted);
+  margin: 0 0 var(--s5);
+  font-weight: 400;
+}
+.coda-lines { max-width: 40em; }
+.coda-line {
+  font-family: var(--ff-body);
+  font-size: var(--fs-lead);
+  line-height: 1.92;
+  color: rgba(16,21,28,.76);
+  margin: 0;
+}
+.coda-line-last {
+  color: var(--red);
+  font-family: var(--ff-display);
+  font-size: var(--fs-display-s);
+  line-height: 1.4;
+  letter-spacing: .04em;
+  margin-top: var(--s4);
 }
 
 /* ── 幕 ───────────────────────────────────────────────── */
@@ -1157,6 +1329,12 @@ body.no-3d::before {
   .foot-meta { flex-wrap: wrap; gap: var(--s3); }
   .foot-meta span + span::before { display: none; }
   .plate img { max-height: 220px; object-fit: contain; }
+  .story-layers { grid-template-columns: 1fr; gap: var(--s5); }
+  .story-thesis { grid-template-columns: 1fr; gap: var(--s6); padding: var(--s7) 0; }
+  .story-logline { font-size: 24px; }
+  .story-coda { grid-template-columns: 1fr; gap: var(--s4); }
+  .coda-mark { width: 40px; height: 40px; font-size: 20px; }
+  .coda-line-last { font-size: 24px; }
 }
 
 /* 超窄屏：品牌与导航分行，导航横向滚动 */
