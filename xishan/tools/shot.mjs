@@ -100,7 +100,8 @@ await send('Log.enable', {}, sessionId);
 await send('Emulation.setDeviceMetricsOverride',
   { width: W, height: H, deviceScaleFactor: 1, mobile: false }, sessionId);
 
-const TARGET = process.env.TARGET_URL || `http://127.0.0.1:${PORT}/`;
+const SUB = process.env.SUB_PATH || '';
+const TARGET = process.env.TARGET_URL || `http://127.0.0.1:${PORT}${SUB}`;
 await send('Page.navigate', { url: TARGET }, sessionId);
 await sleep(9000);
 

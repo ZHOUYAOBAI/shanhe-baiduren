@@ -178,8 +178,14 @@ def main():
 
     # ---- 校验：部署树内不得残留旧路径 ----
     bad = []
+    # 就地部署的子站：目录结构与部署树一致，路径不需改写，故跳过校验
+    LOCAL_SUBSITES = ("xishan", "shanhe")
     for base, dirs, files in os.walk(deploy):
         dirs[:] = [x for x in dirs if x not in (".git", "node_modules")]
+        rel = os.path.relpath(base, deploy)
+        if rel.split(os.sep)[0] in LOCAL_SUBSITES and rel != ".":
+            dirs[:] = []
+            continue
         for name in files:
             if not name.endswith((".html", ".css", ".js")):
                 continue

@@ -467,6 +467,31 @@ def gen_emblem(kind, w=180, h=180, color=INK):
     return "".join(p)
 
 
+def gen_emblem_mountain(w=180, h=180, color=INK):
+    """《西山不是山》徽记 —— 山形即卧人。
+    左端头部隆起（罗汉山）→ 中段胸腹平缓（挂榜山 · 门在此处）→ 右端发梢垂落（观音山）。
+    """
+    p = []
+    # 卧人轮廓
+    d = ("M14 118 C17 92 22 72 32 62 C42 53 54 52 68 57 "
+         "C80 61 90 62 101 60 C114 57 128 57 141 60 "
+         "C155 63 166 74 172 92 C176 106 180 114 186 120 "
+         "L186 128 L14 128 Z")
+    p.append(f'<path d="{d}" stroke="{color}" stroke-width="1.3"/>')
+    # 排线：山体内部
+    for i in range(16):
+        x = 18 + i * 10.4
+        p.append(f'<path d="M{x:.1f} 60 V124" stroke="{color}" stroke-width="0.45" '
+                 f'opacity="{0.34 - i * 0.012:.2f}"/>')
+    # 地平线
+    p.append(f'<path d="M6 128 H176" stroke="{color}" stroke-width="1" opacity="0.7"/>')
+    # 山上的门
+    p.append(f'<path d="M80 60 H104 V84 H80 Z" stroke="{color}" stroke-width="1.1" fill="none"/>')
+    p.append(f'<path d="M80 60 L92 48 L104 60" stroke="{color}" stroke-width="1.1" fill="none"/>')
+    p.append(f'<path d="M92 48 V84" stroke="{color}" stroke-width="0.8" opacity="0.65"/>')
+    return "".join(p)
+
+
 
 def gen_figure(w=420, h=420, color=PAPER, ink=INK):
     """圆形画框内的人物（位移排线手法）
@@ -545,5 +570,8 @@ if __name__ == "__main__":
     for k in ["harp", "rings", "wave", "spot"]:
         out[f"emblem-{k}-ink.svg"]   = save(f"emblem-{k}-ink.svg",   gen_emblem(k, color=INK),   180, 180)
         out[f"emblem-{k}-paper.svg"] = save(f"emblem-{k}-paper.svg", gen_emblem(k, color=PAPER), 180, 180)
+    # 《西山不是山》徽记（山形即卧人）
+    out["emblem-mountain-ink.svg"]   = save("emblem-mountain-ink.svg",   gen_emblem_mountain(color=INK),   180, 180)
+    out["emblem-mountain-paper.svg"] = save("emblem-mountain-paper.svg", gen_emblem_mountain(color=PAPER), 180, 180)
     for k, v in out.items():
         print(f"{k:26s} {v:7d} bytes")

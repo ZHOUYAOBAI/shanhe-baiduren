@@ -243,9 +243,14 @@ body {
    ============================================================ */
 .works { background: var(--c-paper); padding: 112px 0 128px; }
 .works-grid {
-  display: grid; grid-template-columns: repeat(4, 1fr);
+  display: grid; grid-template-columns: repeat(5, 1fr);
   gap: var(--s-7) var(--s-6);
 }
+.work { color: inherit; }
+.work h3 { transition: color .24s cubic-bezier(.4,0,.2,1); }
+.work:hover h3 { color: var(--c-red, #C2372F); }
+.work-emblem { transition: transform .52s cubic-bezier(.16,1,.3,1); }
+.work:hover .work-emblem { transform: translateY(-4px); }
 .work { display: flex; flex-direction: column; gap: var(--s-4); }
 .work-emblem {
   width: 100%; aspect-ratio: 1; display: grid; place-items: center;
@@ -516,7 +521,7 @@ body {
         <p class="kicker">WORKS · 剧 目</p>
         <h2 class="sec-title">在写与已写的</h2>
       </div>
-      <p>四个剧目，两种体裁。
+      <p>五个剧目，两种体裁。
 此处陈列剧目梗概与首演记录。</p>
     </div>
     <hr class="rule">
@@ -545,6 +550,12 @@ body {
         <p class="work-meta">歌剧 · 独幕 · 写作中</p>
         <p class="work-desc">一个人反复练习迁徙，直到忘了自己从未飞过。</p>
       </article>
+      <a class="work reveal" href="xishan/" style="text-decoration:none">
+        <div class="work-emblem"><img src="assets/nocturne/svg/emblem-mountain-ink.svg" alt=""></div>
+        <h3>西山不是山</h3>
+        <p class="work-meta">音乐剧 · 十四场 · 七十八分钟 · 完整剧本公开</p>
+        <p class="work-desc">一座一千二百米的岩层，被一眼看成了一个人。</p>
+      </a>
     </div>
   </div>
 </section>

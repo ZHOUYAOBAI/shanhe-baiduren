@@ -141,6 +141,21 @@ body.no-3d::before {
 .topnav a:hover { color: var(--paper); }
 .topnav a.on { color: var(--paper); border-bottom-color: var(--red); }
 
+/* 返回剧作集 */
+.topnav-home {
+  font-family: var(--ff-label);
+  font-size: var(--fs-label);
+  letter-spacing: var(--tr-label);
+  color: var(--muted);
+  text-decoration: none;
+  white-space: nowrap;
+  padding-left: var(--s5);
+  margin-left: var(--s2);
+  border-left: 1px solid var(--rule-dark);
+  transition: color var(--d-fast) var(--ease-soft);
+}
+.topnav-home:hover { color: var(--red-lit); }
+
 /* ── 左侧幕次轨 ───────────────────────────────────────── */
 .rail {
   position: fixed;
