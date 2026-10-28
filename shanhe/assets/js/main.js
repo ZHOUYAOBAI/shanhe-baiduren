@@ -295,6 +295,7 @@ renderSongWall();
     { file: '渡江2.mp3',    name: '渡江 Ⅱ',   dur: '2:05' },
     { file: '等你回来（乐思）.mp3', name: '等你回来（乐思）', dur: '2:48' },
     { file: '山河之光.mp3', name: '山河之光', dur: '7:37' },
+    { file: '红军是什么队伍.mp3', name: '红军是什么队伍', dur: '0:53' },
   ];
 
   const fmt = (sec) => {
