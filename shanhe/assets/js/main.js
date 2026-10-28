@@ -273,53 +273,145 @@ renderSongWall();
     { file: '山河之光.mp3', name: '山河之光', dur: '7:37' },
   ];
 
+  const fmt = (sec) => {
+    if (!isFinite(sec) || sec < 0) sec = 0;
+    const m = Math.floor(sec / 60);
+    const s = Math.floor(sec % 60);
+    return `${m}:${String(s).padStart(2, '0')}`;
+  };
+
   const list = $('#scoringList');
   if (list) {
     list.innerHTML = SCORING.map(s => `
       <div class="scoring-item">
         <button class="scoring-play" type="button"
-                data-audio="assets/audio/${encodeURIComponent(s.file)}"
                 aria-label="播放《${esc(s.name)}》">▶</button>
         <div class="scoring-name">${esc(s.name)}</div>
-        <audio class="scoring-audio" preload="none" controls
-               src="assets/audio/${encodeURIComponent(s.file)}"></audio>
-        <div class="scoring-dur">${esc(s.dur)}</div>
+        <div class="scoring-bar" role="slider" tabindex="0"
+             aria-label="《${esc(s.name)}》播放进度"
+             aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+          <div class="scoring-track"><div class="scoring-fill"></div></div>
+          <div class="scoring-knob"></div>
+        </div>
+        <div class="scoring-time"><span class="scoring-cur">0:00</span> / ${esc(s.dur)}</div>
+        <audio preload="none" src="assets/audio/${encodeURIComponent(s.file)}"></audio>
       </div>`).join('');
 
-    /* 单曲播放：点播放键切换，播完复位 */
-    let current = null;
+    /* ── 单曲播放：任意时刻只允许一条在放（新的自动打断旧的）── */
+    const rows = [...list.querySelectorAll('.scoring-item')];
+    let current = null;      // 当前正在播放的 audio
+    let rafId = 0;
+
+    const resetRow = (row) => {
+      const btn = row.querySelector('.scoring-play');
+      row.querySelector('.scoring-fill').style.width = '0%';
+      row.querySelector('.scoring-knob').style.left = '0%';
+      row.querySelector('.scoring-cur').textContent = '0:00';
+      row.querySelector('.scoring-bar').setAttribute('aria-valuenow', '0');
+      btn.classList.remove('playing');
+      btn.textContent = '▶';
+      row.classList.remove('playing');
+    };
+
+    const stopAll = (except) => {
+      rows.forEach(row => {
+        const a = row.querySelector('audio');
+        if (a && a !== except) {
+          a.pause();
+          a.currentTime = 0;
+        }
+        if (row !== except) resetRow(row);
+      });
+    };
+
+    const paint = (row, audio) => {
+      const dur = isFinite(audio.duration) && audio.duration > 0 ? audio.duration : 0;
+      const pct = dur ? (audio.currentTime / dur) * 100 : 0;
+      row.querySelector('.scoring-fill').style.width = pct + '%';
+      row.querySelector('.scoring-knob').style.left = pct + '%';
+      row.querySelector('.scoring-cur').textContent = fmt(audio.currentTime);
+      row.querySelector('.scoring-bar').setAttribute('aria-valuenow', Math.round(pct));
+    };
+
+    const tick = () => {
+      if (!current) return;
+      const row = current.closest('.scoring-item');
+      paint(row, current);
+      if (!current.paused && !current.ended) rafId = requestAnimationFrame(tick);
+    };
+
     list.addEventListener('click', (e) => {
+      /* 进度条：点击跳转 */
+      const bar = e.target.closest('.scoring-bar');
+      if (bar) {
+        const row = bar.closest('.scoring-item');
+        const audio = row.querySelector('audio');
+        const rect = bar.getBoundingClientRect();
+        const ratio = Math.min(Math.max((e.clientX - rect.left) / rect.width, 0), 1);
+        if (isFinite(audio.duration) && audio.duration > 0) {
+          audio.currentTime = ratio * audio.duration;
+          paint(row, audio);
+        }
+        return;
+      }
+
+      /* 播放键：切换 */
       const btn = e.target.closest('.scoring-play');
       if (!btn) return;
-      const audio = btn.parentElement.querySelector('audio');
-      if (!audio) return;
-      if (current && current !== audio) {
-        current.pause();
-        current.currentTime = 0;
-        current.parentElement.querySelector('.scoring-play')
-          ?.classList.remove('playing');
-        current.parentElement.querySelector('.scoring-play').textContent = '▶';
-      }
-      if (audio.paused) {
-        audio.play();
-        btn.classList.add('playing');
-        btn.textContent = '❚❚';
-        current = audio;
-      } else {
+      const row = btn.closest('.scoring-item');
+      const audio = row.querySelector('audio');
+
+      if (current === audio) {
+        /* 再次点击当前这条 → 暂停 */
         audio.pause();
+        cancelAnimationFrame(rafId);
         btn.classList.remove('playing');
         btn.textContent = '▶';
+        row.classList.remove('playing');
         current = null;
+        return;
       }
+
+      /* 打断其它正在播放的 —— 自动互斥 */
+      stopAll(audio);
+
+      audio.play()
+        .then(() => {
+          current = audio;
+          btn.classList.add('playing');
+          btn.textContent = '❚❚';
+          row.classList.add('playing');
+          cancelAnimationFrame(rafId);
+          rafId = requestAnimationFrame(tick);
+        })
+        .catch(() => {
+          btn.classList.remove('playing');
+          btn.textContent = '▶';
+        });
     });
 
+    /* 键盘：进度条左右键快进 / 快退 */
+    list.addEventListener('keydown', (e) => {
+      const bar = e.target.closest('.scoring-bar');
+      if (!bar) return;
+      if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+      e.preventDefault();
+      const row = bar.closest('.scoring-item');
+      const audio = row.querySelector('audio');
+      if (!isFinite(audio.duration)) return;
+      audio.currentTime = Math.min(Math.max(
+        audio.currentTime + (e.key === 'ArrowRight' ? 5 : -5), 0), audio.duration);
+      paint(row, audio);
+    });
+
+    /* 播完复位 */
     list.addEventListener('ended', (e) => {
       const a = e.target;
-      if (!a.tagName || a.tagName !== 'AUDIO') return;
+      if (a.tagName !== 'AUDIO') return;
+      const row = a.closest('.scoring-item');
       a.currentTime = 0;
-      const btn = a.parentElement.querySelector('.scoring-play');
-      if (btn) { btn.classList.remove('playing'); btn.textContent = '▶'; }
-      current = null;
+      resetRow(row);
+      if (current === a) { current = null; cancelAnimationFrame(rafId); }
     }, true);
   }
 }

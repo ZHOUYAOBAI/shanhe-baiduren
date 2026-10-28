@@ -1310,25 +1310,74 @@ body:not(.unlocked) .songcard .no::after {
   color: var(--paper);
 }
 
-.scoring-audio {
+/* 进度条（自绘，替代原生控件） */
+.scoring-bar {
+  position: relative;
   flex: 1 1 auto;
-  height: 38px;
+  height: 22px;
   min-width: 0;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
 }
-.scoring-audio::-webkit-media-controls-panel {
-  background: rgba(251,244,234,.08);
+.scoring-track {
+  position: relative;
+  width: 100%;
+  height: 3px;
+  background: rgba(251,244,234,.16);
+  transition: height .18s;
+}
+.scoring-bar:hover .scoring-track,
+.scoring-bar:focus-visible .scoring-track { height: 5px; }
+
+.scoring-fill {
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 0;
+  background: var(--red);
 }
 
-.scoring-dur {
+.scoring-knob {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 10px; height: 10px;
+  margin-left: -5px;
+  border-radius: 50%;
+  background: var(--paper);
+  transform: translateY(-50%) scale(.6);
+  opacity: 0;
+  transition: opacity .18s, transform .18s;
+}
+.scoring-bar:hover .scoring-knob,
+.scoring-bar:focus-visible .scoring-knob,
+.scoring-item.playing .scoring-knob {
+  opacity: 1;
+  transform: translateY(-50%) scale(1);
+}
+.scoring-item.playing .scoring-knob { background: var(--red-lit); }
+
+/* 时间 */
+.scoring-time {
   flex: none;
   font-size: 12px;
-  letter-spacing: .1em;
+  letter-spacing: .08em;
   color: var(--ash);
   font-variant-numeric: tabular-nums;
+  min-width: 5.6em;
+  text-align: right;
+}
+.scoring-cur { color: var(--paper-2); }
+.scoring-item.playing .scoring-cur { color: var(--red-lit); }
+
+/* 隐藏原生 audio 元素（保留播放能力，不显示控件） */
+.scoring-item audio {
+  display: none;
 }
 
 @media (max-width: 720px) {
   .scoring-item { flex-wrap: wrap; gap: 12px; }
   .scoring-name { min-width: 0; width: 100%; }
-  .scoring-audio { flex: 1 1 100%; }
+  .scoring-bar { flex: 1 1 100%; order: 3; }
+  .scoring-time { order: 2; }
 }
