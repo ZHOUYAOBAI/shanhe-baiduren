@@ -151,6 +151,29 @@ a { color: inherit; text-decoration: none; }
   background: rgba(200,50,63,.14);
 }
 
+/* DEMO 入口：配乐试听是唯一"能点出声"的区块，给它一个可辨识的标识 */
+.topnav a[data-nav="#scoring"] {
+  color: var(--gold);
+  border-color: rgba(217,169,74,.32);
+}
+.topnav a[data-nav="#scoring"]::before {
+  content: "";
+  display: inline-block;
+  width: 5px; height: 5px;
+  margin-right: 7px;
+  border-radius: 50%;
+  background: var(--gold);
+  vertical-align: middle;
+  box-shadow: 0 0 6px rgba(217,169,74,.7);
+}
+.topnav a[data-nav="#scoring"]:hover,
+.topnav a[data-nav="#scoring"].on {
+  color: var(--paper);
+  border-color: rgba(217,169,74,.7);
+  background: rgba(217,169,74,.16);
+}
+.topnav a[data-nav="#scoring"].on::before { background: var(--paper); }
+
 /* ============================================================
    左侧幕次轨
    ============================================================ */
@@ -1361,6 +1384,43 @@ body:not(.unlocked) .songcard .no::after {
 .scoring-play.playing {
   background: var(--red);
   color: var(--paper);
+}
+
+/* 缓冲中：播放键呼吸光环 + 进度条扫光，提示"在加载"而非"卡死" */
+.scoring-item.loading .scoring-play {
+  border-color: var(--gold);
+  color: var(--gold);
+  animation: loadPulse 1.1s ease-in-out infinite;
+}
+.scoring-item.loading .scoring-play::after {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border: 1px solid var(--gold);
+  border-radius: 50%;
+  opacity: 0;
+  animation: loadRing 1.4s ease-out infinite;
+}
+.scoring-play { position: relative; }
+@keyframes loadPulse {
+  0%, 100% { opacity: .55; }
+  50%      { opacity: 1; }
+}
+@keyframes loadRing {
+  0%   { opacity: .7; transform: scale(.9); }
+  100% { opacity: 0;  transform: scale(1.25); }
+}
+.scoring-item.loading .scoring-track::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(217,169,74,.30), transparent);
+  animation: loadSweep 1.3s linear infinite;
+}
+.scoring-track { position: relative; overflow: hidden; }
+@keyframes loadSweep {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
 }
 
 .scoring-name {

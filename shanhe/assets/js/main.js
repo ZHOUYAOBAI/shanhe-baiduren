@@ -300,8 +300,11 @@ renderSongWall();
   const fmt = (sec) => {
     if (!isFinite(sec) || sec < 0) sec = 0;
     const m = Math.floor(sec / 60);
-    const s = Math.floor(sec % 60);
-    return `${m}:${String(s).padStart(2, '0')}`;
+    // 四舍五入而非向下取整：floor 会让显示始终慢半秒，看着像"播放很慢"
+    const s = Math.round(sec % 60);
+    return s === 60
+      ? `${m + 1}:00`
+      : `${m}:${String(s).padStart(2, '0')}`;
   };
 
   const list = $('#scoringList');
@@ -318,13 +321,13 @@ renderSongWall();
           <div class="scoring-knob"></div>
         </div>
         <div class="scoring-time"><span class="scoring-cur">0:00</span> / ${esc(s.dur)}</div>
+        <div class="scoring-load" aria-hidden="true"></div>
         <audio preload="none" src="assets/audio/${encodeURIComponent(s.file)}"></audio>
       </div>`).join('');
 
     /* ── 单曲播放：任意时刻只允许一条在放（新的自动打断旧的）── */
     const rows = [...list.querySelectorAll('.scoring-item')];
     let current = null;      // 当前正在播放的 audio
-    let rafId = 0;
 
     const resetRow = (row) => {
       const btn = row.querySelector('.scoring-play');
@@ -335,16 +338,21 @@ renderSongWall();
       btn.classList.remove('playing');
       btn.textContent = '▶';
       row.classList.remove('playing');
+      row.classList.remove('loading');
     };
 
+    /* 只停掉真正在播（或已加载）的条目。
+       ⚠️ 对 readyState=0 的音频写 currentTime 会强制触发下载，
+          快速切歌时会把所有曲目都拉下来（26MB），这是之前卡顿的主因。 */
     const stopAll = (except) => {
       rows.forEach(row => {
+        if (row === except) return;
         const a = row.querySelector('audio');
-        if (a && a !== except) {
+        if (a) {
           a.pause();
-          a.currentTime = 0;
+          if (a.readyState > 0) a.currentTime = 0;   // 仅已加载的才归零
         }
-        if (row !== except) resetRow(row);
+        resetRow(row);
       });
     };
 
@@ -357,12 +365,35 @@ renderSongWall();
       row.querySelector('.scoring-bar').setAttribute('aria-valuenow', Math.round(pct));
     };
 
-    const tick = () => {
-      if (!current) return;
-      const row = current.closest('.scoring-item');
-      paint(row, current);
-      if (!current.paused && !current.ended) rafId = requestAnimationFrame(tick);
-    };
+    /* ── 缓冲指示：waiting / canplay 事件 ── */
+    list.addEventListener('waiting', (e) => {
+      const a = e.target;
+      if (a.tagName !== 'AUDIO') return;
+      const row = a.closest('.scoring-item');
+      if (row && a === current) row.classList.add('loading');
+    }, true);
+    list.addEventListener('playing', (e) => {
+      const a = e.target;
+      if (a.tagName !== 'AUDIO') return;
+      const row = a.closest('.scoring-item');
+      if (row) row.classList.remove('loading');
+    }, true);
+    list.addEventListener('canplay', (e) => {
+      const a = e.target;
+      if (a.tagName !== 'AUDIO') return;
+      const row = a.closest('.scoring-item');
+      if (row && a === current) row.classList.remove('loading');
+    }, true);
+
+    /* ── 进度刷新：用 timeupdate（浏览器原生节流），
+          不用 requestAnimationFrame —— 后者在滚动/后台会被降频，
+          表现为进度条卡住不动 ── */
+    list.addEventListener('timeupdate', (e) => {
+      const a = e.target;
+      if (a.tagName !== 'AUDIO') return;
+      const row = a.closest('.scoring-item');
+      if (row) paint(row, a);
+    }, true);
 
     list.addEventListener('click', (e) => {
       /* 进度条：点击跳转 */
@@ -372,9 +403,24 @@ renderSongWall();
         const audio = row.querySelector('audio');
         const rect = bar.getBoundingClientRect();
         const ratio = Math.min(Math.max((e.clientX - rect.left) / rect.width, 0), 1);
+
         if (isFinite(audio.duration) && audio.duration > 0) {
           audio.currentTime = ratio * audio.duration;
           paint(row, audio);
+        } else {
+          /* 还没加载 → 先记录目标位置，加载完自动跳过去。
+             ⚠️ 直接写 currentTime 会触发整首重新下载，用户体验就是"卡住"。 */
+          audio.dataset.seekTo = String(ratio);
+          if (audio.readyState === 0) audio.load();
+          row.classList.add('loading');
+          audio.addEventListener('loadedmetadata', () => {
+            const target = parseFloat(audio.dataset.seekTo);
+            if (isFinite(target) && isFinite(audio.duration) && audio.duration > 0) {
+              audio.currentTime = target * audio.duration;
+              delete audio.dataset.seekTo;
+              paint(row, audio);
+            }
+          }, { once: true });
         }
         return;
       }
@@ -385,13 +431,13 @@ renderSongWall();
       const row = btn.closest('.scoring-item');
       const audio = row.querySelector('audio');
 
-      if (current === audio) {
+      if (current === audio && !audio.paused) {
         /* 再次点击当前这条 → 暂停 */
         audio.pause();
-        cancelAnimationFrame(rafId);
         btn.classList.remove('playing');
         btn.textContent = '▶';
         row.classList.remove('playing');
+        row.classList.remove('loading');
         current = null;
         return;
       }
@@ -399,19 +445,30 @@ renderSongWall();
       /* 打断其它正在播放的 —— 自动互斥 */
       stopAll(audio);
 
-      audio.play()
-        .then(() => {
+      /* 不额外调 audio.load()：
+         play() 本身就会开始下载，而 load() 会重置已有缓冲、重新下载，
+         反而更慢。只需标出"正在缓冲"状态即可。 */
+      if (audio.readyState === 0) row.classList.add('loading');
+
+      const p = audio.play();
+      if (p && p.then) {
+        p.then(() => {
           current = audio;
           btn.classList.add('playing');
           btn.textContent = '❚❚';
           row.classList.add('playing');
-          cancelAnimationFrame(rafId);
-          rafId = requestAnimationFrame(tick);
-        })
-        .catch(() => {
+          row.classList.remove('loading');
+          paint(row, audio);
+        }).catch((err) => {
           btn.classList.remove('playing');
           btn.textContent = '▶';
+          row.classList.remove('loading');
+          // 自动播放被拦截等 → 给个提示，而不是静默无反应
+          if (err && err.name === 'NotAllowedError') {
+            row.querySelector('.scoring-cur').textContent = '请再次点击';
+          }
         });
+      }
     });
 
     /* 键盘：进度条左右键快进 / 快退 */
@@ -435,7 +492,7 @@ renderSongWall();
       const row = a.closest('.scoring-item');
       a.currentTime = 0;
       resetRow(row);
-      if (current === a) { current = null; cancelAnimationFrame(rafId); }
+      if (current === a) current = null;
     }, true);
   }
 }
@@ -526,6 +583,7 @@ document.addEventListener('click', (e) => {
   nav.innerHTML = [
     ['#mainline', '主线'],
     ['#songs', '歌单'],
+    ['#scoring', 'DEMO'],
     ['#cast', '人物'],
     ['#threads', '伏笔'],
   ].map(([h, t]) => `<a href="${h}" data-nav="${h}">${t}</a>`).join('');
@@ -536,11 +594,17 @@ document.addEventListener('click', (e) => {
   });
 
   // 滚动高亮：当前幕次 + 当前 section
-  const sections = $$('[data-nav]');
+  // ⚠️ 观察的必须是**区块本身**（.band[id]），不是导航链接。
+  //    之前 data-nav 挂在 <a> 上，IntersectionObserver 观察 <a> 永远不会
+  //    命中区块 id，导致导航高亮从未生效。
+  const navLinks = $$('#topnav [data-nav]');
+  const sections = navLinks
+    .map(a => document.getElementById(a.dataset.nav.slice(1)))
+    .filter(Boolean);
   const obs = new IntersectionObserver((entries) => {
     entries.forEach(en => {
       if (en.isIntersecting) {
-        sections.forEach(a => a.classList.toggle('on', a.dataset.nav === en.target.id));
+        navLinks.forEach(a => a.classList.toggle('on', a.dataset.nav === '#' + en.target.id));
       }
     });
   }, { rootMargin: '-45% 0px -50% 0px' });
