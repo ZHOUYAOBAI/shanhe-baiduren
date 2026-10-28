@@ -6,6 +6,8 @@
 <title>长夜行 · 陈屿剧作集</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <meta name="description" content="陈屿剧作集 · 音乐剧与歌剧剧本线上展演站。">
+<!-- Three.js 约 660KB，提前 preload 让浏览器尽早开始下载，缩短 3D 场景就绪时间 -->
+<link rel="preload" href="assets/nocturne/vendor/three.module.js" as="script" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@200;300;400;700;900&family=Noto+Sans+SC:wght@300;400;500&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,700;1,6..96,400&family=Pinyon+Script&display=swap" rel="stylesheet">
@@ -749,8 +751,6 @@ body {
   /* ---- 载入 3D 模块 ---- */
   var canvas = document.getElementById('gl-canvas');
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var attempts = 0;
-  var MAX_ATTEMPTS = 3;
 
   function fallback(err) {
     ready = false;
@@ -759,12 +759,13 @@ body {
     if (window.console) console.warn('[NOCTURNE] WebGL 场景不可用，已退回静态复刻图：', err);
   }
 
+  /* three.module.js 约 660KB，GitHub Pages CDN 首字节可能慢到数十秒。
+     动态 import 是运行时请求，失败后若不持续重试，3D 就永远起不来。
+     这里无限退避重试（上限 30 秒间隔），直到模块到位为止；
+     期间展演屏一直显示观感一致的静态复刻图，不影响阅读。 */
+  var delay = 1000;
   function loadScenes() {
-    attempts += 1;
-    /* 动态 import 带时间戳，绕开 CDN 缓存的失败响应 */
     var url = './assets/nocturne/js/scenes.js';
-    if (attempts > 1) url += '?retry=' + attempts;
-
     import(/* webpackIgnore: true */ url)
       .then(function (mod) {
         var active = null;
@@ -794,15 +795,9 @@ body {
         section.classList.add('is-3d');
       })
       .catch(function (err) {
-        /* three.module.js 约 1.3MB，慢网下首取可能失败。
-           退避重试若干次；仍不成功则保持静态复刻图（观感一致，不影响使用）。 */
-        if (attempts < MAX_ATTEMPTS) {
-          var delay = 800 * attempts;
-          if (window.console) console.warn('[NOCTURNE] 3D 模块加载失败，' + delay + 'ms 后重试：', err);
-          setTimeout(loadScenes, delay);
-        } else {
-          fallback(err);
-        }
+        if (window.console) console.warn('[NOCTURNE] 3D 模块未就绪，' + delay + 'ms 后重试：', err);
+        setTimeout(loadScenes, delay);
+        delay = Math.min(delay * 2, 30000);
       });
   }
 
