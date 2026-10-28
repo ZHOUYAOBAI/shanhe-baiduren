@@ -219,7 +219,11 @@ function renderMechanism() {
           他一停，他们退回光里。</div>
       </div>
       <div class="mech-note">${esc(m.note || '')}</div>
-    </div>`;
+    </div>
+    <figure class="mech-figure">
+      <img src="assets/svg/emblem-mountain.svg" alt="山形即卧人 · 徽记" loading="lazy">
+      <figcaption>山形即卧人 —— 一座一千二百米的岩层，被一眼看成了一个人</figcaption>
+    </figure>`;
 }
 
 function renderMotifs() {

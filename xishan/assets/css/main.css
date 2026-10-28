@@ -866,7 +866,7 @@ body.no-3d::before {
 /* ── 机制说明（讲述即演出）───────────────────────────── */
 .mech {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1.05fr .95fr;
   gap: var(--s8);
   align-items: center;
 }
@@ -874,6 +874,29 @@ body.no-3d::before {
   border: 1px solid var(--rule-dark);
   padding: var(--s7);
   background: rgba(242,238,230,.02);
+}
+/* 右侧：徽记线稿，让这一屏有实物 */
+.mech-figure {
+  margin: 0;
+  padding: var(--s6);
+  background: var(--paper);
+  border: 1px solid var(--rule-dark);
+}
+.mech-figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  mix-blend-mode: multiply;
+}
+.mech-figure figcaption {
+  margin-top: var(--s3);
+  padding-top: var(--s3);
+  border-top: 1px solid rgba(16,21,28,.16);
+  font-family: var(--ff-label);
+  font-size: var(--fs-label);
+  letter-spacing: var(--tr-label);
+  color: rgba(16,21,28,.62);
+  text-align: center;
 }
 .mech-row { margin-bottom: var(--s5); }
 .mech-row:last-child { margin-bottom: 0; }

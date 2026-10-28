@@ -296,30 +296,33 @@ def gen_door(w=420, h=520):
 def gen_emblem(w=460, h=300):
     b = []
     # 卧人轮廓（与 3D 场景同一套地貌分区）
-    d = ("M18 176 C22 132 40 112 62 106 C88 99 108 100 132 103 "
-         "C162 107 196 108 232 104 C268 100 300 96 330 104 "
-         "C362 113 386 136 400 172 C410 198 424 220 438 246 "
-         "L438 272 L18 272 Z")
-    b.append(hatch_shape(d, 1.16, 2.5, 0.46, INK, 0.26, seed=53, bbox=(10, 95, 445, 280)))
+    # 左端 = 头（罗汉山，略隆起）→ 中段 = 胸腹（挂榜山／华亭太华，平缓）
+    # → 右端 = 发（观音山黑荞母，垂落入水）
+    d = ("M14 210 C18 168 26 138 40 122 C54 108 70 106 88 112 "
+         "C104 117 116 118 130 116 C148 113 168 112 190 114 "
+         "C214 116 240 117 266 113 C292 109 314 108 334 116 "
+         "C356 125 374 146 388 176 C404 208 420 232 436 252 "
+         "L444 272 L14 272 Z")
+    b.append(hatch_shape(d, 1.16, 2.5, 0.46, INK, 0.26, seed=53, bbox=(8, 98, 450, 280)))
     # 轮廓双描边：外墨线 + 内淡线，强化"山形即卧人"的辨识
-    b.append(f'<path d="{d}" stroke="{INK}" stroke-width="2.4" opacity="0.92"/>')
-    b.append(f'<path d="{d}" stroke="{INK}" stroke-width="1.0" opacity="0.45" '
+    b.append(f'<path d="{d}" stroke="{INK}" stroke-width="2.6" opacity="0.95"/>')
+    b.append(f'<path d="{d}" stroke="{INK}" stroke-width="1.0" opacity="0.4" '
              f'transform="translate(0,3)"/>')
 
     # 地平线与倒影（隔着水看）
-    b.append(f'<path d="M6 272 L454 272" stroke="{INK}" stroke-width="1.4" opacity="0.8"/>')
+    b.append(f'<path d="M4 272 L456 272" stroke="{INK}" stroke-width="1.4" opacity="0.8"/>')
     b.append(f'<g opacity="0.34">')
-    b.append(hatch_horizontal(14, 278, 446, 322, gap=2.6, width=0.42, color=INK,
+    b.append(hatch_horizontal(12, 278, 448, 322, gap=2.6, width=0.42, color=INK,
                               opacity=0.18, seed=57, curve=6.0))
     b.append('</g>')
 
-    # 山上的门 —— 门开在她心口上
-    b.append(f'<path d="M196 100 L232 100 L232 138 L196 138 Z" stroke="{RED}" '
+    # 山上的门 —— 门开在她心口上（挂榜山 · 罗汉山）
+    b.append(f'<path d="M196 112 L232 112 L232 146 L196 146 Z" stroke="{RED}" '
              f'stroke-width="2" fill="none"/>')
-    b.append(f'<path d="M196 100 L214 80 L232 100" stroke="{RED}" stroke-width="2" fill="none"/>')
-    b.append(f'<path d="M214 80 L214 138" stroke="{RED}" stroke-width="1.2" opacity="0.7"/>')
+    b.append(f'<path d="M196 112 L214 94 L232 112" stroke="{RED}" stroke-width="2" fill="none"/>')
+    b.append(f'<path d="M214 94 L214 146" stroke="{RED}" stroke-width="1.2" opacity="0.7"/>')
     # 门缝的光
-    b.append(f'<path d="M212 100 L216 100 L216 138 L212 138 Z" fill="{GOLD}" opacity="0.5"/>')
+    b.append(f'<path d="M212 112 L216 112 L216 146 L212 146 Z" fill="{GOLD}" opacity="0.55"/>')
 
     # 印章
     b.append(f'<rect x="404" y="24" width="42" height="42" fill="none" stroke="{RED}" stroke-width="1.5"/>')
