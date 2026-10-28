@@ -7,20 +7,21 @@
 
 :root {
   /* ── 色 ── */
-  /* 深赭夜：带褐的沉色，像土与血，不是节庆的旗红 */
-  --ink:        #3D1518;   /* 主底色（夜、江、屋影） */
-  --ink-2:      #4C1B1F;   /* 次层 */
-  --ink-3:      #5E2429;   /* 三层 */
-  --ink-deep:   #1A0C0E;   /* 最深（首页/页脚，归于夜色） */
-  --paper:      #F4EADC;   /* 暖米白（宣纸） */
-  --paper-2:    #E7DCCB;   /* 米白暗部 */
-  --paper-3:    #D3C5AF;   /* 米白再暗 */
-  --red:        #C8323F;   /* 正红：收敛使用，只给标题与印章 */
-  --red-lit:    #E05A4A;   /* 火光高亮 */
-  --red-deep:   #8E1C26;   /* 红之深（阴影） */
-  --gold:       #D9A94A;   /* 彝金：名录、信物、碑字（少而重） */
-  --jade:       #4E8C86;   /* 苍青：江与夜雾，只给史实 */
-  --ash:        #A08D80;   /* 灰褐：辅助文字 */
+  /* 深赭夜：带褐的沉色，像土与血，不是节庆的旗红
+     （整体已提亮一档：仍要沉，但不再是压得人喘不过气的黑） */
+  --ink:        #5A2124;   /* 主底色（夜、江、屋影） */
+  --ink-2:      #6B282B;   /* 次层 */
+  --ink-3:      #7E3334;   /* 三层 */
+  --ink-deep:   #2E1214;   /* 最深（首页/页脚，归于夜色） */
+  --paper:      #F7F0E2;   /* 暖米白（宣纸） */
+  --paper-2:    #EAE0CF;   /* 米白暗部 */
+  --paper-3:    #D8CBB5;   /* 米白再暗 */
+  --red:        #D63A47;   /* 正红：收敛使用，只给标题与印章 */
+  --red-lit:    #EC6A56;   /* 火光高亮 */
+  --red-deep:   #9C222C;   /* 红之深（阴影） */
+  --gold:       #E5B855;   /* 彝金：名录、信物、碑字（少而重） */
+  --jade:       #589C95;   /* 苍青：江与夜雾，只给史实 */
+  --ash:        #B29C8C;   /* 灰褐：辅助文字 */
 
   /* ── 字体 ── */
   --serif: "Songti SC", "STSong", "SimSun", "Noto Serif SC", "Source Han Serif SC", serif;
@@ -93,8 +94,8 @@ a { color: inherit; text-decoration: none; }
   z-index: 1;
   pointer-events: none;
   background:
-    radial-gradient(ellipse 80% 64% at 50% 58%, transparent 0%, rgba(61,21,24,.10) 78%, rgba(61,21,24,.48) 100%),
-    linear-gradient(to bottom, rgba(61,21,24,.30) 0%, transparent 28%, transparent 64%, rgba(61,21,24,.56) 94%);
+    radial-gradient(ellipse 80% 64% at 50% 58%, transparent 0%, rgba(90,33,36,.10) 78%, rgba(90,33,36,.48) 100%),
+    linear-gradient(to bottom, rgba(90,33,36,.30) 0%, transparent 28%, transparent 64%, rgba(90,33,36,.56) 94%);
 }
 
 /* ============================================================
@@ -109,9 +110,9 @@ a { color: inherit; text-decoration: none; }
   align-items: center;
   gap: 18px;
   padding: 0 22px;
-  background: rgba(61,21,24,.82);
+  background: rgba(90,33,36,.82);
   backdrop-filter: blur(14px);
-  border-bottom: 1px solid rgba(244,234,220,.13);
+  border-bottom: 1px solid rgba(247,240,226,.13);
 }
 
 .brand {
@@ -182,8 +183,8 @@ a { color: inherit; text-decoration: none; }
   top: 58px; left: 0; bottom: 0;
   z-index: 50;
   width: var(--rail);
-  border-right: 1px solid rgba(244,234,220,.11);
-  background: rgba(61,21,24,.55);
+  border-right: 1px solid rgba(247,240,226,.11);
+  background: rgba(90,33,36,.55);
   backdrop-filter: blur(10px);
   display: flex;
   flex-direction: column;
@@ -238,7 +239,7 @@ a { color: inherit; text-decoration: none; }
 
 .rail-sep {
   width: 22px; height: 1px;
-  background: rgba(244,234,220,.2);
+  background: rgba(247,240,226,.2);
   margin: 7px 0;
   flex: none;
 }
@@ -300,7 +301,7 @@ a { color: inherit; text-decoration: none; }
   font-size: clamp(200px, 44vw, 520px);
   line-height: .8;
   color: transparent;
-  -webkit-text-stroke: 1px rgba(244,234,220,.09);
+  -webkit-text-stroke: 1px rgba(247,240,226,.09);
   letter-spacing: .06em;
   user-select: none;
 }
@@ -314,7 +315,7 @@ a { color: inherit; text-decoration: none; }
   width: min(880px, 116vw); height: 122%;
   transform: translateX(-50%);
   background: radial-gradient(ellipse 54% 50% at 50% 42%,
-    rgba(61,21,24,.88) 0%, rgba(61,21,24,.62) 46%, transparent 74%);
+    rgba(90,33,36,.88) 0%, rgba(90,33,36,.62) 46%, transparent 74%);
   pointer-events: none;
   z-index: -1;
 }
@@ -327,7 +328,7 @@ a { color: inherit; text-decoration: none; }
   width: min(880px, 116vw); height: 122%;
   transform: translateX(-50%);
   background: radial-gradient(ellipse 50% 46% at 50% 40%,
-    rgba(26,12,14,.72) 0%, rgba(26,12,14,.44) 52%, transparent 78%);
+    rgba(46,18,20,.72) 0%, rgba(46,18,20,.44) 52%, transparent 78%);
   pointer-events: none;
   z-index: -1;
   opacity: 0;
@@ -350,14 +351,14 @@ body.is-dawn .hero-inner::after { opacity: 1; }
   letter-spacing: .1em;
   margin: 0;
   text-indent: .1em;
-  text-shadow: 0 2px 40px rgba(26,12,14,.7);
+  text-shadow: 0 2px 40px rgba(46,18,20,.7);
 }
 
 .hero-sub {
   font-family: var(--serif);
   font-size: clamp(15px, 2.2vw, 21px);
   letter-spacing: .34em;
-  color: rgba(244,234,220,.72);
+  color: rgba(247,240,226,.72);
   margin: 30px 0 0;
   text-indent: .34em;
 }
@@ -390,8 +391,8 @@ body.is-dawn .hero-inner::after { opacity: 1; }
   font-size: 13px;
   letter-spacing: .3em;
   padding: 15px 34px;
-  border: 1px solid rgba(244,234,220,.34);
-  background: rgba(61,21,24,.4);
+  border: 1px solid rgba(247,240,226,.34);
+  background: rgba(90,33,36,.4);
   color: var(--paper);
   cursor: pointer;
   transition: background .22s, border-color .22s, gap .22s;
@@ -404,7 +405,7 @@ body.is-dawn .hero-inner::after { opacity: 1; }
   transform: translateX(-50%);
   font-size: 11px;
   letter-spacing: .34em;
-  color: rgba(244,234,220,.42);
+  color: rgba(247,240,226,.42);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -414,7 +415,7 @@ body.is-dawn .hero-inner::after { opacity: 1; }
 .scroll-hint i {
   display: block;
   width: 1px; height: 40px;
-  background: linear-gradient(to bottom, transparent, rgba(244,234,220,.5));
+  background: linear-gradient(to bottom, transparent, rgba(247,240,226,.5));
   animation: drip 2.4s ease-in-out infinite;
 }
 @keyframes drip {
@@ -436,7 +437,7 @@ body.is-dawn .hero-inner::after { opacity: 1; }
   font-size: 11px;
   letter-spacing: .3em;
   text-indent: .3em;
-  color: rgba(244,234,220,.40);
+  color: rgba(247,240,226,.40);
   pointer-events: none;
   white-space: nowrap;
   transition: opacity .8s ease, transform .8s ease;
@@ -484,10 +485,10 @@ body.is-dawn .hero-inner::after { opacity: 1; }
 .sec-desc {
   font-size: 15px;
   line-height: 2;
-  color: rgba(244,234,220,.6);
+  color: rgba(247,240,226,.6);
   max-width: 34rem;
 }
-.band.paper .sec-desc { color: rgba(61,21,24,.62); }
+.band.paper .sec-desc { color: rgba(90,33,36,.62); }
 
 /* ============================================================
    核心主线（时间轴）
@@ -498,7 +499,7 @@ body.is-dawn .hero-inner::after { opacity: 1; }
   position: absolute;
   left: 0; right: 0; top: 30px;
   height: 1px;
-  background: linear-gradient(to right, transparent, rgba(244,234,220,.32) 8%, rgba(244,234,220,.32) 92%, transparent);
+  background: linear-gradient(to right, transparent, rgba(247,240,226,.32) 8%, rgba(247,240,226,.32) 92%, transparent);
 }
 
 .spine-items {
@@ -543,7 +544,7 @@ body.is-dawn .hero-inner::after { opacity: 1; }
 .spine-label {
   font-size: 13px;
   line-height: 1.7;
-  color: rgba(244,234,220,.66);
+  color: rgba(247,240,226,.66);
 }
 
 /* ============================================================
@@ -557,7 +558,7 @@ body.is-dawn .hero-inner::after { opacity: 1; }
   gap: 26px;
   flex-wrap: wrap;
   padding-bottom: 26px;
-  border-bottom: 1px solid rgba(244,234,220,.16);
+  border-bottom: 1px solid rgba(247,240,226,.16);
   margin-bottom: 40px;
 }
 
@@ -587,15 +588,15 @@ body.is-dawn .hero-inner::after { opacity: 1; }
   color: var(--ash);
   text-align: right;
 }
-.act-facts b { color: rgba(244,234,220,.88); font-weight: 400; }
+.act-facts b { color: rgba(247,240,226,.88); font-weight: 400; }
 
 /* 幕内资料卡 */
 .act-meta {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 1px;
-  background: rgba(244,234,220,.13);
-  border: 1px solid rgba(244,234,220,.13);
+  background: rgba(247,240,226,.13);
+  border: 1px solid rgba(247,240,226,.13);
   margin-bottom: 44px;
 }
 .act-meta div {
@@ -612,7 +613,7 @@ body.is-dawn .hero-inner::after { opacity: 1; }
   margin: 0;
   font-size: 13.5px;
   line-height: 1.8;
-  color: rgba(244,234,220,.8);
+  color: rgba(247,240,226,.8);
 }
 
 /* 场次 */
@@ -633,18 +634,18 @@ body.is-dawn .hero-inner::after { opacity: 1; }
   font-family: var(--serif);
   font-size: 14.5px;
   line-height: 2.05;
-  color: rgba(244,234,220,.55);
+  color: rgba(247,240,226,.55);
   margin: 16px 0;
   padding-left: 15px;
-  border-left: 1px solid rgba(244,234,220,.15);
+  border-left: 1px solid rgba(247,240,226,.15);
 }
-.sd em { font-style: normal; color: rgba(244,234,220,.76); }
+.sd em { font-style: normal; color: rgba(247,240,226,.76); }
 
 /* 动作/说明 */
 .act-line {
   font-size: 14.5px;
   line-height: 2;
-  color: rgba(244,234,220,.72);
+  color: rgba(247,240,226,.72);
   margin: 12px 0;
 }
 
@@ -659,11 +660,11 @@ body.is-dawn .hero-inner::after { opacity: 1; }
   margin: 30px 0 10px;
 }
 .act-line.mood-line {
-  color: rgba(244,234,220,.44);
+  color: rgba(247,240,226,.44);
   font-size: 13.5px;
   font-style: italic;
   line-height: 2.05;
-  border-left: 1px solid rgba(244,234,220,.14);
+  border-left: 1px solid rgba(247,240,226,.14);
   padding-left: 14px;
 }
 
@@ -680,7 +681,7 @@ body.is-dawn .hero-inner::after { opacity: 1; }
   margin: 18px 0 4px;
   text-align: center;
   font-size: 14px;
-  color: rgba(244,234,220,.5);
+  color: rgba(247,240,226,.5);
 }
 .cue-line .cue {
   font-style: italic;
@@ -726,8 +727,8 @@ body.is-dawn .hero-inner::after { opacity: 1; }
    ============================================================ */
 .song {
   margin: 44px 0;
-  border: 1px solid rgba(244,234,220,.15);
-  background: linear-gradient(180deg, rgba(94,36,41,.62), rgba(61,21,24,.35));
+  border: 1px solid rgba(247,240,226,.15);
+  background: linear-gradient(180deg, rgba(94,36,41,.62), rgba(90,33,36,.35));
 }
 
 .song-head {
@@ -737,7 +738,7 @@ body.is-dawn .hero-inner::after { opacity: 1; }
   flex-wrap: wrap;
   padding: 17px 22px;
   background: rgba(200,50,63,.13);
-  border-bottom: 1px solid rgba(244,234,220,.14);
+  border-bottom: 1px solid rgba(247,240,226,.14);
   cursor: pointer;
   user-select: none;
 }
@@ -782,7 +783,7 @@ body.is-dawn .hero-inner::after { opacity: 1; }
   font-family: var(--serif);
   font-size: 17px;
   line-height: 2.3;
-  color: rgba(244,234,220,.9);
+  color: rgba(247,240,226,.9);
   text-align: center;
   max-width: 30rem;
   margin: 0 auto;
@@ -848,7 +849,7 @@ p.song-stage {
   font-size: 13px;
   font-style: italic;
   line-height: 1.95;
-  color: rgba(244,234,220,.46);
+  color: rgba(247,240,226,.46);
   text-align: center;
   margin: 12px auto;
   text-indent: 0;
@@ -864,8 +865,8 @@ p.song-stage {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(258px, 1fr));
   gap: 1px;
-  background: rgba(244,234,220,.13);
-  border: 1px solid rgba(244,234,220,.13);
+  background: rgba(247,240,226,.13);
+  border: 1px solid rgba(247,240,226,.13);
 }
 
 .songcard {
@@ -923,7 +924,7 @@ p.song-stage {
 }
 
 .person {
-  border: 1px solid rgba(244,234,220,.15);
+  border: 1px solid rgba(247,240,226,.15);
   padding: 24px 22px;
   position: relative;
   transition: border-color .22s, transform .22s;
@@ -940,7 +941,7 @@ p.song-stage {
 .person-desc {
   font-size: 13.5px;
   line-height: 2;
-  color: rgba(244,234,220,.66);
+  color: rgba(247,240,226,.66);
 }
 .person-tag {
   position: absolute;
@@ -951,8 +952,8 @@ p.song-stage {
   font-family: var(--serif);
   font-size: 15px;
   color: rgba(200,50,63,.42);
-  border-left: 1px solid rgba(244,234,220,.12);
-  border-bottom: 1px solid rgba(244,234,220,.12);
+  border-left: 1px solid rgba(247,240,226,.12);
+  border-bottom: 1px solid rgba(247,240,226,.12);
   transition: color .22s, background .22s;
 }
 .person:hover .person-tag {
@@ -963,7 +964,7 @@ p.song-stage {
 /* ============================================================
    伏笔闭环
    ============================================================ */
-.threads { display: grid; gap: 1px; background: rgba(244,234,220,.13); border: 1px solid rgba(244,234,220,.13); }
+.threads { display: grid; gap: 1px; background: rgba(247,240,226,.13); border: 1px solid rgba(247,240,226,.13); }
 
 .thread {
   background: var(--ink);
@@ -1000,15 +1001,15 @@ p.song-stage {
   margin: 0;
   font-size: 13px;
   line-height: 1.85;
-  color: rgba(244,234,220,.66);
+  color: rgba(247,240,226,.66);
 }
 .thread-note {
   grid-column: 1 / -1;
   font-family: var(--serif);
   font-size: 13.5px;
-  color: rgba(244,234,220,.42);
+  color: rgba(247,240,226,.42);
   padding-top: 12px;
-  border-top: 1px dashed rgba(244,234,220,.14);
+  border-top: 1px dashed rgba(247,240,226,.14);
   margin-top: 2px;
 }
 
@@ -1017,7 +1018,7 @@ p.song-stage {
    ============================================================ */
 .foot {
   background: var(--ink);
-  border-top: 1px solid rgba(244,234,220,.12);
+  border-top: 1px solid rgba(247,240,226,.12);
   padding: 66px 0 40px;
 }
 .foot-title {
@@ -1047,7 +1048,7 @@ p.song-stage {
   flex-wrap: wrap;
   font-size: 12px;
   letter-spacing: .14em;
-  color: rgba(244,234,220,.4);
+  color: rgba(247,240,226,.4);
 }
 
 /* 署名（编剧 / 音乐）：成组排列，不与其他页脚元信息混排 */
@@ -1056,7 +1057,7 @@ p.song-stage {
   flex-direction: column;
   gap: 5px;
   align-items: center;
-  color: rgba(244,234,220,.62);
+  color: rgba(247,240,226,.62);
   letter-spacing: .18em;
   text-align: center;
 }
@@ -1074,7 +1075,7 @@ p.song-stage {
   margin: 18px 0 4px;
   font-size: 13px;
   letter-spacing: .16em;
-  color: rgba(244,234,220,.6);
+  color: rgba(247,240,226,.6);
 }
 .hero-credits span {
   position: relative;
@@ -1103,7 +1104,7 @@ p.song-stage {
     align-items: center;
     padding: 0 10px;
     border-right: none;
-    border-top: 1px solid rgba(244,234,220,.13);
+    border-top: 1px solid rgba(247,240,226,.13);
     overflow-x: auto;
   }
   .rail-item {
@@ -1173,7 +1174,7 @@ p.song-stage {
    这里只做「仅概况」的版面收束 —— 幕次区块更紧凑 */
 body:not(.unlocked) .act {
   padding: 44px 0;
-  border-bottom: 1px solid rgba(244,234,220,.1);
+  border-bottom: 1px solid rgba(247,240,226,.1);
 }
 body:not(.unlocked) .act:last-child {
   border-bottom: 0;
@@ -1205,7 +1206,7 @@ body:not(.unlocked) .gate {
   border: 1px solid rgba(200,50,63,.32);
   background:
     radial-gradient(ellipse 90% 70% at 50% 0%, rgba(200,50,63,.12) 0%, transparent 70%),
-    rgba(61,21,24,.6);
+    rgba(90,33,36,.6);
   position: relative;
 }
 
@@ -1234,7 +1235,7 @@ body:not(.unlocked) .gate {
   font-size: 14.5px;
   line-height: 2.1;
   letter-spacing: .04em;
-  color: rgba(244,234,220,.68);
+  color: rgba(247,240,226,.68);
   margin: 0 0 34px;
 }
 
@@ -1264,14 +1265,14 @@ body:not(.unlocked) .gate {
   letter-spacing: .5em;
   text-align: center;
   color: var(--paper);
-  background: rgba(61,21,24,.75);
-  border: 1px solid rgba(244,234,220,.24);
+  background: rgba(90,33,36,.75);
+  border: 1px solid rgba(247,240,226,.24);
   border-radius: 0;
   outline: none;
   transition: border-color .2s, box-shadow .2s;
 }
 .gate-input::placeholder {
-  color: rgba(244,234,220,.32);
+  color: rgba(247,240,226,.32);
   letter-spacing: .12em;
   font-size: 14px;
 }
@@ -1313,7 +1314,7 @@ body:not(.unlocked) .gate {
   margin: 26px 0 0;
   font-size: 12px;
   letter-spacing: .12em;
-  color: rgba(244,234,220,.38);
+  color: rgba(247,240,226,.38);
 }
 
 /* 已解锁：门卡隐藏 */
@@ -1350,8 +1351,8 @@ body:not(.unlocked) .songcard .no::after {
 .scoring-list {
   display: grid;
   gap: 1px;
-  background: rgba(244,234,220,.14);
-  border: 1px solid rgba(244,234,220,.14);
+  background: rgba(247,240,226,.14);
+  border: 1px solid rgba(247,240,226,.14);
 }
 
 .scoring-item {
@@ -1446,7 +1447,7 @@ body:not(.unlocked) .songcard .no::after {
   position: relative;
   width: 100%;
   height: 3px;
-  background: rgba(244,234,220,.16);
+  background: rgba(247,240,226,.16);
   transition: height .18s;
 }
 .scoring-bar:hover .scoring-track,
@@ -1515,7 +1516,7 @@ body:not(.unlocked) .songcard .no::after {
   padding: 18px 22px;
   border-left: 2px solid var(--jade);
   background: linear-gradient(90deg, rgba(78,140,134,.11), transparent 78%);
-  color: rgba(244,234,220,.78);
+  color: rgba(247,240,226,.78);
   font-size: 13.5px;
   line-height: 2;
   letter-spacing: .03em;
@@ -1540,8 +1541,8 @@ body:not(.unlocked) .songcard .no::after {
   border: 1px solid rgba(217,169,74,.34);
   background:
     radial-gradient(ellipse 70% 120% at 50% 0%, rgba(217,169,74,.07), transparent 70%),
-    rgba(26,12,14,.5);
-  color: rgba(244,234,220,.86);
+    rgba(46,18,20,.5);
+  color: rgba(247,240,226,.86);
   font-size: 14.5px;
   line-height: 2.15;
   letter-spacing: .06em;

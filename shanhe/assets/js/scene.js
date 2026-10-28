@@ -79,25 +79,28 @@ void main(){
   float r = length(d);
 
   // 外晕（大范围暖光，破晓时铺满天色）
-  float glow = exp(-r * 4.2) * (0.16 + 0.84 * uDawn);
-  col += vec3(1.0, 0.66, 0.26) * glow * 0.55;
-  // 中晕
-  col += vec3(1.0, 0.78, 0.38) * exp(-r * 11.0) * (0.30 + 0.70 * uDawn) * 0.85;
+  float glow = exp(-r * 5.0) * (0.16 + 0.84 * uDawn);
+  col += vec3(1.0, 0.66, 0.26) * glow * 0.72;
+  // 中晕（收窄，避免冲淡日轮本身）
+  col += vec3(1.0, 0.78, 0.38) * exp(-r * 16.0) * (0.22 + 0.78 * uDawn) * 0.60;
 
   // 日轮（升起过程中逐渐完整、由暗红转金）
-  float R = 0.072;
-  float disc = smoothstep(R, R * 0.965, r);
+  // ⚠️ 天色提亮后，用 mix() 把日轮融进天空会"化掉"看不见。
+  //    改为实心填充 + 深色描边，任何背景上都能立住。
+  float R = 0.075;
+  float disc = smoothstep(R, R * 0.955, r);
+  float edgeBand = smoothstep(R * 1.10, R * 0.99, r) - smoothstep(R * 0.99, R * 0.90, r);
   float rings = 0.5 + 0.5 * sin(r / R * 24.0);
   float rays  = 0.5 + 0.5 * sin(atan(d.y, d.x) * 30.0);
-  vec3 sunCol = mix(vec3(1.0, 0.96, 0.80), vec3(1.0, 0.60, 0.15),
+  vec3 sunCol = mix(vec3(1.0, 0.98, 0.86), vec3(1.0, 0.66, 0.18),
                     smoothstep(0.06, 1.0, r / R));
-  sunCol *= 0.92 + 0.08 * rings * 0.6 + 0.05 * rays * 0.5;
-  // 盘缘高光环
-  float halo = smoothstep(0.80, 0.985, r / R) * (1.0 - smoothstep(0.985, 1.0, r / R));
-  sunCol += vec3(1.0, 0.92, 0.62) * halo * 1.0;
+  sunCol *= 0.94 + 0.06 * rings * 0.6 + 0.04 * rays * 0.5;
   // 未出山时日轮黯淡、偏赭
-  sunCol = mix(vec3(0.58, 0.24, 0.15), sunCol, 0.30 + 0.70 * uDawn);
-  col = mix(col, sunCol, disc * (0.30 + 0.70 * uDawn));
+  sunCol = mix(vec3(0.62, 0.26, 0.16), sunCol, 0.30 + 0.70 * uDawn);
+  // 实心填充（不用 mix，避免被背景吃掉）
+  col = mix(col, sunCol, disc * (0.55 + 0.45 * uDawn));
+  // 深色描边勾出轮廓
+  col = mix(col, vec3(0.30, 0.12, 0.09), edgeBand * (0.35 + 0.40 * uDawn));
 
   // 地平线暖光
   float hz = exp(-abs(y - 0.44) * 9.0);
@@ -278,6 +281,11 @@ void main(){
   float l3 = smoothstep(0.26, 0.0, abs(fract(ph3) - 0.5));
   float lines = clamp(l1 * 0.90 + l2 * 0.55 + l3 * 0.40, 0.0, 1.0);
 
+  // 近岸处波纹变粗、变疏（透视），并整体渐隐，
+  // 避免水面的横排线一直铺到近岸、跟地面混成一片
+  float nearFade = smoothstep(6.0, -14.0, p.y);
+  lines *= mix(1.0, 0.30, nearFade);
+
   vec3 col = mix(uDeep, uSurface, smoothstep(0.0, 0.80, lines));
 
   // 远端融入雾色（远岸）
@@ -295,6 +303,10 @@ void main(){
   // 碎金高光
   float sp = step(0.9960, hash21(floor(p * vec2(3.0, 6.0) + floor(uTime * 6.0))));
   col += uGold * sp * band * uDawn * 0.95;
+
+  // 近岸水线：一道亮边，把江面与岸地分开
+  float shore = exp(-abs(p.y - 2.0) * 0.55);
+  col += uSurface * shore * 0.55;
 
   col += (hash21(gl_FragCoord.xy * 0.5) - 0.5) * 0.028;
 
@@ -438,56 +450,56 @@ function drawSoldier(g, fx, fy, H, opt = {}) {
   const P = (x, y) => [fx + x * u, fy - y * u];
   g.fillStyle = '#000';
 
-  // 双腿
+  // 双腿（y 46 → 0，约占身高一半）
   g.beginPath();
-  g.moveTo(...P(-9, 47)); g.lineTo(...P(9, 47));
-  g.lineTo(...P(12, 25)); g.lineTo(...P(14, 2));
-  g.lineTo(...P(6.5, 2)); g.lineTo(...P(4, 25));
-  g.lineTo(...P(3, 2)); g.lineTo(...P(-4.5, 2));
-  g.lineTo(...P(-6, 25));
+  g.moveTo(...P(-7, 48)); g.lineTo(...P(8, 48));
+  g.lineTo(...P(10, 26)); g.lineTo(...P(12, 1));
+  g.lineTo(...P(6, 1)); g.lineTo(...P(4, 26));
+  g.lineTo(...P(2, 1)); g.lineTo(...P(-4, 1));
+  g.lineTo(...P(-5, 26));
   g.closePath(); g.fill();
 
-  // 躯干
+  // 躯干（y 46 → 80，肩宽腰窄）
   g.beginPath();
-  g.moveTo(...P(-11, 46)); g.lineTo(...P(11, 46));
-  g.lineTo(...P(13.5, 78)); g.lineTo(...P(-12.5, 79));
+  g.moveTo(...P(-9, 46)); g.lineTo(...P(9, 46));
+  g.lineTo(...P(12, 78)); g.lineTo(...P(-12, 79));
   g.closePath(); g.fill();
 
   // 背包
   if (opt.pack !== false) {
     g.beginPath();
-    g.moveTo(...P(-12, 75)); g.lineTo(...P(-21, 72));
-    g.lineTo(...P(-22, 48)); g.lineTo(...P(-12, 48));
+    g.moveTo(...P(-11, 74)); g.lineTo(...P(-18, 71));
+    g.lineTo(...P(-19, 50)); g.lineTo(...P(-11, 50));
     g.closePath(); g.fill();
   }
 
-  // 前臂
+  // 前臂（斜握枪）
   g.beginPath();
-  g.moveTo(...P(9, 76)); g.lineTo(...P(21, 57));
-  g.lineTo(...P(25.5, 61)); g.lineTo(...P(14, 81));
+  g.moveTo(...P(9, 74)); g.lineTo(...P(19, 58));
+  g.lineTo(...P(23, 62)); g.lineTo(...P(13, 79));
   g.closePath(); g.fill();
 
-  // 头
+  // 头（半径 5，约身高 10%）
   g.beginPath();
-  g.arc(fx + 1 * u, fy - 87 * u, 7.4 * u, 0, Math.PI * 2);
+  g.arc(fx + 1 * u, fy - 86 * u, 5.2 * u, 0, Math.PI * 2);
   g.fill();
 
   // 军帽
   g.beginPath();
-  g.ellipse(fx + 1 * u, fy - 92 * u, 9.2 * u, 3.8 * u, 0, Math.PI, 0);
+  g.ellipse(fx + 1 * u, fy - 89 * u, 6.6 * u, 2.8 * u, 0, Math.PI, 0);
   g.fill();
   g.beginPath();
-  g.moveTo(...P(-8.5, 91)); g.lineTo(...P(11, 88.6));
-  g.lineTo(...P(11, 92)); g.lineTo(...P(-8.5, 94));
+  g.moveTo(...P(-6, 88.5)); g.lineTo(...P(8, 87));
+  g.lineTo(...P(8, 89.5)); g.lineTo(...P(-6, 91));
   g.closePath(); g.fill();
 
   // 步枪
   if (opt.rifle !== false) {
     g.save();
-    g.translate(fx + 6 * u, fy - 60 * u);
+    g.translate(fx + 5 * u, fy - 58 * u);
     g.rotate(-0.52);
-    g.fillRect(-1.7 * u, -33 * u, 3.4 * u, 66 * u);
-    g.fillRect(-4.0 * u, -8 * u, 8.0 * u, 3.0 * u);
+    g.fillRect(-1.3 * u, -28 * u, 2.6 * u, 56 * u);
+    g.fillRect(-3.2 * u, -7 * u, 6.4 * u, 2.4 * u);
     g.restore();
   }
 }
@@ -603,58 +615,66 @@ function drawReeds(g, x, y, W, H, seed = 1) {
   }
 }
 
-/* 驮马（滇北驿路）：四蹄与背驮 */
+/* 驮马（滇北驿路）：四蹄与背驮
+   比例按真实马：躯干高 ≈ 腿高，颈短头小 */
 function drawHorse(g, fx, fy, H) {
   const u = H / 100;
   const P = (x, y) => [fx + x * u, fy - y * u];
   g.fillStyle = '#000';
 
-  // 躯干
+  // 躯干（占 y 40–68）
   g.beginPath();
-  g.moveTo(...P(-34, 58)); g.lineTo(...P(20, 62));
-  g.quadraticCurveTo(...P(34, 60), ...P(33, 50));
-  g.lineTo(...P(-32, 48));
+  g.moveTo(...P(-30, 62));
+  g.quadraticCurveTo(...P(-34, 50), ...P(-28, 42));
+  g.lineTo(...P(22, 40));
+  g.quadraticCurveTo(...P(32, 44), ...P(30, 60));
   g.closePath(); g.fill();
 
-  // 颈与头
+  // 颈（斜向前上）与头
   g.beginPath();
-  g.moveTo(...P(26, 62)); g.lineTo(...P(40, 76));
-  g.lineTo(...P(58, 70)); g.lineTo(...P(60, 60));
-  g.lineTo(...P(44, 60)); g.lineTo(...P(33, 50));
+  g.moveTo(...P(22, 62)); g.lineTo(...P(34, 78));
+  g.lineTo(...P(46, 74)); g.lineTo(...P(48, 64));
+  g.lineTo(...P(36, 62)); g.lineTo(...P(28, 52));
   g.closePath(); g.fill();
+  // 头（吻部）
+  g.beginPath();
+  g.moveTo(...P(44, 74)); g.lineTo(...P(58, 68));
+  g.lineTo(...P(58, 62)); g.lineTo(...P(44, 64));
+  g.closePath(); g.fill();
+  // 耳
+  g.beginPath();
+  g.moveTo(...P(38, 76)); g.lineTo(...P(41, 86));
+  g.lineTo(...P(45, 76)); g.closePath(); g.fill();
 
-  // 四条腿
-  g.beginPath();
-  g.moveTo(...P(-26, 48)); g.lineTo(...P(-22, 20));
-  g.lineTo(...P(-17, 20)); g.lineTo(...P(-20, 48));
-  g.closePath(); g.fill();
-  g.beginPath();
-  g.moveTo(...P(-16, 48)); g.lineTo(...P(-10, 16));
-  g.lineTo(...P(-5, 16)); g.lineTo(...P(-11, 48));
-  g.closePath(); g.fill();
-  g.beginPath();
-  g.moveTo(...P(18, 48)); g.lineTo(...P(22, 22));
-  g.lineTo(...P(27, 22)); g.lineTo(...P(24, 48));
-  g.closePath(); g.fill();
-  g.beginPath();
-  g.moveTo(...P(8, 48)); g.lineTo(...P(13, 18));
-  g.lineTo(...P(18, 18)); g.lineTo(...P(15, 48));
-  g.closePath(); g.fill();
+  // 四条腿（y 40 → 0），前腿略直、后腿略弯
+  const leg = (x0, x1, x2, bend) => {
+    g.beginPath();
+    g.moveTo(...P(x0, 42)); g.lineTo(...P(x1, 20));
+    g.lineTo(...P(x2, 20)); g.lineTo(...P(x2 + 3, 0));
+    g.lineTo(...P(x2 - 4, 0)); g.lineTo(...P(x0 - 5 + bend, 42));
+    g.closePath(); g.fill();
+  };
+  leg(-24, -22, -24, 0);    // 后腿
+  leg(-14, -12, -14, 2);    // 后腿
+  leg(14, 16, 14, 0);       // 前腿
+  leg(22, 24, 22, -2);      // 前腿
 
   // 尾
   g.beginPath();
-  g.moveTo(...P(-34, 60)); g.lineTo(...P(-46, 52));
-  g.lineTo(...P(-48, 34)); g.lineTo(...P(-42, 36));
-  g.lineTo(...P(-40, 52)); g.lineTo(...P(-32, 50));
+  g.moveTo(...P(-30, 62)); g.lineTo(...P(-40, 56));
+  g.lineTo(...P(-42, 34)); g.lineTo(...P(-37, 36));
+  g.lineTo(...P(-35, 54)); g.lineTo(...P(-28, 52));
   g.closePath(); g.fill();
 
   // 背上的驮包
   g.beginPath();
-  g.moveTo(...P(-20, 62)); g.lineTo(...P(-2, 62));
-  g.lineTo(...P(-4, 76)); g.lineTo(...P(-18, 76));
+  g.moveTo(...P(-18, 66)); g.lineTo(...P(-2, 66));
+  g.lineTo(...P(-4, 82)); g.lineTo(...P(-16, 82));
   g.closePath(); g.fill();
+  // 腹下的肚带
+  g.fillRect(...P(-18, 58), 20 * u, 4 * u);
 
-  // 鬃与耳
+  // 鬃
   g.beginPath();
   g.moveTo(...P(38, 74)); g.lineTo(...P(46, 82));
   g.lineTo(...P(44, 70)); g.closePath(); g.fill();
@@ -804,12 +824,12 @@ export function createStage(canvas) {
     vertexShader: FULLSCREEN_VERT,
     fragmentShader: SKY_FRAG,
     uniforms: {
-      uNightTop: { value: new THREE.Color(0x2a1014) },
-      uNightMid: { value: new THREE.Color(0x4a1c1c) },
-      uNightBot: { value: new THREE.Color(0x7a2a20) },
-      uDawnTop:  { value: new THREE.Color(0x6b241a) },
-      uDawnMid:  { value: new THREE.Color(0xc04a22) },
-      uDawnBot:  { value: new THREE.Color(0xf5a844) },
+      uNightTop: { value: new THREE.Color(0x4a1e20) },
+      uNightMid: { value: new THREE.Color(0x75302a) },
+      uNightBot: { value: new THREE.Color(0xa8412c) },
+      uDawnTop:  { value: new THREE.Color(0x8a3320) },
+      uDawnMid:  { value: new THREE.Color(0xd05c26) },
+      uDawnBot:  { value: new THREE.Color(0xffbc58) },
       uSunUv:    { value: new THREE.Vector2(0.68, 0.55) },
       uAspect:   { value: window.innerWidth / window.innerHeight },
       uDawn:     shared.uDawn,
@@ -825,29 +845,28 @@ export function createStage(canvas) {
   const scene = new THREE.Scene();
 
   /* ── 太阳位置：画在天空层（无穷远），由破晓进度驱动升起 ──
-     屏幕横坐标 0.715（偏右，避开正中的标题）。
-     纵坐标：0.22（藏在远山后）→ 0.70（完全升起于山脊之上） */
-  const SUN_SCREEN_X = 0.715;
-  const SUN_Y_LOW = 0.22, SUN_Y_HIGH = 0.70;
+     屏幕横坐标 0.87（标题文字占 25%–80%，太阳放右侧空白区）
+     纵坐标在 tick() 里按「屏幕百分比」换算成 uv（uv.y 向上）。 */
+  const SUN_SCREEN_X = 0.87;
 
   /* ── 四层山峦 ──
      屏幕落点 20% / 28% / 36% / 44%；
      颜色由远及近加深（平涂色阶，非雾化） */
   const RIDGES = [
     { z: -150, w: 270, base: -14, y: 42.8, hatch: 0.070, ang: 0.55, rim: 3.0, px: 0.05,
-      body: 0x8a4433, bodyDawn: 0xc4703c,
+      body: 0xc4703f, bodyDawn: 0xe89a52,
       peaks: [{ c: 0.16, w: 0.15, a: 1.0 }, { c: 0.40, w: 0.12, a: 0.66 }, { c: 0.86, w: 0.16, a: 0.94 }],
       saddle: { u: 0.645, w: 0.085, depth: 0.55 } },
     { z: -122, w: 230, base: -12, y: 27.1, hatch: 0.090, ang: 0.72, rim: 2.4, px: 0.13,
-      body: 0x6b3227, bodyDawn: 0x9c4f2c,
+      body: 0x9c4f2c, bodyDawn: 0xc46a34,
       peaks: [{ c: 0.24, w: 0.17, a: 0.92 }, { c: 0.60, w: 0.14, a: 0.78 }, { c: 0.92, w: 0.12, a: 0.62 }],
       saddle: { u: 0.672, w: 0.080, depth: 0.62 } },
     { z: -100, w: 190, base: -10, y: 15.8, hatch: 0.115, ang: 0.48, rim: 2.0, px: 0.26,
-      body: 0x4c221e, bodyDawn: 0x743421,
+      body: 0x743421, bodyDawn: 0x9c4a28,
       peaks: [{ c: 0.20, w: 0.16, a: 0.88 }, { c: 0.48, w: 0.20, a: 1.0 }, { c: 0.80, w: 0.15, a: 0.70 }],
       saddle: { u: 0.711, w: 0.070, depth: 0.66 } },
     { z: -82,  w: 165, base: -8,  y: 7.43, hatch: 0.145, ang: 0.86, rim: 1.5, px: 0.48,
-      body: 0x2e1214, bodyDawn: 0x4a1e1b,
+      body: 0x4a1e1b, bodyDawn: 0x6b2a20,
       peaks: [{ c: 0.18, w: 0.18, a: 0.85 }, { c: 0.52, w: 0.22, a: 1.0 }, { c: 0.88, w: 0.13, a: 0.60 }],
       saddle: { u: 0.737, w: 0.060, depth: 0.70 } },
   ];
@@ -900,10 +919,10 @@ export function createStage(canvas) {
       uFade:    shared.uFade,
       uSunX:    shared.uSunX,
       uRes:     shared.uRes,
-      uDeep:    { value: new THREE.Color(0x1e0d0d) },
-      uSurface: { value: new THREE.Color(0x7d3b2b) },
-      uGold:    { value: new THREE.Color(0xffb648) },
-      uHaze:    { value: new THREE.Color(0x8a3a28) },
+      uDeep:    { value: new THREE.Color(0x3a1a17) },
+      uSurface: { value: new THREE.Color(0xa8543c) },
+      uGold:    { value: new THREE.Color(0xffc46a) },
+      uHaze:    { value: new THREE.Color(0xb04a30) },
     },
     transparent: true,
   });
@@ -939,7 +958,7 @@ export function createStage(canvas) {
 
   const ground = new THREE.Mesh(
     new THREE.PlaneGeometry(200, 42, 1, 1),
-    hatchMat({ lineScale: 0.17, angle: 1.02, ink: 0x2a0e11, paper: 0x3f1a1a, glowPower: 1.5 })
+    hatchMat({ lineScale: 0.17, angle: 1.02, ink: 0x4a1d1c, paper: 0x6e2c26, glowPower: 1.5 })
   );
   ground.rotation.x = -Math.PI / 2;
   ground.position.set(0, 0, 21);      // z 范围 0 → 42
@@ -956,8 +975,8 @@ export function createStage(canvas) {
   {
     const m = hatchMat({
       lineScale: 0.19, angle: 1.02,
-      glow: 0xc8323f, glowPower: 1.4,
-      ink: 0x2c1013, paper: 0x4a1d1c,
+      glow: 0xd8544f, glowPower: 1.4,
+      ink: 0x4c1c1c, paper: 0x77322a,
     });
     const floor = new THREE.Mesh(new THREE.CircleGeometry(4.6, 36), m);
     floor.rotation.x = -Math.PI / 2;
@@ -1112,17 +1131,18 @@ export function createStage(canvas) {
     sprites.push(mesh);
   }
 
-  /* 马帮：滇北驿路上的驮马，衔接火塘与渡江队伍（置于中景，避免压住标题） */
+  /* 马帮：滇北驿路上的驮马，置于中景偏左（屏幕 ~16%），
+   避开正中的 CTA 按钮区，衔接火塘与渡江队伍 */
   {
-    const cw = 512, ch = 256, base = 240;
+    const cw = 512, ch = 256, base = 244;
     const mat = silhouetteMaterial(cw, ch, (g) => {
-      drawHorse(g, 150, base, 118);
-      drawHorse(g, 300, base + 6, 112);
-      drawHorse(g, 430, base - 4, 122);
+      drawHorse(g, 120, base, 108);
+      drawHorse(g, 268, base + 5, 102);
+      drawHorse(g, 408, base - 3, 112);
     });
-    const W = 11, H = W * ch / cw;
+    const W = 9.5, H = W * ch / cw;
     const mesh = new THREE.Mesh(new THREE.PlaneGeometry(W, H), mat);
-    placeSprite(mesh, cw, ch, 256, base, 2.0, 0, 8);
+    placeSprite(mesh, cw, ch, 256, base, -12, 0, 0);
     mesh.renderOrder = -3;
     mesh.userData.px = 0.55;
     scene.add(mesh);
@@ -1248,9 +1268,15 @@ export function createStage(canvas) {
     fade += (fadeTarget - fade) * 0.09;
     shared.uFade.value = fade;
 
-    /* 太阳自山口升起：屏幕纵坐标由低到高 */
+    /* 太阳自山口升起：屏幕纵坐标由低到高
+       注意：天空层的 vUv.y = 0 是**屏幕底部**、1 是顶部，
+       而屏幕百分比 f 是"从上往下"。两者关系： uv.y = 1 - f。
+       远山脊在屏幕 29.6% → uv.y = 0.704；太阳要完全露出，
+       uv.y 必须 > 0.704（即屏幕 30% 以上）。 */
     const sunEase = dawn * dawn * 0.28 + dawn * 0.72;
-    const sunScreenY = lerp(SUN_Y_LOW, SUN_Y_HIGH, sunEase);
+    // 屏幕百分比（从上往下）：起于 42%（藏在远山后）→ 升到 16%
+    const sunScreenPct = lerp(42, 16, sunEase);
+    const sunScreenY = 1 - sunScreenPct / 100;
     // 窄屏时太阳略偏中，避免贴边
     const sunScreenX = camera.aspect < 1.0 ? 0.68 : SUN_SCREEN_X;
     skyMat.uniforms.uSunUv.value.set(sunScreenX, sunScreenY);

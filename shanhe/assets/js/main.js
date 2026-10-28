@@ -329,6 +329,33 @@ renderSongWall();
     const rows = [...list.querySelectorAll('.scoring-item')];
     let current = null;      // 当前正在播放的 audio
 
+    /* ── 智能预加载 ──
+       卡顿的真正原因：preload="none" 只下载够播的部分，
+       缓冲一空就断流停顿（线上实测在 4.2s 处卡了 2 秒）。
+       策略：
+         · 进入视口 → 只取元数据（拿时长、可拖进度条）
+         · 鼠标悬停/聚焦 → 续传完整音频，提前把这条蓄满
+       悬停是明确的"用户意图"，此时多下流量是值得的；
+       而进入视口就全量预取 26MB 会在弱网下拖慢整站。 */
+    const warmFull = (audio) => {
+      if (audio.readyState < 2) {
+        audio.preload = 'auto';
+        audio.load();
+      }
+    };
+
+    /* 悬停 / 键盘聚焦 → 提前蓄满缓冲。
+       用 pointerover（冒泡）+ closest，比 pointerenter 更可靠：
+       指针在行内移动时也能命中，不必精确落在子元素上。 */
+    list.addEventListener('pointerover', (e) => {
+      const row = e.target.closest('.scoring-item');
+      if (row) warmFull(row.querySelector('audio'));
+    });
+    list.addEventListener('focusin', (e) => {
+      const row = e.target.closest('.scoring-item');
+      if (row) warmFull(row.querySelector('audio'));
+    });
+
     const resetRow = (row) => {
       const btn = row.querySelector('.scoring-play');
       row.querySelector('.scoring-fill').style.width = '0%';
@@ -361,28 +388,41 @@ renderSongWall();
       const pct = dur ? (audio.currentTime / dur) * 100 : 0;
       row.querySelector('.scoring-fill').style.width = pct + '%';
       row.querySelector('.scoring-knob').style.left = pct + '%';
-      row.querySelector('.scoring-cur').textContent = fmt(audio.currentTime);
+      // 缓冲中时保留提示文案，不被时间覆盖
+      if (!row.classList.contains('loading')) {
+        row.querySelector('.scoring-cur').textContent = fmt(audio.currentTime);
+      }
       row.querySelector('.scoring-bar').setAttribute('aria-valuenow', Math.round(pct));
     };
 
-    /* ── 缓冲指示：waiting / canplay 事件 ── */
+    /* ── 缓冲指示：waiting（缓冲耗尽）/ canplay（缓冲就绪） ── */
     list.addEventListener('waiting', (e) => {
       const a = e.target;
       if (a.tagName !== 'AUDIO') return;
       const row = a.closest('.scoring-item');
-      if (row && a === current) row.classList.add('loading');
+      // 缓冲耗尽 → 明确显示"缓冲中"，与"卡死"区分开
+      if (row && a === current) {
+        row.classList.add('loading');
+        row.querySelector('.scoring-cur').textContent = '缓冲中';
+      }
     }, true);
     list.addEventListener('playing', (e) => {
       const a = e.target;
       if (a.tagName !== 'AUDIO') return;
       const row = a.closest('.scoring-item');
-      if (row) row.classList.remove('loading');
+      if (row) {
+        row.classList.remove('loading');
+        paint(row, a);
+      }
     }, true);
     list.addEventListener('canplay', (e) => {
       const a = e.target;
       if (a.tagName !== 'AUDIO') return;
       const row = a.closest('.scoring-item');
-      if (row && a === current) row.classList.remove('loading');
+      if (row && a === current) {
+        row.classList.remove('loading');
+        paint(row, a);
+      }
     }, true);
 
     /* ── 进度刷新：用 timeupdate（浏览器原生节流），
@@ -469,6 +509,33 @@ renderSongWall();
           }
         });
       }
+
+      /* ── 缓冲守护 ──
+         缓冲量不足时先攒到 8 秒再放，避免起播后很快断流。
+         缓冲不足 → 暂停并显示"缓冲中"；缓冲够了 → 自动恢复播放。 */
+      const BUFFER_GUARD = 8;
+      let waiting = false;
+      const guard = () => {
+        if (current !== audio) return;
+        const dur = isFinite(audio.duration) ? audio.duration : 0;
+        const bufEnd = audio.buffered.length
+          ? audio.buffered.end(audio.buffered.length - 1) : 0;
+        const ahead = bufEnd - audio.currentTime;
+        if (ahead < BUFFER_GUARD && bufEnd < dur - 0.5) {
+          if (!waiting) {
+            waiting = true;
+            audio.pause();
+            row.classList.add('loading');
+            row.querySelector('.scoring-cur').textContent = '缓冲中';
+          }
+        } else if (waiting && ahead >= BUFFER_GUARD) {
+          waiting = false;
+          row.classList.remove('loading');
+          audio.play().catch(() => {});
+        }
+      };
+      audio.addEventListener('progress', guard);
+      audio.addEventListener('canplay', guard);
     });
 
     /* 键盘：进度条左右键快进 / 快退 */
