@@ -371,23 +371,19 @@ renderSongWall();
     /* 只停掉真正在播（或已加载）的条目。
        ⚠️ 对 readyState=0 的音频写 currentTime 会强制触发下载，
                 快速切歌时会把所有曲目都拉下来（26MB），这是之前卡顿的主因。
-       ⚠️ 关键：**不要去 pause() 那些 play() 还没兑现的条目**。
-          快速连点时它们的 play() 正在等待，一旦被 pause() 就以
-          AbortError reject，整条播放链就此断掉（实测前 5 首全部停在 t=0）。
-          对这类条目只需让它的令牌失效，等它自己 reject 后被忽略。 */
+       ⚠️ 关键顺序：**先作废令牌，再 pause()**。
+          play() 尚未兑现时被 pause() 会以 AbortError reject，
+          但令牌已作废 → 该 rejection 被忽略，不会污染当前状态；
+          而音频确实被停住了，不会出现多轨齐鸣。 */
     const stopAll = (except) => {
       rows.forEach(row => {
         if (row === except) return;
         const a = row.querySelector('audio');
         if (a) {
-          const inFlight = !a.paused && a.readyState === 0 && a.__pending;
-          if (inFlight) {
-            // 播放请求还在飞：作废令牌，不 pause，等它自然失败被忽略
-            a.__token = (a.__token || 0) + 1;
-          } else {
-            a.pause();
-            if (a.readyState > 0) a.currentTime = 0;   // 仅已加载的才归零
-          }
+          a.__token = (a.__token || 0) + 1;   // 先作废，令旧回调失效
+          a.__pending = false;
+          a.pause();
+          if (a.readyState > 0) a.currentTime = 0;   // 仅已加载的才归零
         }
         resetRow(row);
       });
@@ -521,8 +517,15 @@ renderSongWall();
       const p = audio.play();
       if (p && p.then) {
         p.then(() => {
-          if (audio.__token !== token) return;      // 已过期，忽略
+          /* ⚠️ __pending 必须在令牌校验**之前**清掉。
+             否则被作废的条目会永远标记为"播放请求在飞"，
+             它的 play() 其实成功了 → 出现多轨齐鸣。 */
           audio.__pending = false;
+          if (audio.__token !== token) {
+            // 已过期：确保它真的停下，别让多首同时响
+            if (!audio.paused) audio.pause();
+            return;
+          }
           current = audio;
           btn.classList.add('playing');
           btn.textContent = '❚❚';
@@ -530,8 +533,8 @@ renderSongWall();
           row.classList.remove('loading');
           paint(row, audio);
         }).catch((err) => {
-          if (audio.__token !== token) return;      // 已过期，忽略
           audio.__pending = false;
+          if (audio.__token !== token) return;      // 已过期，忽略
           btn.classList.remove('playing');
           btn.textContent = '▶';
           row.classList.remove('loading');
