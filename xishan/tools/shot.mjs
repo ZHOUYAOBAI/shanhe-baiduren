@@ -106,7 +106,13 @@ const TARGET = process.env.TARGET_URL || `http://127.0.0.1:${PORT}${SUB}`;
 await send('Network.enable', {}, sessionId);
 await send('Network.setCacheDisabled', { cacheDisabled: true }, sessionId);
 await send('Page.navigate', { url: TARGET + (TARGET.includes('?') ? '&' : '?') + '_=' + Date.now() }, sessionId);
-await sleep(9000);
+// 线上 three.core.js 约 1.4MB，GitHub Pages 传输可能需数十秒
+// 需等待模块图完全下载后再取指标
+const WAIT = Number(process.env.WAIT_MS || 9000);
+let waited = 0;
+while (waited < WAIT) {
+  await sleep(1000); waited += 1000;
+}
 
 const shots = [];
 for (let i = 0; i < SCROLLS.length; i++) {
