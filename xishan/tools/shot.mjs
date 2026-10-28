@@ -100,8 +100,9 @@ await send('Log.enable', {}, sessionId);
 await send('Emulation.setDeviceMetricsOverride',
   { width: W, height: H, deviceScaleFactor: 1, mobile: false }, sessionId);
 
-await send('Page.navigate', { url: `http://127.0.0.1:${PORT}/` }, sessionId);
-await sleep(5000);
+const TARGET = process.env.TARGET_URL || `http://127.0.0.1:${PORT}/`;
+await send('Page.navigate', { url: TARGET }, sessionId);
+await sleep(9000);
 
 const shots = [];
 for (let i = 0; i < SCROLLS.length; i++) {
