@@ -1,0 +1,92 @@
+/* ============================================================
+   《西山不是山》· 视觉令牌（唯一真源）
+   ---------------------------------------------------------------
+   沿用 NOCTURNE 的「铜版画蚀刻」技术路线，但重定色谱：
+
+   《山河摆渡人》= 火塘朱砂红（1932—35 彝寨，血色）
+   《西山不是山》= 滇池夜雾的墨青（一盏煤油灯，一扇门）
+
+   三色封顶：墨青（夜/水）、纸白（雾/光）、朱砂（门/血）。
+   不出现第四色相。3D 实物可用极小的暖色面积（火光）。
+   ============================================================ */
+
+:root {
+  /* ── 色 ── */
+  --ink:        #10151C;   /* 墨青 —— 夜、滇池深处 */
+  --ink-2:      #1A2129;   /* 次层 */
+  --ink-3:      #26303A;   /* 三层 */
+  --paper:      #F2EEE6;   /* 宣纸米白 —— 雾、光 */
+  --paper-warm: #E7E0D3;   /* 浅米白 */
+  --paper-pure: #FFFFFF;
+  --red:        #C2372F;   /* 朱砂 —— 门、血 */
+  --red-lit:    #E86A4C;   /* 灯火橙红 */
+  --gold:       #C9A24B;   /* 灯焰金 */
+  --rule:       #C7C0B4;   /* 纸面分隔线 */
+  --rule-dark:  #2C3742;   /* 墨面分隔线 */
+  --muted:      #6E7480;   /* 中灰 */
+  --muted-dim:  #8A9098;
+
+  /* ── 字体 ── */
+  --ff-display: "Noto Serif SC", "Songti SC", "SimSun", serif;
+  --ff-latin:   "Bodoni Moda", "Didot", serif;
+  --ff-script:  "Pinyon Script", "Snell Roundhand", cursive;
+  --ff-body:    "Noto Serif SC", "Songti SC", serif;
+  --ff-label:   "Noto Sans SC", "PingFang SC", sans-serif;
+
+  /* ── 字号 ── */
+  --fs-hero:      148px;
+  --fs-display-l: 92px;
+  --fs-display-m: 60px;
+  --fs-display-s: 38px;
+  --fs-title:     27px;
+  --fs-lead:      18px;
+  --fs-body:      15.5px;
+  --fs-caption:   12.5px;
+  --fs-label:     11px;
+
+  --lh-hero:      0.94;
+  --lh-display:   1.04;
+  --lh-title:     1.34;
+  --lh-lead:      1.78;
+  --lh-body:      1.9;
+  --lh-caption:   1.65;
+
+  --tr-hero:    -0.02em;
+  --tr-label:   0.28em;
+
+  /* ── 间距（4 的倍数）── */
+  --s1: 4px;   --s2: 8px;   --s3: 12px;  --s4: 16px;
+  --s5: 24px;  --s6: 32px;  --s7: 48px;  --s8: 64px;
+  --s9: 96px;  --s10: 128px; --s11: 160px;
+
+  /* ── 圆角 / 描边 ── */
+  --r0: 0;
+  --r1: 2px;
+  --sw-hair: 0.5px;
+  --sw-thin: 1px;
+  --sw-med: 1.5px;
+  --sw-thick: 2.5px;
+
+  /* ── 版式 ── */
+  --page-w: 1440px;
+  --page-pad: 96px;
+  --measure: 640px;
+
+  /* ── 动效 ── */
+  --ease-out:  cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+  --d-fast: 240ms;
+  --d-mid:  520ms;
+  --d-slow: 900ms;
+
+  /* ── 铜版画排线纹理 ── */
+  --hatch-fine-gap: 3.4px;
+  --hatch-fine-w: 0.45px;
+  --hatch-fine-o: 0.13;
+  --hatch-mid-gap:  3.0px;
+  --hatch-mid-w:   0.5px;
+  --hatch-mid-o:   0.18;
+  --hatch-bold-gap: 2.4px;
+  --hatch-bold-w:   0.5px;
+  --hatch-bold-o:   0.26;
+}

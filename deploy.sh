@@ -31,11 +31,28 @@ for f in shanhe/index.html shanhe/404.html \
 done
 echo "   ✓ 8 个核心文件齐全"
 
-echo "③ 提交并推送…"
+echo "③ 校验《西山不是山》（xishan/ 子目录）…"
+for f in xishan/index.html xishan/404.html \
+         xishan/assets/css/main.css \
+         xishan/assets/css/tokens.css \
+         xishan/assets/js/main.js \
+         xishan/assets/js/data.js \
+         xishan/assets/js/scene.js \
+         xishan/assets/js/hatch.js \
+         xishan/assets/js/three.module.js \
+         xishan/assets/js/three.core.js \
+         xishan/assets/svg/emblem-mountain.svg \
+         xishan/assets/svg/object-door.svg; do
+  [ -f "$f" ] || { echo "缺少文件：$f"; exit 1; }
+done
+echo "   ✓ 12 个核心文件齐全"
+
+echo "④ 提交并推送…"
 git add -A
 git commit -m "update: $(date '+%Y-%m-%d %H:%M')" || true
 git push origin main
 
-echo "④ 完成。GitHub Pages 约 1-2 分钟后自动更新。"
+echo "⑤ 完成。GitHub Pages 约 1-2 分钟后自动更新。"
 echo "   NOCTURNE 剧作集：https://zhouyaobai.github.io/shanhe-baiduren/"
 echo "   《山河摆渡人》　：https://zhouyaobai.github.io/shanhe-baiduren/shanhe/"
+echo "   《西山不是山》　：https://zhouyaobai.github.io/shanhe-baiduren/xishan/"

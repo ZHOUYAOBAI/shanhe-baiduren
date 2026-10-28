@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>西山不是山 ｜ 中小型原创音乐剧</title>
+<meta name="description" content="音乐剧《西山不是山》。一夜，一间屋，一扇门。14 场，78 分钟，7 首唱段。讲述即演出——传说中的人从守塔人的讲述里走出来。">
+<meta name="theme-color" content="#10151C">
+<meta property="og:type" content="website">
+<meta property="og:title" content="西山不是山 ｜ 中小型原创音乐剧">
+<meta property="og:description" content="一夜，一间屋，一扇门。她是怎么被看出来的，又是怎么被看错的。">
+<meta property="og:locale" content="zh_CN">
+<link rel="stylesheet" href="assets/css/main.css">
+<link rel="preload" href="assets/js/three.module.js" as="script" crossorigin>
+<link rel="preload" href="assets/js/data.js" as="script">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%2310151C'/><circle cx='16' cy='16' r='8' fill='none' stroke='%23C2372F' stroke-width='1.6'/><path d='M6 22h20' stroke='%23C9A24B' stroke-width='1'/></svg>">
+</head>
+<body>
+
+<canvas id="stage" aria-hidden="true"></canvas>
+<div class="hatch" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+
+<!-- ══ 顶栏 ══ -->
+<header class="topbar">
+  <div class="brand">西山<em>不是山</em></div>
+  <nav class="topnav" id="topnav" aria-label="主导航"></nav>
+</header>
+
+<!-- ══ 左侧幕次轨 ══ -->
+<nav class="rail" id="rail" aria-label="幕次导航"></nav>
+
+<main class="page">
+
+  <!-- ══ HERO ══ -->
+  <section class="hero" id="hero">
+    <div class="hero-mark" aria-hidden="true"><span>门</span></div>
+    <div class="hero-inner">
+      <div class="hero-kicker">昆明西山睡美人题材 · 中小型原创音乐剧</div>
+      <h1 class="hero-title">西山不是山<span class="seal" aria-hidden="true">一夜</span></h1>
+      <p class="hero-sub" id="heroSub">一夜。一间屋。一扇门。</p>
+      <div class="hero-meta" id="heroMeta"></div>
+      <div class="hero-credits" id="heroCredits"></div>
+      <button class="hero-cta" data-goto="#act-0">开 演 · 序幕</button>
+    </div>
+    <div class="scroll-hint" aria-hidden="true"><span>向下</span><i></i></div>
+    <div class="drag-hint" id="dragHint" aria-hidden="true">
+      <svg viewBox="0 0 64 24" width="64" height="24" fill="none">
+        <path d="M2 12h58M52 5l8 7-8 7" stroke="currentColor" stroke-width="1.4"
+              stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>拖动 · 拉开山色</span>
+    </div>
+  </section>
+
+  <!-- ══ 核心主线 ══ -->
+  <section class="band dark" id="mainline">
+    <div class="wrap wide">
+      <div class="sec-head">
+        <div class="sec-num">主 线</div>
+        <h2 class="sec-title">她是怎么被看出来的，又是怎么被看错的</h2>
+        <p class="sec-desc">全剧只问这一个問題。六个单元，一个晚上，一间堂屋。</p>
+      </div>
+      <div class="spine">
+        <div class="spine-line" aria-hidden="true"></div>
+        <div class="spine-items" id="spineItems"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 舞台机制 ══ -->
+  <section class="band mist" id="mechanism">
+    <div class="wrap wide">
+      <div class="sec-head">
+        <div class="sec-num">机 制</div>
+        <h2 class="sec-title">讲述即演出</h2>
+        <p class="sec-desc">当守塔人开口，传说中的人物从光里走出来，站到堂屋里；他一停，他们退回光里。讲的人与被讲的人同处一室——于是第四幕那场争执无法回避。</p>
+      </div>
+      <div class="mech" id="mechBox"></div>
+    </div>
+  </section>
+
+  <!-- ══ 剧目（幕） ══ -->
+  <div id="acts"></div>
+
+  <!-- ══ 权限说明 ══ -->
+  <section class="band dark gate" id="gate">
+    <div class="wrap">
+      <div class="gate-card">
+        <div class="gate-mark" aria-hidden="true">开</div>
+        <h2 class="gate-title">全本剧本 · 对外公开</h2>
+        <p class="gate-desc">
+          全部 14 场分场剧本正文、全部唱段完整歌词，对外公开。<br>
+          本剧为独立原创剧目，与大型版《西山不是山》非删减改编关系。
+        </p>
+        <form class="gate-form" id="gateForm" autocomplete="off">
+          <label class="gate-label" for="gateInput">阅读密码</label>
+          <input class="gate-input" id="gateInput" type="password"
+                 inputmode="numeric" placeholder="请输入密码" aria-label="阅读密码">
+          <button class="gate-btn" type="submit">开 卷</button>
+        </form>
+        <p class="gate-msg" id="gateMsg" role="status" aria-live="polite"></p>
+        <p class="gate-tip">密码由主创团队分发 · 公开页面仅展示剧目概况</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 曲目总览 ══ -->
+  <section class="band dark" id="songs">
+    <div class="wrap wide">
+      <div class="sec-head">
+        <div class="sec-num">歌 单</div>
+        <h2 class="sec-title">全剧七首</h2>
+        <p class="sec-desc">点开任意一首，看它的完整歌词。低吟、二重唱、群舞合唱，各有其声。</p>
+      </div>
+      <div class="songwall" id="songwall"></div>
+    </div>
+  </section>
+
+  <!-- ══ 五动机 ══ -->
+  <section class="band dark" id="motifs">
+    <div class="wrap wide">
+      <div class="sec-head">
+        <div class="sec-num">动 机</div>
+        <h2 class="sec-title">五支动机，一支负责不解决</h2>
+        <p class="sec-desc">动机 C「门」在全剧从不解决——直到终曲才第一次落地。这是全剧最重要的一条听觉纪律。</p>
+      </div>
+      <div class="motifs" id="motifList"></div>
+    </div>
+  </section>
+
+  <!-- ══ 人物 ══ -->
+  <section class="band dark" id="cast">
+    <div class="wrap wide">
+      <div class="sec-head">
+        <div class="sec-num">人 物</div>
+        <h2 class="sec-title">三个人，一间屋</h2>
+        <p class="sec-desc">没有反派。只有一个守了四代规矩的人，和一个不肯将就的年轻人。</p>
+      </div>
+      <div class="cast" id="castGrid"></div>
+    </div>
+  </section>
+
+  <!-- ══ 伏笔 ══ -->
+  <section class="band dark" id="threads">
+    <div class="wrap wide">
+      <div class="sec-head">
+        <div class="sec-num">伏 笔</div>
+        <h2 class="sec-title">六件东西，都收到了</h2>
+        <p class="sec-desc">每一件信物埋下时，都不是为了好看。它们在最后一场全部落地。</p>
+      </div>
+      <div class="threads" id="threadList"></div>
+    </div>
+  </section>
+
+  <!-- ══ 线稿 ══ -->
+  <section class="band paper" id="gallery">
+    <div class="wrap wide">
+      <div class="sec-head">
+        <div class="sec-num">线 稿</div>
+        <h2 class="sec-title">六件信物的铜版画</h2>
+        <p class="sec-desc">手绘钢笔排线，程序生成。每一张对应剧中的一个实物。</p>
+      </div>
+      <div class="gallery">
+        <figure class="plate">
+          <img src="assets/svg/emblem-mountain.svg" alt="山形即卧人 · 徽记" loading="lazy">
+          <figcaption>山形即卧人 · 徽记</figcaption>
+        </figure>
+        <figure class="plate">
+          <img src="assets/svg/object-book.svg" alt="旧册" loading="lazy">
+          <figcaption>那册旧册</figcaption>
+        </figure>
+        <figure class="plate">
+          <img src="assets/svg/object-lamp.svg" alt="煤油灯" loading="lazy">
+          <figcaption>那盏煤油灯</figcaption>
+        </figure>
+        <figure class="plate">
+          <img src="assets/svg/object-chisel.svg" alt="旧凿子" loading="lazy">
+          <figcaption>那把旧凿子</figcaption>
+        </figure>
+        <figure class="plate">
+          <img src="assets/svg/object-camera.svg" alt="摄影机" loading="lazy">
+          <figcaption>那台机器</figcaption>
+        </figure>
+        <figure class="plate">
+          <img src="assets/svg/object-cup.svg" alt="豆浆杯" loading="lazy">
+          <figcaption>那杯豆浆</figcaption>
+        </figure>
+        <figure class="plate">
+          <img src="assets/svg/object-door.svg" alt="门" loading="lazy">
+          <figcaption>那扇门</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 页脚 ══ -->
+  <footer class="foot">
+    <div class="wrap">
+      <h2 class="foot-title">门在这里</h2>
+      <div class="foot-line" aria-hidden="true"></div>
+      <p class="foot-note" id="footNote"></p>
+      <div class="foot-meta">
+        <span id="footAuthor"></span>
+        <span>14 场 · 78 分钟</span>
+        <span>七首唱段</span>
+      </div>
+    </div>
+  </footer>
+
+</main>
+
+<script src="assets/js/data.js"></script>
+<script type="module" src="assets/js/main.js"></script>
+</body>
+</html>
