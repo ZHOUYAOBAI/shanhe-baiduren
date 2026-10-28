@@ -1,28 +1,42 @@
 /* ============================================================
-   NOCTURNE — 剧目展演站 设计 token
-   视觉基底：铜版画蚀刻 + 幕布正红
-   本文件是 Ardot 设计稿 / 可运行原型 / 规范文档的唯一真源
+   NOCTURNE — 剧作集 设计 token
+   视觉基底：正红幕布 × 极细密铜版画排线 × 手绘平面插画
+   —— 全部色值由参考视频逐帧像素采样得出，非目测估计
+   本文件是 Ardot 画布 / 可运行原型 / 规范文档的唯一真源
    ============================================================ */
 
 :root {
-  /* ---------- 色彩 ---------- */
-  --c-curtain:      #B00000;   /* 幕布正红 — 品牌主色，样片实测采样值 */
-  --c-curtain-deep: #7C0000;   /* 深红 — 排线阴影 / 渐层暗部 */
-  --c-curtain-lift: #C81E1E;   /* 亮红 — 高光与强调 */
-  --c-paper:        #E0D9D6;   /* 米白 — 反白文字与卡片底 */
-  --c-paper-warm:   #EFE9E5;   /* 浅米白 — 交替区块底 */
-  --c-ink:          #08080A;   /* 墨黑 — 正文与深色区块 */
-  --c-ink-soft:     #3A342E;   /* 暖灰 — 次级文字 */
-  --c-ink-mute:     #6B635C;   /* 灰褐 — 辅助信息 */
-  --c-rule:         #C9C0BA;   /* 分隔线（纸面上） */
-  --c-rule-dark:    #5E1818;   /* 分隔线（红面上） */
+  /* ---------- 核心三色（实测） ---------- */
+  --c-red:       #FF0000;   /* 幕布正红 —— 视频主色，峰值采样 */
+  --c-red-deep:  #BF0002;   /* 幕布暗部（受光衰减后的实测值） */
+  --c-red-lift:  #FF2A2A;   /* 高光红 */
+  --c-paper:     #F8F2E8;   /* 米白（宣纸） */
+  --c-paper-pure:#FFFFFF;   /* 纯白（瓶盖、台座高光） */
+  --c-ink:       #0E0D12;   /* 墨黑（近黑带蓝） */
+
+  /* ---------- 三原色瓶（实测） ---------- */
+  --c-bottle-blue:   #4FB6F9;
+  --c-bottle-green:  #91EA82;
+  --c-bottle-yellow: #FDDE1F;
+
+  /* ---------- 兼容别名（供页面使用） ---------- */
+  --c-curtain:      var(--c-red);
+  --c-curtain-deep: var(--c-red-deep);
+  --c-curtain-lift: var(--c-red-lift);
+
+  /* ---------- 次级 ---------- */
+  --c-paper-dim:  #E4D7D3;   /* 米白暗部 */
+  --c-ink-soft:   #2A2A30;   /* 深灰 */
+  --c-ink-mute:   #6B6B72;   /* 中灰 */
+  --c-rule:       #C9C0BA;   /* 纸面分隔线 */
+  --c-rule-dark:  #7A1414;   /* 红面分隔线 */
 
   /* ---------- 字体 ---------- */
-  --f-display: "Noto Serif SC", "Songti SC", serif;  /* 蚀刻巨标题 */
-  --f-latin:   "Bodoni Moda", "Didot", serif;        /* 拉丁 Didone */
-  --f-script:  "Pinyon Script", "Snell Roundhand", cursive; /* 手写签名 */
-  --f-body:    "Noto Serif SC", serif;               /* 正文 */
-  --f-label:   "Noto Sans SC", "Inter", sans-serif;  /* 导航 / 标签 / 数据 */
+  --f-display: "Noto Serif SC", "Songti SC", serif;   /* 巨标题 */
+  --f-latin:   "Bodoni Moda", "Didot", serif;         /* 拉丁 Didone */
+  --f-script:  "Pinyon Script", "Snell Roundhand", cursive; /* 手写 logo */
+  --f-body:    "Noto Serif SC", serif;
+  --f-label:   "Noto Sans SC", "Inter", sans-serif;
 
   /* ---------- 字号阶 ---------- */
   --t-hero:      176px;  --lh-hero:      0.94;
@@ -38,68 +52,76 @@
   /* ---------- 字距 ---------- */
   --ls-hero:    -0.02em;
   --ls-display:  0.00em;
-  --ls-label:    0.28em;   /* 导航与标签：大字距 */
+  --ls-label:    0.28em;
   --ls-caps:     0.16em;
 
   /* ---------- 间距阶（4 的倍数） ---------- */
-  --s-1:   4px;
-  --s-2:   8px;
-  --s-3:  12px;
-  --s-4:  16px;
-  --s-5:  24px;
-  --s-6:  32px;
-  --s-7:  48px;
-  --s-8:  64px;
-  --s-9:  96px;
-  --s-10: 128px;
-  --s-11: 160px;
+  --s-1:   4px;   --s-2:   8px;   --s-3:  12px;
+  --s-4:  16px;   --s-5:  24px;   --s-6:  32px;
+  --s-7:  48px;   --s-8:  64px;   --s-9:  96px;
+  --s-10: 128px;  --s-11: 160px;
 
   /* ---------- 圆角 ---------- */
-  --r-none: 0px;      /* 全站统一直角：古典戏单语汇 */
-  --r-1:    2px;      /* 仅用于 1px 描边块的微圆 */
+  --r-none: 0px;      /* 全站直角 */
+  --r-1:    2px;
 
   /* ---------- 描边 ---------- */
-  --w-hair: 0.5px;    /* 蚀刻细线 */
-  --w-thin: 1px;      /* 分隔线 */
-  --w-med:  1.5px;    /* 线稿主轮廓 */
-  --w-thick: 2.5px;   /* 强调轮廓 */
+  --w-hair: 0.5px;
+  --w-thin: 1px;
+  --w-med:  1.5px;
+  --w-thick: 2.5px;
 
   /* ---------- 版心 ---------- */
   --w-page: 1440px;
   --pad-page: 96px;
-  --w-measure: 640px;   /* 正文可读行宽 */
+  --w-measure: 640px;
 
   /* ---------- 动效 ---------- */
-  --e-out: cubic-bezier(0.16, 1, 0.3, 1);      /* 强出场 */
-  --e-soft: cubic-bezier(0.4, 0, 0.2, 1);      /* 常规 */
+  --e-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --e-soft: cubic-bezier(0.4, 0, 0.2, 1);
   --d-fast: 240ms;
   --d-mid:  520ms;
   --d-slow: 900ms;
 }
 
-/* 纸面模式：米白底 + 墨黑字（长文阅读区） */
+/* ============================================================
+   铜版画排线 —— 三种密度（视频实测：极细密，1px 级）
+   ============================================================ */
+:root {
+  /* 细密排线：用于大面积色块的表面纹理 */
+  --hatch-fine-gap:   3px;
+  --hatch-fine-w:     0.6px;
+  /* 中密排线：用于形体转折处 */
+  --hatch-mid-gap:    5px;
+  --hatch-mid-w:      0.9px;
+  /* 粗排线：用于轮廓与深阴影 */
+  --hatch-bold-gap:   8px;
+  --hatch-bold-w:     1.6px;
+}
+
+/* 纸面模式 */
 .on-paper {
-  --fg:        var(--c-ink);
-  --fg-soft:   var(--c-ink-soft);
-  --fg-mute:   var(--c-ink-mute);
-  --rule:      var(--c-rule);
-  --bg:        var(--c-paper);
+  --fg:      var(--c-ink);
+  --fg-soft: var(--c-ink-soft);
+  --fg-mute: var(--c-ink-mute);
+  --rule:    var(--c-rule);
+  --bg:      var(--c-paper);
 }
 
-/* 红面模式：正红底 + 米白字（主视觉 / 强区块） */
+/* 红面模式 */
 .on-curtain {
-  --fg:        var(--c-paper);
-  --fg-soft:   #E8C9C9;
-  --fg-mute:   #B98A8A;
-  --rule:      var(--c-rule-dark);
-  --bg:        var(--c-curtain);
+  --fg:      var(--c-paper);
+  --fg-soft: #F5C9C9;
+  --fg-mute: #E09A9A;
+  --rule:    var(--c-rule-dark);
+  --bg:      var(--c-red);
 }
 
-/* 墨面模式：近黑底 + 米白字（数据区 / 尾声） */
+/* 墨面模式 */
 .on-ink {
-  --fg:        var(--c-paper);
-  --fg-soft:   #A8A29C;
-  --fg-mute:   #7A746E;
-  --rule:      #2A2622;
-  --bg:        var(--c-ink);
+  --fg:      var(--c-paper);
+  --fg-soft: #A8A29C;
+  --fg-mute: #7A746E;
+  --rule:    #2A2622;
+  --bg:      var(--c-ink);
 }
