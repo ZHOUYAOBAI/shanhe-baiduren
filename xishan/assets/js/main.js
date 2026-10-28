@@ -55,10 +55,21 @@ function renderSongItems(items) {
   }).join('');
 }
 
-function renderSongCard(s) {
+/* ── 唱段卡渲染 ─────────────────────────────────────────
+   一首长歌可能跨场延续（源剧本会在多场重复标记同一唱段）。
+   首次出现处展开完整歌词，后续处只标「续」并指向首次出现处，
+   避免同一首歌被渲染成多张重复的完整卡片。               */
+const songSeen = new Map();   // no → 首次出现的 DOM 序号
+let songSeq = 0;             // 全局递增，用于标记首次出现
+
+function renderSongCard(s, seq) {
   const full = songByNo[s.no];
   const items = (full && full.items) || s.items || [];
-  return `
+  const first = !songSeen.has(s.no);
+
+  if (first) {
+    songSeen.set(s.no, seq);
+    return `
     <div class="song" data-song="${s.no}">
       <div class="song-head" role="button" tabindex="0" aria-expanded="false">
         <span class="song-no">${String(s.no).padStart(2, '0')}</span>
@@ -70,6 +81,17 @@ function renderSongCard(s) {
         <div class="song-inner">
           <div class="lyric">${renderSongItems(items)}</div>
         </div>
+      </div>
+    </div>`;
+  }
+
+  // 续唱标记：点击跳回首次出现处
+  return `
+    <div class="song song-cont" data-song-cont="${s.no}">
+      <div class="song-head">
+        <span class="song-no">${String(s.no).padStart(2, '0')}</span>
+        <span class="song-name">《${esc(s.name)}》<span class="song-cont-tag">续</span></span>
+        <a class="song-cont-link" href="#" data-jump-song="${s.no}">看全词</a>
       </div>
     </div>`;
 }
@@ -98,7 +120,7 @@ function renderAct(a, ai) {
         body += `<div class="scene" id="scene-${b.no}"><div class="scene-head">${esc(b.v)}</div></div>`;
         break;
       case 'song':
-        body += renderSongCard(b.v);
+        body += renderSongCard(b.v, ++songSeq);
         break;
       case 'sd':
         body += `<p class="sd">${esc(b.v)}</p>`;
@@ -164,11 +186,25 @@ function renderSongWall() {
 function renderSpine() {
   const box = $('#spineItems');
   if (!box) return;
-  box.innerHTML = (D.cover.mainline || []).map(t =>
-    `<div class="spine-item">
+  const items = D.cover.mainline || [];
+  box.innerHTML = items.map((it, i) => {
+    // 兼容旧格式（纯字符串）
+    if (typeof it === 'string') {
+      return `<div class="spine-item">
+         <span class="spine-dot" aria-hidden="true"></span>
+         <div class="spine-label">${esc(it)}</div>
+       </div>`;
+    }
+    const anchor = it.no ? `scene-${it.no}` : `act-${it.act || 0}`;
+    return `<a class="spine-item" href="#${anchor}" data-spine="${i}">
        <span class="spine-dot" aria-hidden="true"></span>
-       <div class="spine-label">${esc(t)}</div>
-     </div>`).join('');
+       <div class="spine-head">
+         <span class="spine-t">${esc(it.t || '')}</span>
+         <span class="spine-scene">第 ${it.no} 场</span>
+       </div>
+       <div class="spine-label">${esc(it.d || '')}</div>
+     </a>`;
+  }).join('');
 }
 
 /* ── 故事概述 ───────────────────────────────────────────

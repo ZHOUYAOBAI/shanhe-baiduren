@@ -35,10 +35,17 @@ import json, os, re, sys
 ok = True
 for f in ('index.html', 'assets/css/main.css', 'assets/css/tokens.css',
           'assets/js/main.js', 'assets/js/scene.js', 'assets/js/data.js',
-          'assets/js/hatch.js', 'assets/js/three.module.js',
-          'assets/js/three.core.js'):
+          'assets/js/hatch.js', 'assets/js/three.module.js'):
     if not os.path.isfile(f) or os.path.getsize(f) == 0:
         print('  ✗ 缺失或为空:', f); ok = False
+# three.module.js 必须是自包含版（零外部 import）
+# 拆分版需额外请求 1.4MB 的 three.core.js，GitHub Pages 上传输可达 70 秒，
+# 导致模块图长时间解析不完，页面脚本静默不执行
+tm = open('assets/js/three.module.js', encoding='utf-8', errors='replace').read()
+if re.search(r"from\s*['\"]\./three\.core\.js['\"]", tm):
+    print('  ✗ three.module.js 依赖外部 three.core.js，须改用自包含版'); ok = False
+if os.path.exists('assets/js/three.core.js'):
+    print('  ! assets/js/three.core.js 已无用，建议删除')
 d = json.load(open('working/script_struct.json', encoding='utf-8'))
 print('  幕 %d ／ 场 %d ／ 唱段 %d'
       % (len(d['acts']), len(d['scenes']), len(d['songs'])))
@@ -62,5 +69,15 @@ if need - ids:
 print('  ✓ 校验通过' if ok else '  ✗ 校验未通过')
 sys.exit(0 if ok else 1)
 PY
+
+echo "⑤ 观众视角回归测试"
+if command -v node >/dev/null 2>&1; then
+  node tools/interact.mjs "$(pwd)" | tail -8
+  if [ "${PIPESTATUS[0]}" != "0" ]; then
+    echo "  ! 交互测试有失败项，请检查"
+  fi
+else
+  echo "  (跳过：未找到 node)"
+fi
 
 echo "✓ 构建完成 → xishan/"
