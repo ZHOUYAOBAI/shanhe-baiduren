@@ -337,12 +337,14 @@ export function createStageScene(canvas, opts = {}) {
   }
   window.addEventListener('pointermove', onMove, { passive: true });
 
-  const clock = new THREE.Clock();
+  /* 自计时器：THREE.Clock 在新版 Three.js 已废弃，避免依赖 API 变动 */
+  const t0 = performance.now();
+  const elapsed = () => (performance.now() - t0) / 1000;
   let raf = 0;
 
   function animate() {
     raf = requestAnimationFrame(animate);
-    const t = clock.getElapsedTime();
+    const t = elapsed();
 
     pointer.x += (pointer.tx - pointer.x) * 0.045;
     pointer.y += (pointer.ty - pointer.y) * 0.045;
@@ -493,11 +495,13 @@ export function createSpectrumScene(canvas, opts = {}) {
   }
   window.addEventListener('pointermove', onMove, { passive: true });
 
-  const clock = new THREE.Clock();
+  /* 自计时器：THREE.Clock 在新版 Three.js 已废弃，避免依赖 API 变动 */
+  const t0 = performance.now();
+  const elapsed = () => (performance.now() - t0) / 1000;
   let raf = 0;
   function animate() {
     raf = requestAnimationFrame(animate);
-    const t = clock.getElapsedTime();
+    const t = elapsed();
     pointer.x += (pointer.tx - pointer.x) * 0.05;
 
     camera.position.x = (reducedMotion ? 0 : pointer.x) * 0.5;

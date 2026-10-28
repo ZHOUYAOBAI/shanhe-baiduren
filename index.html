@@ -174,6 +174,9 @@ body {
 }
 /* 3D 就绪后 canvas 覆盖静态兜底图 */
 .showcase.is-3d .showcase-canvas { opacity: 1; }
+/* 兜底图始终垫底：3D 加载慢时不会出现空白屏 */
+.showcase-stage { z-index: 1; }
+.showcase.is-3d .showcase-stage { opacity: 0; transition: opacity var(--d-mid) var(--e-soft); }
 /* 复刻场景（降级兜底）：红幕剧场 / 黑色频谱 */
 .showcase-stage {
   position: absolute; inset: 0; z-index: 1;
@@ -746,6 +749,8 @@ body {
   /* ---- 载入 3D 模块 ---- */
   var canvas = document.getElementById('gl-canvas');
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var attempts = 0;
+  var MAX_ATTEMPTS = 3;
 
   function fallback(err) {
     ready = false;
@@ -754,35 +759,54 @@ body {
     if (window.console) console.warn('[NOCTURNE] WebGL 场景不可用，已退回静态复刻图：', err);
   }
 
-  import('./assets/nocturne/js/scenes.js')
-    .then(function (mod) {
-      var active = null;
-      function mount(which) {
-        if (active) { active.dispose(); active = null; }
-        /* 重建场景必须换新 canvas 元素：
-           renderer.dispose() 不释放 WebGL context 占用，
-           复用同一 canvas 会导致像素全透明且无任何报错。 */
-        var fresh = document.createElement('canvas');
-        fresh.className = canvas.className;
-        fresh.id = canvas.id;
-        fresh.width = canvas.width;
-        fresh.height = canvas.height;
-        canvas.parentNode.replaceChild(fresh, canvas);
-        canvas = fresh;
-        active = (which === 'bottles')
-          ? mod.createStageScene(canvas, { reducedMotion: reduced })
-          : mod.createSpectrumScene(canvas, { reducedMotion: reduced });
-      }
-      ready = true;
-      webgl = {
-        show: function (which) {
-          mount(which);
+  function loadScenes() {
+    attempts += 1;
+    /* 动态 import 带时间戳，绕开 CDN 缓存的失败响应 */
+    var url = './assets/nocturne/js/scenes.js';
+    if (attempts > 1) url += '?retry=' + attempts;
+
+    import(/* webpackIgnore: true */ url)
+      .then(function (mod) {
+        var active = null;
+        function mount(which) {
+          if (active) { active.dispose(); active = null; }
+          /* 重建场景必须换新 canvas 元素：
+             renderer.dispose() 不释放 WebGL context 占用，
+             复用同一 canvas 会导致像素全透明且无任何报错。 */
+          var fresh = document.createElement('canvas');
+          fresh.className = canvas.className;
+          fresh.id = canvas.id;
+          fresh.width = canvas.width;
+          fresh.height = canvas.height;
+          canvas.parentNode.replaceChild(fresh, canvas);
+          canvas = fresh;
+          active = (which === 'bottles')
+            ? mod.createStageScene(canvas, { reducedMotion: reduced })
+            : mod.createSpectrumScene(canvas, { reducedMotion: reduced });
         }
-      };
-      mount(current);
-      section.classList.add('is-3d');
-    })
-    .catch(fallback);
+        ready = true;
+        webgl = {
+          show: function (which) {
+            mount(which);
+          }
+        };
+        mount(current);
+        section.classList.add('is-3d');
+      })
+      .catch(function (err) {
+        /* three.module.js 约 1.3MB，慢网下首取可能失败。
+           退避重试若干次；仍不成功则保持静态复刻图（观感一致，不影响使用）。 */
+        if (attempts < MAX_ATTEMPTS) {
+          var delay = 800 * attempts;
+          if (window.console) console.warn('[NOCTURNE] 3D 模块加载失败，' + delay + 'ms 后重试：', err);
+          setTimeout(loadScenes, delay);
+        } else {
+          fallback(err);
+        }
+      });
+  }
+
+  loadScenes();
 })();
 </script>
 
