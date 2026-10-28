@@ -1506,6 +1506,125 @@ body:not(.unlocked) .songcard .no::after {
 }
 
 /* ============================================================
+   移动端专项优化（≤ 720px）
+   —— PC 端样式完全不受影响，所有规则只在此断点内生效
+   ============================================================ */
+@media (max-width: 720px) {
+
+  /* ── ① 顶栏：品牌名精简 + 导航可滑动 + 右侧渐隐提示 ──
+     原来 393px 宽放不下 5 个导航项，"人物/伏笔"被硬切 */
+  .topbar {
+    height: 52px;
+    padding: 0 12px 0 14px;
+    gap: 8px;
+  }
+  .brand {
+    font-size: 15px;
+    letter-spacing: .04em;
+    flex: none;
+  }
+
+  .topnav {
+    margin-left: 0;
+    flex: 1 1 auto;
+    min-width: 0;
+    gap: 0;
+    /* 右侧渐隐，暗示还能横向滑动 */
+    -webkit-mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 22px), transparent 100%);
+    mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 22px), transparent 100%);
+    padding-right: 22px;
+  }
+  .topnav a {
+    font-size: 12px;
+    letter-spacing: .06em;
+    padding: 6px 9px;
+  }
+  /* DEMO 的金色圆点在窄屏太占位，改为纯文字 */
+  .topnav a[data-nav="#scoring"]::before {
+    width: 4px; height: 4px;
+    margin-right: 5px;
+  }
+
+  /* ── ② 底部幕次轨：抬离屏幕底端，避免被浏览器地址栏遮住 ──
+     原来 bottom:0，会被 iOS Safari 的地址栏 / home indicator 盖住。
+     做法：抬到地址栏之上（bottom: 8px），并缩窄字号让 6 项尽量放下。 */
+  .rail {
+    height: 44px;
+    bottom: 8px;
+    left: 8px; right: 8px;
+    width: auto;
+    padding: 0 6px;
+    border: 1px solid rgba(247,240,226,.14);
+    border-radius: 4px;
+    background: rgba(46,18,20,.90);
+    backdrop-filter: blur(14px);
+    box-shadow: 0 6px 24px rgba(0,0,0,.45);
+  }
+  .rail-item {
+    padding: 5px 9px;
+    font-size: 11.5px;
+    letter-spacing: .02em;
+    flex: none;
+  }
+  .rail-sep { margin: 0 1px; }
+  .page { padding-bottom: 76px; }
+  .foot { padding-bottom: 76px; }
+
+  /* ── ③ 首屏：把 3D 场景元素让给文字 ──
+     原来马匹/火塘/战士正好压在"编剧/音乐"两行下面，文字读不清。
+     做法：给 hero 加一层自上而下的暗色遮罩，让文字区更沉。 */
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background:
+      linear-gradient(180deg,
+        rgba(46,18,20,.72) 0%,
+        rgba(46,18,20,.52) 26%,
+        rgba(46,18,20,.18) 46%,
+        rgba(46,18,20,.30) 72%,
+        rgba(46,18,20,.62) 100%);
+  }
+  .hero > * { position: relative; z-index: 2; }
+
+  /* ── ④ 首屏信息：收紧行距、缩小字号，减少堆叠感 ── */
+  .hero { padding: 84px 20px 150px; }
+  .hero-kicker { font-size: 11px; letter-spacing: .22em; }
+  .hero-title { font-size: 30px; letter-spacing: .04em; }
+  .hero-sub { font-size: 15px; margin-top: 10px; }
+  .hero-meta { font-size: 12px; line-height: 1.9; }
+  .hero-credits { font-size: 12px; line-height: 1.9; }
+  .hero-cta { margin-top: 26px; }
+
+  /* ── ⑤ 拖动提示 / 向下指示 ──
+     底部幕次轨浮在 bottom:8px（高 44px），内容要让到 60px 以上。
+     拖动提示与 CTA 同在首屏，窄屏时把它压到"向下"指示上方、
+     CTA 下方，并降低不透明度，避免与按钮抢视觉。 */
+  .drag-hint {
+    bottom: 92px;
+    gap: 8px;
+    font-size: 10px;
+    letter-spacing: .14em;
+    opacity: .7;
+  }
+  .drag-hint svg { width: 40px; height: 15px; }
+  .scroll-hint {
+    bottom: 64px;
+    font-size: 10px;
+    opacity: .65;
+  }
+}
+
+/* 矮屏（iPhone SE 等）：首屏塞不下，隐藏拖动提示，
+   只保留"向下"引导，避免与 CTA 重叠 */
+@media (max-width: 720px) and (max-height: 740px) {
+  .drag-hint { display: none; }
+  .hero { padding-bottom: 118px; }
+}
+
+/* ============================================================
    赓续红色历史 · 视觉调整
    —— 整站深赭夜色；苍青只给史实，彝金只给名录
    ============================================================ */

@@ -788,8 +788,10 @@ export function createStage(canvas) {
 
   /* 窄屏（竖屏）时视野更窄 → 相机后撤并抬高，
      让左右两侧的江岸、人物仍能落在画面内 */
+  let isNarrow = false;
   function applyCameraFraming() {
     const a = camera.aspect;
+    isNarrow = a < 1.0;
     if (a < 0.85) {
       camera.position.z = CAM_Z + 30;
       camera.position.y = CAM_Y + 5;
@@ -1058,6 +1060,7 @@ export function createStage(canvas) {
     mesh.position.y = ty + H / 2 - (1 - ay / ch) * H;
     if (tz !== undefined) mesh.position.z = tz;
     mesh.userData.baseX = mesh.position.x;
+    mesh.userData.baseY = mesh.position.y;
     return mesh;
   }
 
@@ -1071,6 +1074,7 @@ export function createStage(canvas) {
     placeSprite(mesh, cw, ch, cw / 2, feet, x, opt.groundY ?? 0, z);
     mesh.renderOrder = opt.order ?? 0;
     mesh.userData.px = opt.px ?? 1.0;
+    if (opt.drop) mesh.userData.narrowDrop = opt.drop;
     scene.add(mesh);
     sprites.push(mesh);
     return mesh;
@@ -1081,7 +1085,7 @@ export function createStage(canvas) {
   addSoldier(8.3, 7, 2.35, { px: 1.10, pack: false, order: -4 });
   addSoldier(7.9, 10, 2.25, { px: 1.10, pack: true, order: -4 });
   /* 火塘边守夜的一人 */
-  addSoldier(-6.2, 11, 2.30, { px: 1.10, pack: false, order: -4 });
+  addSoldier(-6.2, 11, 2.30, { px: 1.10, pack: false, order: -4, drop: 7 });
 
   /* 芦苇丛：置于画面最左边缘，远离火塘，避免与火光重叠 */
   {
@@ -1091,6 +1095,7 @@ export function createStage(canvas) {
     placeSprite(mesh, cw, ch, 256, 512, -13.4, 0, 12);
     mesh.renderOrder = -4;
     mesh.userData.px = 1.16;
+    mesh.userData.narrowDrop = 12;    // 窄屏时下移
     scene.add(mesh);
     sprites.push(mesh);
   }
@@ -1145,6 +1150,7 @@ export function createStage(canvas) {
     placeSprite(mesh, cw, ch, 256, base, -12, 0, 0);
     mesh.renderOrder = -3;
     mesh.userData.px = 0.55;
+    mesh.userData.narrowDrop = 16;    // 窄屏时下移，让开首屏文字区
     scene.add(mesh);
     sprites.push(mesh);
   }
@@ -1293,8 +1299,15 @@ export function createStage(canvas) {
     ground.position.x = ground.userData.baseX;
     sprites.forEach((m) => {
       m.position.x = m.userData.baseX;
+      /* 窄屏：把标记过的前景元素下移，让开首屏的文字区
+         （否则马匹/火塘正好压在"编剧/音乐"两行下面）
+         ⚠️ 世界坐标 y 向上为正，下移要**减** y */
+      const drop = isNarrow ? (m.userData.narrowDrop ?? 0) : 0;
+      m.position.y = m.userData.baseY - drop;
     });
     fireGroup.position.x = firePos.x;
+    // 火塘同样下移
+    fireGroup.position.y = firePos.y - (isNarrow ? 8.5 : 0);
 
     /* 相机：只有鼠标悬停带来的轻微视差；分离完全由图层自身承担 */
     const camBaseY = camera.userData.baseY ?? CAM_Y;
