@@ -289,6 +289,7 @@ renderSongWall();
 {
   /* 剧目配乐样带：纯器乐，无唱词，不与曲目歌词挂钩 */
   const SCORING = [
+    { file: '火塘恋.mp3', name: '火塘恋', dur: '3:22' },
     { file: '遇敌.mp3',     name: '遇敌',     dur: '1:48' },
     { file: '渡江1.mp3',    name: '渡江 Ⅰ',   dur: '2:42' },
     { file: '渡江2.mp3',    name: '渡江 Ⅱ',   dur: '2:05' },
