@@ -177,15 +177,31 @@ function renderAct(a, ai) {
         body += `<p class="sd">${esc(b.v)}</p>`;
         if (!openSong) break;
         break;
-      case 'act':
-        body += `<p class="act-line">${esc(b.v)}</p>`;
+      case 'act': {
+        const t = String(b.v || '');
+        if (/三十七|镌刻|刻着.*名字|一笔一画/.test(t)) {
+          body += `<aside class="roll-card">${esc(t)}</aside>`;
+          break;
+        }
+        body += `<p class="act-line">${esc(t)}</p>`;
         break;
+      }
       case 'note': {
         // 【地点】等幕内资料标签已进资料卡；其余转场/动作标记保留
         const t = String(b.v || '');
         if (/^【(时间|地点|出场人物|舞台氛围)】/.test(t)) break;
         if (t.startsWith('［氛围］')) {
           body += `<p class="act-line mood-line">${esc(t.replace('［氛围］', ''))}</p>`;
+          break;
+        }
+        // 史实锚点：字幕浮现 / 纪念碑 / 具体史实日期 → 苍青，与虚构的暖红区分
+        if (/字幕浮现|纪念碑|史实/.test(t)) {
+          body += `<aside class="fact-card">${esc(t)}</aside>`;
+          break;
+        }
+        // 名录：三十七个名字、碑上镌刻 → 彝金
+        if (/三十七|镌刻|刻着.*名字|一笔一画/.test(t)) {
+          body += `<aside class="roll-card">${esc(t)}</aside>`;
           break;
         }
         body += `<p class="act-line note-line">${esc(t)}</p>`;
@@ -234,13 +250,20 @@ function renderSongWall() {
     return m ? m[1] : '';
   };
   wall.innerHTML = D.songs.map(s => {
-    const part = partOf(s);
-    /* 同名曲目（如尾幕主题歌各段）才显示段落标记 */
+    /* 同名曲目（如尾幕主题歌各段、《等你回来》两版）才补段落标记。
+       若 performer 里已含该标记，则不再重复提取。 */
     const sameName = D.songs.filter(x => x.name === s.name).length > 1;
+    let part = '';
+    if (sameName) {
+      const m = String(s.label || '').match(/《[^》]+》\s*（(.+?)）/);
+      part = m ? m[1] : '';
+      /* performer 已含同样内容时不再重复 */
+      if (part && String(s.performer || '').includes(part)) part = '';
+    }
     return `
     <div class="songcard" data-goto-song="${s.no}" tabindex="0" role="button">
       <div class="no">曲目 ${String(s.no).padStart(2, '0')}</div>
-      <div class="nm">《${esc(s.name)}》${sameName && part ? `<em class="nm-part">${esc(part)}</em>` : ''}</div>
+      <div class="nm">《${esc(s.name)}》${part ? `<em class="nm-part">${esc(part)}</em>` : ''}</div>
       <div class="pf">${esc(s.performer || '')}</div>
       <div class="ac">${esc(ACT_LABELS[s.act] || '')}</div>
     </div>`;
@@ -545,6 +568,27 @@ if (stage) {
   io.observe($('#hero'));
 }
 
+/* ── 破晓提示：一旦开始拖动就淡出 ─────────────────────── */
+(() => {
+  const hint = $('#dragHint');
+  if (!hint) return;
+  let gone = false;
+  const hide = () => {
+    if (gone) return;
+    gone = true;
+    hint.classList.add('is-gone');
+  };
+  window.addEventListener('shanhe:dawn', (e) => {
+    const d = e.detail?.dawn ?? 0;
+    if (d > 0.04) hide();
+    // 破晓过半时加深标题背后的暗角
+    document.body.classList.toggle('is-dawn', d > 0.42);
+  });
+  window.addEventListener('pointerdown', (e) => {
+    if (e.clientY < window.innerHeight) hide();
+  }, { once: true });
+})();
+
 /* ── 打印时展开全部唱段 ────────────────────────────────── */
 window.addEventListener('beforeprint', () => {
   $$('.song').forEach(s => s.classList.add('open'));
@@ -601,6 +645,7 @@ window.addEventListener('beforeprint', () => {
       mergeSecret(payload);
       renderActs();
       renderSongWall();
+      if (typeof setupReveal === 'function') setupReveal();
       body.classList.add('unlocked');
       try { sessionStorage.setItem(KEY, '1'); } catch {}
       showMsg('已解锁 · 全本剧本正文与歌词现已展开', true);
@@ -650,3 +695,52 @@ window.addEventListener('beforeprint', () => {
     }
   }, true);
 })();
+
+/* ============================================================
+   入场淡入：滚到视口才浮现（只用 transform / opacity）
+   —— 解锁后剧目区会重渲染，故做成可重入
+   ============================================================ */
+let revealObserver = null;
+
+function setupReveal() {
+  const targets = [
+    ...document.querySelectorAll('.act-head, .act-meta, .fact-card, .roll-card, .scene, .song'),
+    ...document.querySelectorAll('.songcard, .person, .thread, .spine-item, .scoring-item'),
+  ];
+
+  /* 同一容器内的兄弟元素依次延迟 */
+  const groups = new Map();
+  targets.forEach(el => {
+    const parent = el.parentElement;
+    if (!parent) return;
+    const idx = groups.get(parent) || 0;
+    el.dataset.revealDelay = String(Math.min(idx, 6) * 60);
+    groups.set(parent, idx + 1);
+  });
+
+  targets.forEach(el => el.classList.add('reveal'));
+
+  if (revealObserver) revealObserver.disconnect();
+  revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(en => {
+      if (!en.isIntersecting) return;
+      const el = en.target;
+      setTimeout(() => el.classList.add('in'), Number(el.dataset.revealDelay || 0));
+      revealObserver.unobserve(el);
+    });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.04 });
+
+  targets.forEach(el => revealObserver.observe(el));
+
+  /* 初始视口内的立即显示，不等滚动 */
+  requestAnimationFrame(() => {
+    document.querySelectorAll('.reveal').forEach(el => {
+      const r = el.getBoundingClientRect();
+      if (r.top < window.innerHeight * 0.92 && r.bottom > 0) {
+        setTimeout(() => el.classList.add('in'), Number(el.dataset.revealDelay || 0));
+      }
+    });
+  });
+}
+
+setupReveal();
