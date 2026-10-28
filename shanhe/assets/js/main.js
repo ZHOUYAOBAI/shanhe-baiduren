@@ -370,14 +370,24 @@ renderSongWall();
 
     /* 只停掉真正在播（或已加载）的条目。
        ⚠️ 对 readyState=0 的音频写 currentTime 会强制触发下载，
-          快速切歌时会把所有曲目都拉下来（26MB），这是之前卡顿的主因。 */
+                快速切歌时会把所有曲目都拉下来（26MB），这是之前卡顿的主因。
+       ⚠️ 关键：**不要去 pause() 那些 play() 还没兑现的条目**。
+          快速连点时它们的 play() 正在等待，一旦被 pause() 就以
+          AbortError reject，整条播放链就此断掉（实测前 5 首全部停在 t=0）。
+          对这类条目只需让它的令牌失效，等它自己 reject 后被忽略。 */
     const stopAll = (except) => {
       rows.forEach(row => {
         if (row === except) return;
         const a = row.querySelector('audio');
         if (a) {
-          a.pause();
-          if (a.readyState > 0) a.currentTime = 0;   // 仅已加载的才归零
+          const inFlight = !a.paused && a.readyState === 0 && a.__pending;
+          if (inFlight) {
+            // 播放请求还在飞：作废令牌，不 pause，等它自然失败被忽略
+            a.__token = (a.__token || 0) + 1;
+          } else {
+            a.pause();
+            if (a.readyState > 0) a.currentTime = 0;   // 仅已加载的才归零
+          }
         }
         resetRow(row);
       });
@@ -503,9 +513,16 @@ renderSongWall();
          反而更慢。只需标出"正在缓冲"状态即可。 */
       if (audio.readyState === 0) row.classList.add('loading');
 
+      /* 播放令牌：快速连点时，上一条的 play() 可能还没兑现就被中断，
+         它的 resolve/reject 回调必须不能影响当前这条的状态。 */
+      const token = (audio.__token = (audio.__token || 0) + 1);
+      audio.__pending = true;                       // 标记"播放请求在飞"
+
       const p = audio.play();
       if (p && p.then) {
         p.then(() => {
+          if (audio.__token !== token) return;      // 已过期，忽略
+          audio.__pending = false;
           current = audio;
           btn.classList.add('playing');
           btn.textContent = '❚❚';
@@ -513,10 +530,13 @@ renderSongWall();
           row.classList.remove('loading');
           paint(row, audio);
         }).catch((err) => {
+          if (audio.__token !== token) return;      // 已过期，忽略
+          audio.__pending = false;
           btn.classList.remove('playing');
           btn.textContent = '▶';
           row.classList.remove('loading');
-          // 自动播放被拦截等 → 给个提示，而不是静默无反应
+          /* AbortError = 被 stopAll 的 pause() 中断，属正常切换，忽略。
+             只有真正的错误（如自动播放被拦截）才提示用户。 */
           if (err && err.name === 'NotAllowedError') {
             row.querySelector('.scoring-cur').textContent = '请再次点击';
           }
