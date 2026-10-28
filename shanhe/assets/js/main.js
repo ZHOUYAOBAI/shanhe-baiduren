@@ -388,25 +388,30 @@ renderSongWall();
       const pct = dur ? (audio.currentTime / dur) * 100 : 0;
       row.querySelector('.scoring-fill').style.width = pct + '%';
       row.querySelector('.scoring-knob').style.left = pct + '%';
-      // 缓冲中时保留提示文案，不被时间覆盖
-      if (!row.classList.contains('loading')) {
-        row.querySelector('.scoring-cur').textContent = fmt(audio.currentTime);
-      }
+      // 始终显示时间：缓冲状态由样式（光环/扫光）表达，
+      // 不用文字替换，否则恢复事件没触发时文字会永久卡住。
+      row.querySelector('.scoring-cur').textContent = fmt(audio.currentTime);
       row.querySelector('.scoring-bar').setAttribute('aria-valuenow', Math.round(pct));
     };
 
-    /* ── 缓冲指示：waiting（缓冲耗尽）/ canplay（缓冲就绪） ── */
+    /* ── 缓冲指示：waiting（缓冲耗尽）/ playing（恢复） ──
+       ⚠️ 这里绝不能主动 pause() 音频。
+       之前加的"缓冲守护"要求缓冲满 8 秒才恢复播放，
+       但线上下载速度约 1.3 秒音频 / 0.7 秒真实时间，
+       永远追不上 8 秒门槛 → 播放被永久暂停在"缓冲中"。
+       正确做法：只提示状态，播放节奏交给浏览器自己管。 */
     list.addEventListener('waiting', (e) => {
       const a = e.target;
       if (a.tagName !== 'AUDIO') return;
       const row = a.closest('.scoring-item');
-      // 缓冲耗尽 → 明确显示"缓冲中"，与"卡死"区分开
       if (row && a === current) {
+        /* 只加样式状态，不改文字。
+           文字若改成"缓冲中"，一旦恢复事件没触发就会永久卡住。
+           样式（呼吸光环 + 扫光）已经足够表达"在缓冲"。 */
         row.classList.add('loading');
-        row.querySelector('.scoring-cur').textContent = '缓冲中';
       }
     }, true);
-    list.addEventListener('playing', (e) => {
+        list.addEventListener('playing', (e) => {
       const a = e.target;
       if (a.tagName !== 'AUDIO') return;
       const row = a.closest('.scoring-item');
@@ -415,6 +420,8 @@ renderSongWall();
         paint(row, a);
       }
     }, true);
+    /* canplay 只在首次就绪时触发，断流恢复时不会再触发，
+       所以恢复显示主要靠 timeupdate（下面）。这里仅作首次兜底。 */
     list.addEventListener('canplay', (e) => {
       const a = e.target;
       if (a.tagName !== 'AUDIO') return;
@@ -427,12 +434,18 @@ renderSongWall();
 
     /* ── 进度刷新：用 timeupdate（浏览器原生节流），
           不用 requestAnimationFrame —— 后者在滚动/后台会被降频，
-          表现为进度条卡住不动 ── */
+          表现为进度条卡住不动 ──
+          顺带在这里恢复"缓冲中"的显示：
+          只要播放位置在推进，就说明缓冲已恢复、可以正常播了。 */
     list.addEventListener('timeupdate', (e) => {
       const a = e.target;
       if (a.tagName !== 'AUDIO') return;
       const row = a.closest('.scoring-item');
-      if (row) paint(row, a);
+      if (!row) return;
+      if (row.classList.contains('loading')) {
+        row.classList.remove('loading');
+      }
+      paint(row, a);
     }, true);
 
     list.addEventListener('click', (e) => {
@@ -509,33 +522,6 @@ renderSongWall();
           }
         });
       }
-
-      /* ── 缓冲守护 ──
-         缓冲量不足时先攒到 8 秒再放，避免起播后很快断流。
-         缓冲不足 → 暂停并显示"缓冲中"；缓冲够了 → 自动恢复播放。 */
-      const BUFFER_GUARD = 8;
-      let waiting = false;
-      const guard = () => {
-        if (current !== audio) return;
-        const dur = isFinite(audio.duration) ? audio.duration : 0;
-        const bufEnd = audio.buffered.length
-          ? audio.buffered.end(audio.buffered.length - 1) : 0;
-        const ahead = bufEnd - audio.currentTime;
-        if (ahead < BUFFER_GUARD && bufEnd < dur - 0.5) {
-          if (!waiting) {
-            waiting = true;
-            audio.pause();
-            row.classList.add('loading');
-            row.querySelector('.scoring-cur').textContent = '缓冲中';
-          }
-        } else if (waiting && ahead >= BUFFER_GUARD) {
-          waiting = false;
-          row.classList.remove('loading');
-          audio.play().catch(() => {});
-        }
-      };
-      audio.addEventListener('progress', guard);
-      audio.addEventListener('canplay', guard);
     });
 
     /* 键盘：进度条左右键快进 / 快退 */
