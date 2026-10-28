@@ -1599,29 +1599,37 @@ body:not(.unlocked) .songcard .no::after {
   .hero-cta { margin-top: 26px; }
 
   /* ── ⑤ 拖动提示 / 向下指示 ──
-     底部幕次轨浮在 bottom:8px（高 44px），内容要让到 60px 以上。
-     拖动提示与 CTA 同在首屏，窄屏时把它压到"向下"指示上方、
-     CTA 下方，并降低不透明度，避免与按钮抢视觉。 */
+     原来两者都是绝对定位（锚在 hero 底部），与同样绝对定位的 CTA
+     在纵向重叠（实测 ctaVsDrag=true）。
+     改法：窄屏时把它们从绝对定位改为**相对定位**，
+     排进 hero-inner 的正常文档流 → 必然在 CTA 下方，不会重叠。 */
+  .hero-inner { position: relative; }
   .drag-hint {
-    bottom: 92px;
+    position: static;
+    margin: 22px auto 0;
+    width: max-content;
+    opacity: .62;
     gap: 8px;
     font-size: 10px;
     letter-spacing: .14em;
-    opacity: .7;
   }
   .drag-hint svg { width: 40px; height: 15px; }
   .scroll-hint {
-    bottom: 64px;
+    position: static;
+    margin: 14px auto 0;
+    width: max-content;
     font-size: 10px;
-    opacity: .65;
+    opacity: .6;
   }
+  /* 提示已进流，hero 底部不需要那么多留白了 */
+  .hero { padding-bottom: 96px; }
 }
 
 /* 矮屏（iPhone SE 等）：首屏塞不下，隐藏拖动提示，
    只保留"向下"引导，避免与 CTA 重叠 */
 @media (max-width: 720px) and (max-height: 740px) {
   .drag-hint { display: none; }
-  .hero { padding-bottom: 118px; }
+  .hero { padding-bottom: 84px; }
 }
 
 /* ============================================================
