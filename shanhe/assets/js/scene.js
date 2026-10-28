@@ -348,7 +348,7 @@ void main(){
   vec3 col = mix(uCool, uHot, core * (0.42 + vSeed * 0.45));
   col = mix(col, vec3(1.0, 0.93, 0.76), core * core * vLife * 0.7);
   col *= uBreathe;
-  gl_FragColor = vec4(col, a * 0.50 * uFade);
+  gl_FragColor = vec4(col, a * 0.30 * uFade);
 }
 `;
 
@@ -570,19 +570,94 @@ function drawReeds(g, x, y, W, H, seed = 1) {
   g.strokeStyle = '#000';
   g.fillStyle = '#000';
   g.lineCap = 'round';
-  for (let i = 0; i < 16; i++) {
+  for (let i = 0; i < 22; i++) {
     const bx = x + (rnd() - 0.5) * W;
-    const h = H * (0.45 + rnd() * 0.75);
-    const bend = (rnd() - 0.5) * H * 0.42;
-    g.lineWidth = H * (0.020 + rnd() * 0.016);
+    const h = H * (0.40 + rnd() * 0.62);
+    const bend = (rnd() - 0.5) * H * 0.46;
+    // 茎：细，向上渐收
+    g.lineWidth = H * 0.006;
     g.beginPath();
     g.moveTo(bx, y);
-    g.quadraticCurveTo(bx + bend * 0.4, y - h * 0.6, bx + bend, y - h);
+    g.quadraticCurveTo(bx + bend * 0.35, y - h * 0.62, bx + bend, y - h);
     g.stroke();
+    // 穗：细长的一缕，不是实心棒
+    g.save();
+    g.translate(bx + bend, y - h);
+    g.rotate(Math.atan2(bend, h) * 0.9);
     g.beginPath();
-    g.ellipse(bx + bend, y - h - H * 0.035, H * 0.016, H * 0.062, 0, 0, Math.PI * 2);
+    g.moveTo(0, 0);
+    g.quadraticCurveTo(H * 0.010, -H * 0.035, H * 0.004, -H * 0.078);
+    g.quadraticCurveTo(-H * 0.006, -H * 0.035, 0, 0);
     g.fill();
+    g.restore();
+    // 偶有一片叶
+    if (rnd() > 0.55) {
+      g.lineWidth = H * 0.005;
+      const ly = y - h * (0.35 + rnd() * 0.35);
+      const dir = rnd() > 0.5 ? 1 : -1;
+      g.beginPath();
+      g.moveTo(bx, ly);
+      g.quadraticCurveTo(bx + dir * H * 0.05, ly - H * 0.02, bx + dir * H * 0.10, ly - H * 0.075);
+      g.stroke();
+    }
   }
+}
+
+/* 驮马（滇北驿路）：四蹄与背驮 */
+function drawHorse(g, fx, fy, H) {
+  const u = H / 100;
+  const P = (x, y) => [fx + x * u, fy - y * u];
+  g.fillStyle = '#000';
+
+  // 躯干
+  g.beginPath();
+  g.moveTo(...P(-34, 58)); g.lineTo(...P(20, 62));
+  g.quadraticCurveTo(...P(34, 60), ...P(33, 50));
+  g.lineTo(...P(-32, 48));
+  g.closePath(); g.fill();
+
+  // 颈与头
+  g.beginPath();
+  g.moveTo(...P(26, 62)); g.lineTo(...P(40, 76));
+  g.lineTo(...P(58, 70)); g.lineTo(...P(60, 60));
+  g.lineTo(...P(44, 60)); g.lineTo(...P(33, 50));
+  g.closePath(); g.fill();
+
+  // 四条腿
+  g.beginPath();
+  g.moveTo(...P(-26, 48)); g.lineTo(...P(-22, 20));
+  g.lineTo(...P(-17, 20)); g.lineTo(...P(-20, 48));
+  g.closePath(); g.fill();
+  g.beginPath();
+  g.moveTo(...P(-16, 48)); g.lineTo(...P(-10, 16));
+  g.lineTo(...P(-5, 16)); g.lineTo(...P(-11, 48));
+  g.closePath(); g.fill();
+  g.beginPath();
+  g.moveTo(...P(18, 48)); g.lineTo(...P(22, 22));
+  g.lineTo(...P(27, 22)); g.lineTo(...P(24, 48));
+  g.closePath(); g.fill();
+  g.beginPath();
+  g.moveTo(...P(8, 48)); g.lineTo(...P(13, 18));
+  g.lineTo(...P(18, 18)); g.lineTo(...P(15, 48));
+  g.closePath(); g.fill();
+
+  // 尾
+  g.beginPath();
+  g.moveTo(...P(-34, 60)); g.lineTo(...P(-46, 52));
+  g.lineTo(...P(-48, 34)); g.lineTo(...P(-42, 36));
+  g.lineTo(...P(-40, 52)); g.lineTo(...P(-32, 50));
+  g.closePath(); g.fill();
+
+  // 背上的驮包
+  g.beginPath();
+  g.moveTo(...P(-20, 62)); g.lineTo(...P(-2, 62));
+  g.lineTo(...P(-4, 76)); g.lineTo(...P(-18, 76));
+  g.closePath(); g.fill();
+
+  // 鬃与耳
+  g.beginPath();
+  g.moveTo(...P(38, 74)); g.lineTo(...P(46, 82));
+  g.lineTo(...P(44, 70)); g.closePath(); g.fill();
 }
 
 function drawBirds(g, x, y, W, H, seed = 3) {
@@ -729,12 +804,12 @@ export function createStage(canvas) {
     vertexShader: FULLSCREEN_VERT,
     fragmentShader: SKY_FRAG,
     uniforms: {
-      uNightTop: { value: new THREE.Color(0x0e0507) },
-      uNightMid: { value: new THREE.Color(0x280f13) },
-      uNightBot: { value: new THREE.Color(0x541c18) },
-      uDawnTop:  { value: new THREE.Color(0x5e1f16) },
-      uDawnMid:  { value: new THREE.Color(0xb2421f) },
-      uDawnBot:  { value: new THREE.Color(0xf0a03e) },
+      uNightTop: { value: new THREE.Color(0x2a1014) },
+      uNightMid: { value: new THREE.Color(0x4a1c1c) },
+      uNightBot: { value: new THREE.Color(0x7a2a20) },
+      uDawnTop:  { value: new THREE.Color(0x6b241a) },
+      uDawnMid:  { value: new THREE.Color(0xc04a22) },
+      uDawnBot:  { value: new THREE.Color(0xf5a844) },
       uSunUv:    { value: new THREE.Vector2(0.68, 0.55) },
       uAspect:   { value: window.innerWidth / window.innerHeight },
       uDawn:     shared.uDawn,
@@ -760,19 +835,19 @@ export function createStage(canvas) {
      颜色由远及近加深（平涂色阶，非雾化） */
   const RIDGES = [
     { z: -150, w: 270, base: -14, y: 42.8, hatch: 0.070, ang: 0.55, rim: 3.0, px: 0.05,
-      body: 0x58291f, bodyDawn: 0x9c4a2a,
+      body: 0x8a4433, bodyDawn: 0xc4703c,
       peaks: [{ c: 0.16, w: 0.15, a: 1.0 }, { c: 0.40, w: 0.12, a: 0.66 }, { c: 0.86, w: 0.16, a: 0.94 }],
       saddle: { u: 0.645, w: 0.085, depth: 0.55 } },
     { z: -122, w: 230, base: -12, y: 27.1, hatch: 0.090, ang: 0.72, rim: 2.4, px: 0.13,
-      body: 0x401c19, bodyDawn: 0x7d3624,
+      body: 0x6b3227, bodyDawn: 0x9c4f2c,
       peaks: [{ c: 0.24, w: 0.17, a: 0.92 }, { c: 0.60, w: 0.14, a: 0.78 }, { c: 0.92, w: 0.12, a: 0.62 }],
       saddle: { u: 0.672, w: 0.080, depth: 0.62 } },
     { z: -100, w: 190, base: -10, y: 15.8, hatch: 0.115, ang: 0.48, rim: 2.0, px: 0.26,
-      body: 0x2c1315, bodyDawn: 0x5e2620,
+      body: 0x4c221e, bodyDawn: 0x743421,
       peaks: [{ c: 0.20, w: 0.16, a: 0.88 }, { c: 0.48, w: 0.20, a: 1.0 }, { c: 0.80, w: 0.15, a: 0.70 }],
       saddle: { u: 0.711, w: 0.070, depth: 0.66 } },
     { z: -82,  w: 165, base: -8,  y: 7.43, hatch: 0.145, ang: 0.86, rim: 1.5, px: 0.48,
-      body: 0x190a0d, bodyDawn: 0x381618,
+      body: 0x2e1214, bodyDawn: 0x4a1e1b,
       peaks: [{ c: 0.18, w: 0.18, a: 0.85 }, { c: 0.52, w: 0.22, a: 1.0 }, { c: 0.88, w: 0.13, a: 0.60 }],
       saddle: { u: 0.737, w: 0.060, depth: 0.70 } },
   ];
@@ -825,10 +900,10 @@ export function createStage(canvas) {
       uFade:    shared.uFade,
       uSunX:    shared.uSunX,
       uRes:     shared.uRes,
-      uDeep:    { value: new THREE.Color(0x180b0d) },
-      uSurface: { value: new THREE.Color(0x6b3128) },
+      uDeep:    { value: new THREE.Color(0x1e0d0d) },
+      uSurface: { value: new THREE.Color(0x7d3b2b) },
       uGold:    { value: new THREE.Color(0xffb648) },
-      uHaze:    { value: new THREE.Color(0x53231c) },
+      uHaze:    { value: new THREE.Color(0x8a3a28) },
     },
     transparent: true,
   });
@@ -841,7 +916,7 @@ export function createStage(canvas) {
 
   /* ── 近岸地面（z 0 → 42，排线材质） ──
      火塘置于近岸左侧，屏幕落在画面左下角 */
-  const firePos = new THREE.Vector3(-9.4, 0, 8);
+  const firePos = new THREE.Vector3(-10.4, 0, 8);
   const hatchMat = (opts = {}) => new THREE.ShaderMaterial({
     vertexShader: HATCH_VERT,
     fragmentShader: HATCH_FRAG,
@@ -851,7 +926,7 @@ export function createStage(canvas) {
       uPaper:      { value: new THREE.Color(opts.paper ?? 0x6d2a24) },
       uGlow:       { value: new THREE.Color(opts.glow ?? 0xc8323f) },
       uFirePos:    { value: firePos },
-      uGlowPower:  { value: opts.glowPower ?? 4.2 },
+      uGlowPower:  { value: opts.glowPower ?? 1.5 },
       uLineScale:  { value: opts.lineScale ?? 0.13 },
       uAngle:      { value: opts.angle ?? 0.62 },
       uOpacity:    { value: opts.opacity ?? 1.0 },
@@ -864,7 +939,7 @@ export function createStage(canvas) {
 
   const ground = new THREE.Mesh(
     new THREE.PlaneGeometry(200, 42, 1, 1),
-    hatchMat({ lineScale: 0.17, angle: 1.02, ink: 0x2e1013, paper: 0x5a2320, glowPower: 5.0 })
+    hatchMat({ lineScale: 0.17, angle: 1.02, ink: 0x2a0e11, paper: 0x3f1a1a, glowPower: 1.5 })
   );
   ground.rotation.x = -Math.PI / 2;
   ground.position.set(0, 0, 21);      // z 范围 0 → 42
@@ -875,16 +950,16 @@ export function createStage(canvas) {
   /* ── 火塘 ── */
   const fireGroup = new THREE.Group();
   fireGroup.position.set(firePos.x, firePos.y, firePos.z);
-  fireGroup.scale.setScalar(0.52);
+  fireGroup.scale.setScalar(0.34);
   scene.add(fireGroup);
 
   {
     const m = hatchMat({
       lineScale: 0.19, angle: 1.02,
-      glow: 0xc8323f, glowPower: 3.0,
-      ink: 0x351214, paper: 0x66271f,
+      glow: 0xc8323f, glowPower: 1.4,
+      ink: 0x2c1013, paper: 0x4a1d1c,
     });
-    const floor = new THREE.Mesh(new THREE.CircleGeometry(7.0, 40), m);
+    const floor = new THREE.Mesh(new THREE.CircleGeometry(4.6, 36), m);
     floor.rotation.x = -Math.PI / 2;
     floor.position.y = 0.02;
     floor.renderOrder = -8;
@@ -895,15 +970,15 @@ export function createStage(canvas) {
     const stones = new THREE.Group();
     const stoneMat = hatchMat({
       lineScale: 0.30, angle: 0.34,
-      glow: 0xc8323f, glowPower: 3.0,
+      glow: 0xc8323f, glowPower: 1.4,
       ink: 0x45191d, paper: 0x83412f,
     });
-    for (let i = 0; i < 13; i++) {
-      const a = (i / 13) * Math.PI * 2;
-      const rad = 1.72 + Math.sin(i * 2.7) * 0.14;
-      const s = 0.36 + Math.abs(Math.sin(i * 1.9)) * 0.26;
+    for (let i = 0; i < 11; i++) {
+      const a = (i / 11) * Math.PI * 2;
+      const rad = 1.15 + Math.sin(i * 2.7) * 0.10;
+      const s = 0.26 + Math.abs(Math.sin(i * 1.9)) * 0.18;
       const st = new THREE.Mesh(new THREE.DodecahedronGeometry(s, 0), stoneMat);
-      st.position.set(Math.cos(a) * rad, s * 0.42 + 0.55, Math.sin(a) * rad);
+      st.position.set(Math.cos(a) * rad, s * 0.42 + 0.40, Math.sin(a) * rad);
       st.rotation.set(i * 0.7, i * 1.3, i * 0.4);
       st.scale.set(1, 0.78, 1);
       st.renderOrder = -8;
@@ -912,18 +987,18 @@ export function createStage(canvas) {
     fireGroup.add(stones);
   }
 
-  const FLAME_N = 300;
+  const FLAME_N = 220;
   const pos = new Float32Array(FLAME_N * 3);
   const size = new Float32Array(FLAME_N);
   const seedA = new Float32Array(FLAME_N);
   const speed = new Float32Array(FLAME_N);
   for (let i = 0; i < FLAME_N; i++) {
     const a = Math.random() * Math.PI * 2;
-    const r = Math.pow(Math.random(), 0.55) * 1.30;
+    const r = Math.pow(Math.random(), 0.55) * 0.85;
     pos[i * 3] = Math.cos(a) * r;
     pos[i * 3 + 1] = 0;
     pos[i * 3 + 2] = Math.sin(a) * r;
-    size[i] = 10 + Math.random() * 15;
+    size[i] = 5 + Math.random() * 7;
     seedA[i] = Math.random();
     speed[i] = 0.16 + Math.random() * 0.30;
   }
@@ -950,6 +1025,7 @@ export function createStage(canvas) {
   });
   const flames = new THREE.Points(flameGeo, flameMat);
   flames.position.y = 0.55;
+  flames.scale.set(0.72, 0.42, 0.72);   // 压低焰高，收窄火舌
   flames.renderOrder = -6;
   fireGroup.add(flames);
 
@@ -988,29 +1064,39 @@ export function createStage(canvas) {
   /* 火塘边守夜的一人 */
   addSoldier(-6.2, 11, 2.30, { px: 1.10, pack: false, order: -4 });
 
-  /* 芦苇丛 */
+  /* 芦苇丛：置于画面最左边缘，远离火塘，避免与火光重叠 */
   {
     const cw = 512, ch = 512;
-    const mat = silhouetteMaterial(cw, ch, (g) => drawReeds(g, 256, 512, 460, 420, 11));
-    const mesh = new THREE.Mesh(new THREE.PlaneGeometry(6.4, 6.4), mat);
-    placeSprite(mesh, cw, ch, 256, 512, -10.3, 0, 9);
+    const mat = silhouetteMaterial(cw, ch, (g) => drawReeds(g, 256, 512, 470, 400, 11));
+    const mesh = new THREE.Mesh(new THREE.PlaneGeometry(4.2, 4.2), mat);
+    placeSprite(mesh, cw, ch, 256, 512, -13.4, 0, 12);
     mesh.renderOrder = -4;
     mesh.userData.px = 1.16;
     scene.add(mesh);
     sprites.push(mesh);
   }
 
-  /* 江上的竹筏（画面左中，撑篙渡江） */
+  /* ── 渡江竹筏队列 ──
+     「巧渡金沙江」的核心意象：一只接一只的竹筏横渡江面。
+     三只远近递减，越远越小、越淡。 */
   {
     const cw = 512, ch = 384, wl = 380;
     const mat = silhouetteMaterial(cw, ch, (g) => drawRaft(g, 256, wl, 400, 300));
-    const W = 13.5, H = W * ch / cw;
-    const mesh = new THREE.Mesh(new THREE.PlaneGeometry(W, H), mat);
-    placeSprite(mesh, cw, ch, 256, wl, -13.1, 0.05, -34);
-    mesh.renderOrder = -30;
-    mesh.userData.px = 0.42;
-    scene.add(mesh);
-    sprites.push(mesh);
+    const fleet = [
+      { x: -13.1, z: -34, W: 13.5, o: -30, px: 0.42, dim: 0x1a0b0c },
+      { x: 2.0,   z: -44, W: 9.0,  o: -31, px: 0.30, dim: 0x241011 },
+      { x: 21.0,  z: -58, W: 6.0,  o: -32, px: 0.20, dim: 0x2e1415 },
+    ];
+    fleet.forEach((f) => {
+      const H = f.W * ch / cw;
+      const mesh = new THREE.Mesh(new THREE.PlaneGeometry(f.W, H), mat.clone());
+      mesh.material.color = new THREE.Color(f.dim);
+      placeSprite(mesh, cw, ch, 256, wl, f.x, 0.05, f.z);
+      mesh.renderOrder = f.o;
+      mesh.userData.px = f.px;
+      scene.add(mesh);
+      sprites.push(mesh);
+    });
   }
 
   /* 远处的小船 */
@@ -1022,6 +1108,23 @@ export function createStage(canvas) {
     placeSprite(mesh, cw, ch, 256, wl, 12.7, 0.05, -52);
     mesh.renderOrder = -32;
     mesh.userData.px = 0.24;
+    scene.add(mesh);
+    sprites.push(mesh);
+  }
+
+  /* 马帮：滇北驿路上的驮马，衔接火塘与渡江队伍（置于中景，避免压住标题） */
+  {
+    const cw = 512, ch = 256, base = 240;
+    const mat = silhouetteMaterial(cw, ch, (g) => {
+      drawHorse(g, 150, base, 118);
+      drawHorse(g, 300, base + 6, 112);
+      drawHorse(g, 430, base - 4, 122);
+    });
+    const W = 11, H = W * ch / cw;
+    const mesh = new THREE.Mesh(new THREE.PlaneGeometry(W, H), mat);
+    placeSprite(mesh, cw, ch, 256, base, 2.0, 0, 8);
+    mesh.renderOrder = -3;
+    mesh.userData.px = 0.55;
     scene.add(mesh);
     sprites.push(mesh);
   }
@@ -1154,13 +1257,13 @@ export function createStage(canvas) {
     skyMat.uniforms.uAspect.value = camera.aspect;
     shared.uSunX.value = sunScreenX;
 
-/* 图层分离：只让山峦与江面错开，拉开纵深。
+/* 图层分离：各层按视差系数依次错开，拉出纵深。
        近岸与前景元素（塘、人物、芦苇）保持原位，避免压住标题区 */
-    const sepPx = drag.sep * 300;
+    const sepPx = drag.sep * 460;
     ridges.forEach((m) => {
-      m.position.x = m.userData.baseX + sepPx * m.userData.px * 0.42;
+      m.position.x = m.userData.baseX + sepPx * m.userData.px * 0.62;
     });
-    water.position.x = water.userData.baseX + sepPx * 0.18;
+    water.position.x = water.userData.baseX + sepPx * 0.24;
     ground.position.x = ground.userData.baseX;
     sprites.forEach((m) => {
       m.position.x = m.userData.baseX;
@@ -1186,7 +1289,7 @@ export function createStage(canvas) {
     flames.rotation.y = Math.sin(t * 0.12) * 0.06;
     const pulse = 0.82 + Math.sin(t * 2.35) * 0.10 + Math.sin(t * 5.7) * 0.055;
     flameMat.uniforms.uBreathe.value = 1 + 0.13 * Math.sin(t * 0.966);
-    fireGroup.scale.setScalar(0.52 * (0.99 + 0.01 * pulse));
+    fireGroup.scale.setScalar(0.34 * (0.99 + 0.01 * pulse));
 
     renderer.clear();
     renderer.render(bgScene, bgCam);
