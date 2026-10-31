@@ -3,6 +3,7 @@
    ============================================================ */
 import { createStage } from './scene.js';
 import { decryptSecret } from './crypto.js';
+import { AudioEngine } from './audio-engine.js';
 
 /* D：公开层数据（剧目概况 / 歌单目录 / 人物 / 伏笔）
    解锁后由 mergeSecret() 补入六幕正文与全部歌词 */
@@ -285,17 +286,64 @@ renderSongWall();
   });
 }
 
+/* ── 全剧曲目表（定稿「全剧曲目表」原表：幕次 / 序号 / 曲目名称 / 类型 / 演唱）── */
+function renderSongTable() {
+  const head = $('#songTableHead');
+  const body = $('#songTableBody');
+  const rows = (D.songTable || []);
+  if (!head || !body || rows.length < 2) return;
+
+  head.innerHTML = '<tr>' + rows[0].map(c => `<th scope="col">${esc(c)}</th>`).join('') + '</tr>';
+
+  /* 定稿原表的「幕次」列只在每幕首行填写，这里按幕分组，用 rowspan 还原 */
+  const groups = [];
+  rows.slice(1).forEach(r => {
+    const g = groups[groups.length - 1];
+    if (!g || (r[0] && g.act !== r[0])) groups.push({ act: r[0] || '', rows: [r] });
+    else g.rows.push(r);
+  });
+
+  body.innerHTML = groups.map(g => {
+    const cells = g.rows.map((r, i) => {
+      const [, no, name, kind, singer] = r;
+      const actCell = i === 0 && g.act
+        ? `<td class="ta-act" rowspan="${g.rows.length}">${esc(g.act)}</td>` : '';
+      return `<tr>${actCell}
+        <td class="ta-no"><a href="#" data-goto-song="${esc(no)}" title="跳到曲目 ${esc(no)}">${esc(no)}</a></td>
+        <td class="ta-name">《${esc(name)}》</td>
+        <td class="ta-kind">${esc(kind)}</td>
+        <td class="ta-singer">${esc(singer)}</td>
+      </tr>`;
+    }).join('');
+    return cells;
+  }).join('');
+}
+renderSongTable();
+
+{
+  const body = $('#songTableBody');
+  if (body) {
+    body.addEventListener('click', (e) => {
+      const a = e.target.closest('[data-goto-song]');
+      if (a) { e.preventDefault(); jumpToSong(+a.dataset.gotoSong); }
+    });
+  }
+}
+
 /* ── 配乐试听（纯器乐 demo）───────────────────────────── */
 {
   /* 剧目配乐样带：纯器乐，无唱词，不与曲目歌词挂钩 */
   const SCORING = [
-    { file: '火塘恋.mp3', name: '火塘恋', dur: '3:22' },
-    { file: '遇敌.mp3',     name: '遇敌',     dur: '1:48' },
-    { file: '渡江1.mp3',    name: '渡江 Ⅰ',   dur: '2:42' },
-    { file: '渡江2.mp3',    name: '渡江 Ⅱ',   dur: '2:05' },
-    { file: '等你回来（乐思）.mp3', name: '等你回来（乐思）', dur: '2:48' },
-    { file: '山河之光.mp3', name: '山河之光', dur: '7:37' },
-    { file: '红军是什么队伍.mp3', name: '红军是什么队伍', dur: '0:53' },
+    /* 文件名带 .web 后缀 = 网页压缩版（44.1kHz / 80kbps，体积比母版小 57%）。
+       换文件名是为了绕开 CDN 与浏览器的旧缓存；母版仍在 git 历史里。
+       v = 音频内容的 md5 前 10 位，改了音频必须同步改这里（见 AGENTS.md 缓存铁律）。 */
+    { file: '火塘恋.web.mp3', name: '火塘恋', dur: '3:22', v: '6610310549' },
+    { file: '遇敌.web.mp3',     name: '遇敌',     dur: '3:08', v: 'f562f0d8ab' },
+    { file: '渡江1.web.mp3',    name: '渡江 Ⅰ',   dur: '2:47', v: '2a0ea5df5e' },
+    { file: '渡江2.web.mp3',    name: '渡江 Ⅱ',   dur: '2:52', v: '147f19ead3' },
+    { file: '等你回来（乐思）.web.mp3', name: '等你回来（乐思）', dur: '3:28', v: '8e368e4798' },
+    { file: '山河之光.web.mp3', name: '山河之光', dur: '3:19', v: 'f2d56c1c50' },
+    { file: '红军是什么队伍.web.mp3', name: '红军是什么队伍', dur: '0:53', v: '807f16b982' },
   ];
 
   const fmt = (sec) => {
@@ -310,8 +358,13 @@ renderSongWall();
 
   const list = $('#scoringList');
   if (list) {
+    /* ⚠️ preload="none"：页面打开时**一张音频都不下载**。
+       上一版是 preload="metadata"，7 首曲子会同时各拉一段元数据，
+       等于页面一打开就有 7 条连接在抢带宽 → 真正要点播时反而慢。
+       ⚠️ crossorigin="anonymous"：跨站取音频时必须带上，
+       否则浏览器按「不透明响应」处理，拖进度条会失败（实测拖了就断）。 */
     list.innerHTML = SCORING.map(s => `
-      <div class="scoring-item">
+      <div class="scoring-item" data-file="${esc(s.file)}">
         <button class="scoring-play" type="button"
                 aria-label="播放《${esc(s.name)}》">▶</button>
         <div class="scoring-name">${esc(s.name)}</div>
@@ -321,41 +374,193 @@ renderSongWall();
           <div class="scoring-track"><div class="scoring-fill"></div></div>
           <div class="scoring-knob"></div>
         </div>
-        <div class="scoring-time"><span class="scoring-cur">0:00</span> / ${esc(s.dur)}</div>
-        <div class="scoring-load" aria-hidden="true"></div>
-        <audio preload="none" src="assets/audio/${encodeURIComponent(s.file)}"></audio>
+        <div class="scoring-time"><span class="scoring-cur">0:00</span> / <span class="scoring-total">${esc(s.dur)}</span></div>
+        <div class="scoring-load" aria-hidden="true"><i></i><span></span></div>
+        <audio preload="none" crossorigin="anonymous"
+               src="assets/audio/${encodeURIComponent(s.file)}?v=${esc(s.v)}"></audio>
       </div>`).join('');
 
     /* ── 单曲播放：任意时刻只允许一条在放（新的自动打断旧的）── */
     const rows = [...list.querySelectorAll('.scoring-item')];
     let current = null;      // 当前正在播放的 audio
 
-    /* ── 智能预加载 ──
-       卡顿的真正原因：preload="none" 只下载够播的部分，
-       缓冲一空就断流停顿（线上实测在 4.2s 处卡了 2 秒）。
-       策略：
-         · 进入视口 → 只取元数据（拿时长、可拖进度条）
-         · 鼠标悬停/聚焦 → 续传完整音频，提前把这条蓄满
-       悬停是明确的"用户意图"，此时多下流量是值得的；
-       而进入视口就全量预取 26MB 会在弱网下拖慢整站。 */
-    const warmFull = (audio) => {
-      if (audio.readyState < 2) {
-        audio.preload = 'auto';
-        audio.load();
-      }
+    /* 文件名 → 行的映射（避免用 CSS.escape 处理中文文件名） */
+    const rowOf = new Map();
+    rows.forEach(row => rowOf.set(row.dataset.file, row));
+
+    /* ── 线路 ──────────────────────────────────────────────
+       分两组，因为两类线路的脾气不一样：
+
+       ① 直接播（<audio> 直接指向它）
+          必须支持 Range（服务器回 206），否则**拖进度条会直接断流**。
+          jsDelivr / GitHub Pages / raw.githubusercontent 都实测支持。
+       ② 整首下载（后台并行分块下整首，存成内存 Blob）
+          哪条快用哪条；Cloudflare Pages 虽然不支持 Range，
+          但它国内线路稳，可以进这一组做兜底。 */
+    const STREAM_LINES = [
+      /* ① 同源：就在本站旁边，不用猜它在不在、不会 404，最稳 */
+      (f, v) => `assets/audio/${encodeURIComponent(f)}?v=${v}`,
+      /* ② jsDelivr 自带中国 CDN，国内拉得最快 */
+      (f, v) => `https://cdn.jsdelivr.net/gh/zhouyaobai/shanhe-baiduren@main/shanhe/assets/audio/${encodeURIComponent(f)}?v=${v}`,
+      /* ③ GitHub Pages 显式地址（站点就托管在这儿） */
+      (f, v) => `https://zhouyaobai.github.io/shanhe-baiduren/shanhe/assets/audio/${encodeURIComponent(f)}?v=${v}`,
+      /* ④ raw.githubusercontent：最后一道保险 */
+      (f, v) => `https://raw.githubusercontent.com/zhouyaobai/shanhe-baiduren/main/shanhe/assets/audio/${encodeURIComponent(f)}?v=${v}`,
+    ];
+    const DOWNLOAD_LINES = [
+      ...STREAM_LINES,
+      /* Cloudflare Pages：国内线路比 GitHub Pages 稳，但不支持 Range */
+      (f, v) => `https://shanhe-baiduren.pages.dev/shanhe/assets/audio/${encodeURIComponent(f)}?v=${v}`,
+    ];
+
+    const engine = new AudioEngine({
+      sources: (file) => {
+        const item = SCORING.find(x => x.file === file);
+        const v = item ? item.v : '';
+        return DOWNLOAD_LINES.map(m => m(file, v));
+      },
+      onProgress: (file, info) => {
+        const row = rowOf.get(file);
+        if (!row) return;
+        const bar = row.querySelector('.scoring-load');
+        bar.querySelector('i').style.width = (info.ratio * 100).toFixed(1) + '%';
+        bar.querySelector('span').textContent = info.total
+          ? `整首缓存 ${Math.round(info.ratio * 100)}%`
+          : '整首缓存中…';
+      },
+      onStage: (file, stage) => {
+        const row = rowOf.get(file);
+        if (!row) return;
+        const bar = row.querySelector('.scoring-load');
+        if (stage === 'ready' || stage === 'cached') {
+          bar.querySelector('i').style.width = '100%';
+          bar.querySelector('span').textContent = '';
+          row.classList.remove('downloading');
+        } else if (stage === 'downloading') {
+          row.classList.add('downloading');
+          bar.querySelector('i').style.width = '0%';
+          bar.querySelector('span').textContent = '整首缓存中…';
+        }
+      },
+    });
+
+    /* 某首曲子的候选线路（绝对地址） */
+    const streamLines = (file) => {
+      const item = SCORING.find(x => x.file === file);
+      const v = item ? item.v : '';
+      const out = STREAM_LINES.map(m => {
+        const u = m(file, v);
+        try { return new URL(u, location.href).href; } catch (_) { return u; }
+      });
+      return [...new Set(out)];
     };
 
-    /* 悬停 / 键盘聚焦 → 提前蓄满缓冲。
-       用 pointerover（冒泡）+ closest，比 pointerenter 更可靠：
-       指针在行内移动时也能命中，不必精确落在子元素上。 */
-    list.addEventListener('pointerover', (e) => {
-      const row = e.target.closest('.scoring-item');
-      if (row) warmFull(row.querySelector('audio'));
-    });
-    list.addEventListener('focusin', (e) => {
-      const row = e.target.closest('.scoring-item');
-      if (row) warmFull(row.querySelector('audio'));
-    });
+    /* ── 换源并续播：记住位置，等 metadata 到位后跳回去 ──── */
+    const setSource = (audio, src) => {
+      if (!src) return;
+      const at = audio.currentTime || 0;
+      if (audio.getAttribute('src') !== src) {
+        audio.setAttribute('src', src);
+        if (at > 0) audio.dataset.resumeAt = String(at);
+      }
+      audio.play().catch(() => {});
+    };
+
+    /* 换成内存版（整首已在本地）：彻底不碰网络，拖进度条也稳 */
+    const useBlob = (audio, url) => {
+      audio.__blobUrl = url;
+      audio.__triedBlob = true;
+      setSource(audio, url);
+    };
+
+    /* ── 卡顿看门狗 ────────────────────────────────────────
+       判断「卡住」不能只看播放位置：缓冲还在涨说明只是慢、不是断流，
+       这时换线路等于前功尽弃。所以规则是——
+         · 已经出声：播放位置**和**缓冲都不动，超过 4 秒才换；
+         · 还没出声：缓冲在涨就继续等，超过 7 秒还没第一声才换。
+       这就是「关键时刻换播放方案」：不用用户重按，自动接上。 */
+    const STALL_MS = 4000;
+    const FIRST_SOUND_MS = 7000;
+    let watchdog = null;
+    const stopWatchdog = () => { if (watchdog) { clearInterval(watchdog); watchdog = null; } };
+
+    const armWatchdog = (audio) => {
+      stopWatchdog();
+      /* 状态挂在 audio 上，换线路时才能一起重置 */
+      const st = {
+        lastT: audio.currentTime || 0,
+        lastBuf: audio.buffered.length ? audio.buffered.end(audio.buffered.length - 1) : 0,
+        lastAdvance: Date.now(),
+        startAt: Date.now(),
+      };
+      audio.__wd = st;
+      watchdog = setInterval(() => {
+        if (audio !== current || !audio.__live) { stopWatchdog(); return; }
+        const t = audio.currentTime || 0;
+        const buf = audio.buffered.length ? audio.buffered.end(audio.buffered.length - 1) : 0;
+        /* 用户自己按了暂停，不算卡 */
+        if (audio.__userPaused) { st.lastT = t; st.lastAdvance = Date.now(); st.lastBuf = buf; return; }
+        /* 已经出声：播放位置在推进就算正常 */
+        if (audio.__started && t > st.lastT + 0.05) {
+          st.lastT = t; st.lastAdvance = Date.now(); st.lastBuf = buf; return;
+        }
+        /* 缓冲还在涨 → 只是在下载，只是慢，别换。
+           ⚠️ lastBuf 必须每轮都更新：否则"曲子已下完、播放位置却卡住"
+              会被误判成"还在下载"，看门狗就永远不换线了。 */
+        const grew = buf > st.lastBuf + 1;
+        st.lastBuf = Math.max(st.lastBuf, buf);
+        if (grew) { st.lastAdvance = Date.now(); return; }
+        if (!audio.__started) {
+          /* 还没出声：7 秒还等不到第一声就换线路（缓冲一直没涨才算数） */
+          if (Date.now() - st.startAt >= FIRST_SOUND_MS) {
+            st.startAt = Date.now();
+            switchLine(audio);
+          }
+          return;
+        }
+        if (Date.now() - st.lastAdvance >= STALL_MS) {
+          st.lastAdvance = Date.now();
+          st.lastT = t;
+          switchLine(audio);
+        }
+      }, 1000);
+    };
+
+    /* 换到下一条线路，位置不丢，接着播 */
+    const switchLine = (audio) => {
+      if (!audio.__live) return;
+      const lines = audio.__lines || [];
+      if (!lines.length) return;
+      let next;
+      if (!audio.__triedBlob && audio.__blobUrl) {
+        next = audio.__blobUrl;          // 本地内存版最稳，优先用
+        audio.__triedBlob = true;
+      } else {
+        audio.__line = (audio.__line + 1) % lines.length;
+        next = lines[audio.__line];
+      }
+      /* 换线后重新计时：新线路也要有自己的宽限期，
+         不然会连着把后面的好线路也跳过去。 */
+      if (audio.__wd) {
+        audio.__wd.startAt = Date.now();
+        audio.__wd.lastAdvance = Date.now();
+        audio.__wd.lastBuf = audio.buffered.length ? audio.buffered.end(audio.buffered.length - 1) : 0;
+        audio.__wd.lastT = audio.currentTime || 0;
+      }
+      setSource(audio, next);
+      const row = audio.closest('.scoring-item');
+      if (row) row.classList.add('loading');
+    };
+
+    /* ── 线路彻底断了 → 立刻换下一条 ─────────────────────
+       error 事件不会冒泡，所以用捕获阶段监听。
+       每失败一次只换一次，不会连着把好线路也跳过去。 */
+    list.addEventListener('error', (e) => {
+      const a = e.target;
+      if (a.tagName !== 'AUDIO') return;
+      if (!a.__live) return;
+      switchLine(a);
+    }, true);
 
     const resetRow = (row) => {
       const btn = row.querySelector('.scoring-play');
@@ -363,10 +568,16 @@ renderSongWall();
       row.querySelector('.scoring-knob').style.left = '0%';
       row.querySelector('.scoring-cur').textContent = '0:00';
       row.querySelector('.scoring-bar').setAttribute('aria-valuenow', '0');
+      const load = row.querySelector('.scoring-load');
+      if (load) {
+        load.querySelector('i').style.width = '0%';
+        load.querySelector('span').textContent = '';
+      }
       btn.classList.remove('playing');
       btn.textContent = '▶';
       row.classList.remove('playing');
       row.classList.remove('loading');
+      row.classList.remove('downloading');
     };
 
     /* 只停掉真正在播（或已加载）的条目。
@@ -377,12 +588,15 @@ renderSongWall();
           但令牌已作废 → 该 rejection 被忽略，不会污染当前状态；
           而音频确实被停住了，不会出现多轨齐鸣。 */
     const stopAll = (except) => {
+      stopWatchdog();
       rows.forEach(row => {
         if (row === except) return;
         const a = row.querySelector('audio');
         if (a) {
           a.__token = (a.__token || 0) + 1;   // 先作废，令旧回调失效
           a.__pending = false;
+          a.__live = false;
+          a.__userPaused = false;
           a.pause();
           if (a.readyState > 0) a.currentTime = 0;   // 仅已加载的才归零
         }
@@ -418,15 +632,25 @@ renderSongWall();
         row.classList.add('loading');
       }
     }, true);
-        list.addEventListener('playing', (e) => {
+
+    list.addEventListener('playing', (e) => {
       const a = e.target;
       if (a.tagName !== 'AUDIO') return;
       const row = a.closest('.scoring-item');
-      if (row) {
-        row.classList.remove('loading');
-        paint(row, a);
+      if (!row) return;
+      row.classList.remove('loading');
+      /* 真的出声了 —— 界面状态跟着事件走，不跟着"发起播放"走。
+         （换线路、换源、缓冲恢复都会重新触发 playing） */
+      a.__started = true;
+      if (a.__live) {
+        const btn = row.querySelector('.scoring-play');
+        btn.classList.add('playing');
+        btn.textContent = '❚❚';
+        row.classList.add('playing');
       }
+      paint(row, a);
     }, true);
+
     /* canplay 只在首次就绪时触发，断流恢复时不会再触发，
        所以恢复显示主要靠 timeupdate（下面）。这里仅作首次兜底。 */
     list.addEventListener('canplay', (e) => {
@@ -436,6 +660,34 @@ renderSongWall();
       if (row && a === current) {
         row.classList.remove('loading');
         paint(row, a);
+      }
+    }, true);
+
+    /* 总时长以**音频文件里的真实 duration** 为准。
+       之前是写死在 SCORING 表里的常量，其中好几条和实际文件对不上
+       （例如《山河之光》写 7:37，文件实际 3:19）——
+       进度条按真实 duration 走、右边文字按写死值显示，两边对不上，
+       用户看着就像"进度条卡住了/跳得不对"。 */
+    list.addEventListener('loadedmetadata', (e) => {
+      const a = e.target;
+      if (a.tagName !== 'AUDIO') return;
+      const row = a.closest('.scoring-item');
+      if (!row) return;
+      const total = row.querySelector('.scoring-total');
+      if (total && isFinite(a.duration) && a.duration > 0) {
+        total.textContent = fmt(a.duration);
+      }
+      /* 换源（直连 → 内存 Blob）后播放位置会复位，这里跳回去 */
+      const resume = parseFloat(a.dataset.resumeAt);
+      if (isFinite(resume) && resume > 0 && isFinite(a.duration) && a.duration > 0) {
+        a.currentTime = Math.min(resume, Math.max(0, a.duration - 0.1));
+        delete a.dataset.resumeAt;
+      }
+      /* 用户在元数据到位之前点了进度条 → 跳到对应位置 */
+      const target = parseFloat(a.dataset.seekTo);
+      if (isFinite(target) && isFinite(a.duration) && a.duration > 0) {
+        a.currentTime = target * a.duration;
+        delete a.dataset.seekTo;
       }
     }, true);
 
@@ -471,16 +723,7 @@ renderSongWall();
           /* 还没加载 → 先记录目标位置，加载完自动跳过去。
              ⚠️ 直接写 currentTime 会触发整首重新下载，用户体验就是"卡住"。 */
           audio.dataset.seekTo = String(ratio);
-          if (audio.readyState === 0) audio.load();
           row.classList.add('loading');
-          audio.addEventListener('loadedmetadata', () => {
-            const target = parseFloat(audio.dataset.seekTo);
-            if (isFinite(target) && isFinite(audio.duration) && audio.duration > 0) {
-              audio.currentTime = target * audio.duration;
-              delete audio.dataset.seekTo;
-              paint(row, audio);
-            }
-          }, { once: true });
         }
         return;
       }
@@ -493,59 +736,64 @@ renderSongWall();
 
       if (current === audio && !audio.paused) {
         /* 再次点击当前这条 → 暂停 */
+        audio.__userPaused = true;
         audio.pause();
         btn.classList.remove('playing');
         btn.textContent = '▶';
         row.classList.remove('playing');
         row.classList.remove('loading');
-        current = null;
         return;
       }
 
       /* 打断其它正在播放的 —— 自动互斥 */
       stopAll(audio);
 
-      /* 不额外调 audio.load()：
-         play() 本身就会开始下载，而 load() 会重置已有缓冲、重新下载，
-         反而更慢。只需标出"正在缓冲"状态即可。 */
-      if (audio.readyState === 0) row.classList.add('loading');
+      const file = row.dataset.file;
 
       /* 播放令牌：快速连点时，上一条的 play() 可能还没兑现就被中断，
-         它的 resolve/reject 回调必须不能影响当前这条的状态。 */
+         它的回调必须不能影响当前这条的状态。 */
       const token = (audio.__token = (audio.__token || 0) + 1);
       audio.__pending = true;                       // 标记"播放请求在飞"
+      audio.__live = true;
+      audio.__userPaused = false;
+      audio.__started = false;
+      audio.__triedBlob = false;
+      audio.__blobUrl = null;
+      audio.__lines = streamLines(file);
+      audio.__line = 0;
 
-      const p = audio.play();
-      if (p && p.then) {
-        p.then(() => {
-          /* ⚠️ __pending 必须在令牌校验**之前**清掉。
-             否则被作废的条目会永远标记为"播放请求在飞"，
-             它的 play() 其实成功了 → 出现多轨齐鸣。 */
-          audio.__pending = false;
-          if (audio.__token !== token) {
-            // 已过期：确保它真的停下，别让多首同时响
-            if (!audio.paused) audio.pause();
-            return;
-          }
-          current = audio;
-          btn.classList.add('playing');
-          btn.textContent = '❚❚';
-          row.classList.add('playing');
-          row.classList.remove('loading');
-          paint(row, audio);
-        }).catch((err) => {
-          audio.__pending = false;
-          if (audio.__token !== token) return;      // 已过期，忽略
-          btn.classList.remove('playing');
-          btn.textContent = '▶';
-          row.classList.remove('loading');
-          /* AbortError = 被 stopAll 的 pause() 中断，属正常切换，忽略。
-             只有真正的错误（如自动播放被拦截）才提示用户。 */
-          if (err && err.name === 'NotAllowedError') {
-            row.querySelector('.scoring-cur').textContent = '请再次点击';
-          }
-        });
-      }
+      /* 用户要看这一首 → 别的曲子的后台下载立刻让路，别抢带宽 */
+      engine.cancelExcept(file);
+
+      /* 这一首现在归我管：看门狗从**发起播放**就开始盯，
+         不等真正出声 —— 上一版等出声后才盯，线路卡死时没人救场。 */
+      current = audio;
+      armWatchdog(audio);
+
+      /* ① 缓存里有 → 直接播内存里的整首：零网络、绝对不卡、拖条也稳 */
+      engine.cacheHit(file).then((hit) => {
+        if (!hit || audio.__token !== token) return;
+        audio.__blobUrl = hit.url;
+        audio.__triedBlob = true;
+        if (!audio.__started) useBlob(audio, hit.url);
+      }).catch(() => {});
+
+      /* ② 没有缓存 → 先流式播第一条线路：第一秒就有声。
+         ⚠️ play() 必须在用户手势的**同一个任务**里调用，
+            放到 await 之后会被浏览器当成"没有用户操作"而拦下自动播放。 */
+      setSource(audio, audio.__lines[0]);
+
+      /* ③ 后台并行分块把整首下下来（8 块同时下 = 8 倍速度）。
+         下完存进缓存 → 这一首从此零网络；中途卡住也有内存版兜底。 */
+      engine.blobOf(file).then((blob) => {
+        if (!blob || audio.__token !== token) return;
+        const url = URL.createObjectURL(blob);
+        audio.__blobUrl = url;
+        audio.__triedBlob = true;
+        /* 切到内存版：位置保留，此后再不碰网络 —— 不卡、拖条也稳。
+           切换只有几十毫秒，听不出来。 */
+        useBlob(audio, url);
+      }).catch(() => {});
     });
 
     /* 键盘：进度条左右键快进 / 快退 */
@@ -660,6 +908,7 @@ document.addEventListener('click', (e) => {
   nav.innerHTML = [
     ['#mainline', '主线'],
     ['#songs', '歌单'],
+    ['#songtable', '曲目表'],
     ['#scoring', 'DEMO'],
     ['#cast', '人物'],
     ['#threads', '伏笔'],

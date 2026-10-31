@@ -52,7 +52,18 @@ git add -A
 git commit -m "update: $(date '+%Y-%m-%d %H:%M')" || true
 git push origin main
 
-echo "⑤ 完成。GitHub Pages 约 1-2 分钟后自动更新。"
-echo "   NOCTURNE 剧作集：https://zhouyaobai.github.io/shanhe-baiduren/"
-echo "   《山河摆渡人》　：https://zhouyaobai.github.io/shanhe-baiduren/shanhe/"
-echo "   《西山不是山》　：https://zhouyaobai.github.io/shanhe-baiduren/xishan/"
+echo "⑤ 同步到 Cloudflare Pages 镜像（国内线路更快，配乐靠它才流畅）…"
+STAGE=$(mktemp -d /tmp/shanhe-pages-XXXX)
+cp -R index.html 404.html favicon.svg assets shanhe xishan _headers .nojekyll "$STAGE"/
+# shanhe/tools/ 是内部工具链（docx 解析与加密），不必发布到公网
+rm -rf "$STAGE/shanhe/tools"
+npx wrangler pages deploy "$STAGE" --project-name shanhe-baiduren --branch main \
+  || echo "   ⚠️ 镜像部署失败（不影响 GitHub Pages，只是会慢一些）"
+
+echo "⑥ 完成。"
+echo "   GitHub Pages（约 1-2 分钟）："
+echo "     NOCTURNE 剧作集：https://zhouyaobai.github.io/shanhe-baiduren/"
+echo "     《山河摆渡人》　：https://zhouyaobai.github.io/shanhe-baiduren/shanhe/"
+echo "     《西山不是山》　：https://zhouyaobai.github.io/shanhe-baiduren/xishan/"
+echo "   Cloudflare Pages 镜像（更快，配乐首选）："
+echo "     《山河摆渡人》　：https://shanhe-baiduren.pages.dev/shanhe/"

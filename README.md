@@ -116,18 +116,19 @@ python3 assets/nocturne/tools/gen_svg.py
 
 ## 二、《山河摆渡人》剧本站
 
-红色庭院音乐剧《山河摆渡人》官方网站。
+云南本土原创红色歌剧《山河摆渡人》官方网站。
 
 ### 这是一个什么站
 
-六幕完整剧本 + 46 首曲目完整歌词 + 10 位人物 + 6 条伏笔闭环。
+六幕完整剧本 + 40 首曲目完整歌词 + 11 位人物 + 6 条伏笔闭环。
 
 - **首页 3D 火塘场景**：Three.js + 手绘钢笔排线着色器（hatching shader），朱砂红主调
 - **六幕正文**：序幕 / 第一幕 / 第二幕 / 第三幕 / 第四幕 / 尾幕，专业剧本排版（角色名居中、台词缩进、歌词独立行距）
 - **曲内有序流**：每首曲目的宣叙调、小节标记、歌词严格按原文顺序呈现
-- **曲目总览**：46 首目录；同名主题歌的各段落带标记区分（主歌 A / 副歌 B / 桥段 / 大合唱 / 再现）
-- **人物卡**：10 位主要角色
-- **伏笔闭环**：骨哨、凤凰帕子、银镯、真假油布包、杀父之鞭、夜不渡皎平
+- **曲目总览**：40 首目录；同名主题歌的各段落带标记区分（主歌 A / 副歌 B / 桥段 / 大合唱 / 再现）
+- **全剧曲目表**：定稿原表（幕次 / 序号 / 曲目名称 / 类型 / 演唱），按幕分组，序号可点跳
+- **人物卡**：11 位（10 位角色 + 其他角色群像）
+- **伏笔闭环**：阿爹的彝刀、日月纹帕子、真假油布包、刘矬子的鞭子、夜不渡皎平、三十七位船工的名字
 
 ### 视觉系统
 
@@ -144,7 +145,7 @@ python3 assets/nocturne/tools/gen_svg.py
 
 ### 剧本阅读权限
 
-**公开可见**：剧目概况（幕名 / 时间 / 地点 / 舞台氛围 / 出场人物）、核心主线、歌单目录、人物小传、伏笔结构。
+**公开可见**：剧目概况（幕名 / 时间 / 地点 / 舞台氛围 / 出场人物）、核心主线、歌单目录、全剧曲目表、人物小传、伏笔结构。
 
 **需密码**：六幕剧本正文（台词 / 舞台提示）与全部唱段歌词。
 
@@ -162,25 +163,26 @@ python3 assets/nocturne/tools/gen_svg.py
 **关键约定：不要另写解析器。** 解析层与数据映射层必须分离。
 
 ```
-docx（内容稿）
-  └─ extract_script.py ──→ script_struct.json      （解析层，已验证）
-       └─ gen_site_data3.py ──→ 结构 JSON           （数据映射层）
-            └─ gen_site_data4.py ──→ data.js + crypto.js   （加密层）
+docx（定稿）
+  └─ tools/extract_script.py ──→ script_struct.json          （解析层）
+       └─ tools/gen_site_data.py ──→ data.js（公开层 + AES-GCM 密文）
+            └─ tools/audit_sync.py ──→ 同步校验（缺失必须为 0 条）
 ```
 
-自写 docx 解析器会引入歌词丢失、幕内资料丢失、唱段边界错乱等 7 处缺陷。
+三个脚本都在 `shanhe/tools/` 下。解析层只做「文档 → 结构」，
+剧目资料卡、人物卡、伏笔等人工内容在映射层；密码走环境变量 `READ_PASS`。
 
 ### 更新流程
 
 ```bash
-# 1. 更新 docx
-# 2. 重新解析
-python3 extract_script.py "outputs/红色庭院音乐剧《山河摆渡人》(修订版).docx" \
-                         output/typeset-20261028-0215/working/script_struct.json
-# 3. 生成（密码走环境变量，不入库）
-READ_PASS=你的密码 python3 gen_site_data4.py
+cd shanhe/tools
+# 1. 重新解析定稿 docx
+python3 extract_script.py "/路径/云南本土原创红色歌剧《山河摆渡人》·定稿.docx" script_struct.json
+# 2. 生成 data.js（密码走环境变量，不入库）
+READ_PASS=你的密码 python3 gen_site_data.py script_struct.json ../assets/js/data.js
+# 3. 核对有没有漏字（应为「缺失 0 条」）
+READ_PASS=你的密码 python3 audit_sync.py "/路径/…·定稿.docx" ../assets/js/data.js
 # 4. 同步并推送（注意：站点产物在 shanhe/ 子目录）
-rsync -a --delete site/ /path/to/repo/shanhe/ --exclude .git
 ./deploy.sh
 ```
 
@@ -188,7 +190,7 @@ rsync -a --delete site/ /path/to/repo/shanhe/ --exclude .git
 
 阿木、阿果为艺术虚构人物，原型是千千万万无名彝、汉、傣各族群众。 剧中真实地名、渡口、里程、船工姓名均依史实。
 
-编剧：孙子岚 白耀洲 李思颖　｜　音乐：彭侠影 白耀洲 孙子岚
+编剧：孙子岚 白耀洲 彭侠颖　｜　音乐：彭侠颖 白耀洲 孙子岚
 
 ---
 
@@ -208,7 +210,42 @@ shanhe/
 ├── index.html                  《山河摆渡人》主页
 ├── 404.html
 └── assets/                     同上
+    ├── js/audio-engine.js      音频引擎（多源竞速 / 整曲预载 / 本地缓存）
+    └── audio/*.web.mp3         网页版配乐（44.1kHz / 80kbps）
+_headers                        Cloudflare Pages 配置（音频跨域 + 长缓存）
 ```
+
+### 配乐为什么这样改（2026-11）
+
+GitHub Pages 在国内线路带宽时快时慢（实测 25KB/s ~ 500KB/s 都出现过），
+把 `<audio src=远程地址>` 直接交给浏览器，播放中途网速一掉就断流 → 卡顿。
+
+现在的做法（`shanhe/assets/js/audio-engine.js` + `shanhe/assets/js/main.js`）：
+
+1. **先出声** —— 点下去立刻用原生流式播第一条线路，第一秒就有声。
+   （页面打开时 `preload="none"`，一张音频都不下载；上一版 7 首同时预取
+   元数据，等于页面一打开就有 7 条连接抢带宽。）
+2. **并行分块下整首** —— 同时把曲子切成 8 块一起下（单条线路再快也就几百 KB/s，
+   8 条并行就是 8 倍速度），下完存成内存 Blob 并**无缝切过去**。
+   切过去之后播放期间完全不碰网络 → 卡顿从根上消失，拖进度条也稳。
+   服务器不支持 Range（Cloudflare Pages 实测永远回 200）时自动退回整首竞速。
+3. **多源竞速** —— 同源 / jsDelivr / GitHub Pages / raw.githubusercontent /
+   Cloudflare Pages 镜像同时参与，谁先跑完用谁，其余立刻掐断；
+   每 1.2 秒重新排名，落后太多的线路直接放弃。
+4. **看门狗自动换线** —— 播放位置和缓冲都不动超过 4 秒就自动换下一条线路，
+   换源后从原位置接着播；还没出声时给 7 秒宽限。**这就是"关键时刻换播放方案"**，
+   不用用户重按。
+5. **本地缓存** —— 整首存进 Cache Storage，第二次播放秒开，断网也能播。
+
+音频本身从 180kbps 压到 80kbps（体积 −57%），并改名 `.web.mp3` + 带
+`?v=<内容md5前10位>` 查询串，彻底避开 CDN 与浏览器的旧缓存。母版仍在 git 历史里。
+
+> ⚠️ `<audio>` 必须带 `crossorigin="anonymous"`：跨站取音频时否则浏览器按
+> 「不透明响应」处理，**拖进度条会直接断流**（实测）。
+> ⚠️ 直接播的线路必须支持 Range（回 206），否则拖进度条同样会断。
+
+> 改了任何音频文件，必须同步改 `shanhe/assets/js/main.js` 里 SCORING 表的 `v` 值
+> （重新算 md5 前 10 位），否则用户会拿到旧文件。
 
 ---
 

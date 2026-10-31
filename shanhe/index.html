@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>山河摆渡人 ｜ 原创大型红色歌舞剧</title>
-<meta name="description" content="原创大型红色歌舞剧《山河摆渡人》完整剧本。六幕、46 首曲目，从 1932 年彝寨火塘到 1935 年巧渡金沙江。">
+<title>山河摆渡人 ｜ 云南本土原创红色歌剧</title>
+<meta name="description" content="云南本土原创红色歌剧《山河摆渡人》完整剧本。六幕、40 首曲目，从 1932 年彝寨火塘到 1935 年巧渡金沙江。">
 <meta name="theme-color" content="#1A0C0E">
 <meta property="og:type" content="website">
-<meta property="og:title" content="山河摆渡人 ｜ 原创大型红色歌舞剧">
-<meta property="og:description" content="六幕 · 四十六首曲目。从 1932 年彝寨火塘到 1935 年巧渡金沙江——完整剧本在线读。">
+<meta property="og:title" content="山河摆渡人 ｜ 云南本土原创红色歌剧">
+<meta property="og:description" content="六幕 · 四十首曲目。从 1932 年彝寨火塘到 1935 年巧渡金沙江——完整剧本在线读。">
 <meta property="og:locale" content="zh_CN">
 <link rel="stylesheet" href="assets/css/main.css">
 <link rel="preload" href="assets/js/three.module.js" as="script" crossorigin>
@@ -35,7 +35,7 @@
   <section class="hero" id="hero">
     <div class="hero-mark" aria-hidden="true"><span>渡</span></div>
     <div class="hero-inner">
-      <div class="hero-kicker">原创大型红色歌舞剧</div>
+      <div class="hero-kicker">云南本土原创红色歌剧</div>
       <h1 class="hero-title">山河摆渡人<span class="seal" aria-hidden="true">渡</span></h1>
       <p class="hero-sub" id="heroSub">历史的回眸 · 巧渡金沙江</p>
       <div class="hero-meta" id="heroMeta"></div>
@@ -97,10 +97,27 @@
     <div class="wrap wide">
       <div class="sec-head">
         <div class="sec-num">歌 单</div>
-        <h2 class="sec-title">全剧四十六首</h2>
+        <h2 class="sec-title">全剧四十首</h2>
         <p class="sec-desc">点开任意一首，看它的完整歌词。咏叹调、宣叙调、合唱，各有其声。</p>
       </div>
       <div class="songwall" id="songwall"></div>
+    </div>
+  </section>
+
+  <!-- ══ 全剧曲目表 ══ -->
+  <section class="band dark" id="songtable">
+    <div class="wrap wide">
+      <div class="sec-head">
+        <div class="sec-num">目 录</div>
+        <h2 class="sec-title">全剧曲目表</h2>
+        <p class="sec-desc">四十首曲目的幕次、体裁与演唱，一表全览。点序号可跳到该曲。</p>
+      </div>
+      <div class="table-scroll">
+        <table class="song-table">
+          <thead id="songTableHead"></thead>
+          <tbody id="songTableBody"></tbody>
+        </table>
+      </div>
     </div>
   </section>
 
@@ -121,7 +138,7 @@
     <div class="wrap wide">
       <div class="sec-head">
         <div class="sec-num">人 物</div>
-        <h2 class="sec-title">十个人，一条河</h2>
+        <h2 class="sec-title">十一个人，一条河</h2>
         <p class="sec-desc">阿木与阿果是艺术虚构人物，原型是千千万万无名彝、汉、傣各族群众。</p>
       </div>
       <div class="cast" id="castGrid"></div>
@@ -134,7 +151,7 @@
       <div class="sec-head">
         <div class="sec-num">伏 笔</div>
         <h2 class="sec-title">六条线，都收到了</h2>
-        <p class="sec-desc">每一件信物埋下时，都不是为了好看。它们在最后一场全部落地。</p>
+        <p class="sec-desc">有些是信物，有些是人。埋下时都不是为了好看，最后一场全部落地。</p>
       </div>
       <div class="threads" id="threadList"></div>
     </div>
@@ -149,7 +166,7 @@
       <div class="foot-meta">
         <span id="footAuthor"></span>
         <span>1932 — 1935</span>
-        <span>六幕 · 四十六首曲目</span>
+        <span>六幕 · 四十首曲目</span>
       </div>
     </div>
   </footer>
