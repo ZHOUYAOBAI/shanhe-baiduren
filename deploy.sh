@@ -40,12 +40,11 @@ for f in xishan/index.html xishan/404.html \
          xishan/assets/js/scene.js \
          xishan/assets/js/hatch.js \
          xishan/assets/js/three.module.js \
-         xishan/assets/js/three.core.js \
          xishan/assets/svg/emblem-mountain.svg \
          xishan/assets/svg/object-door.svg; do
   [ -f "$f" ] || { echo "缺少文件：$f"; exit 1; }
 done
-echo "   ✓ 12 个核心文件齐全"
+echo "   ✓ 11 个核心文件齐全"
 
 echo "④ 校验《百年星语·破晓1928》（px1928/ 子目录）…"
 for f in px1928/index.html px1928/404.html px1928/favicon.svg \
