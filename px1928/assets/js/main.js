@@ -6,8 +6,8 @@
      window.SCRIPT_SECRET 受限层（幕正文 + 全部歌词，AES-256-GCM 密文）
    解锁后由 mergeSecret() 把受限层并入，再重绘受影响的区块。
    ============================================================ */
-import { createStage, readPalette } from './scene.js?v=b622aed5';
-import { decryptSecret, isCryptoAvailable } from './crypto.js?v=b622aed5';
+import { createStage, readPalette } from './scene.js?v=17f90ea3';
+import { decryptSecret, isCryptoAvailable } from './crypto.js?v=17f90ea3';
 
 let D = window.SCRIPT || {};
 const SECRET = window.SCRIPT_SECRET || null;
@@ -61,8 +61,19 @@ function renderHero() {
   if (has(c.kicker)) $('#heroKicker').textContent = c.kicker;
   const title = has(c.name) ? c.name : (D.acts && D.acts.length ? D.acts[0].title : '');
   const titleEl = $('#heroTitle');
-  titleEl.textContent = title;
-  titleEl.dataset.text = title;   /* 立体挤出层靠 data-text 复制字形 */
+  /* 标题按「·」断成两行（「百年星语·」/「破晓1928」）。
+     间隔号落到下一行行首是排版大忌，而中文可以在任意字间断行，
+     光靠 CSS 拦不住 —— 只能在这里显式分行。
+     每行各自带 data-text，立体挤出层逐行复制字形，深度才对得上。 */
+  const raw = String(title);
+  const cut = raw.indexOf('·');
+  const lines = cut > 0 ? [raw.slice(0, cut), raw.slice(cut + 1)] : [raw];
+  titleEl.innerHTML = lines.map((t, i) => {
+    /* 间隔号单独提出来，用宋体的「·」—— 毛笔字的间隔号落在字脚，
+       像一粒墨点；换成朱砂的宋体点，才是个有意为之的标点。 */
+    const dot = (i === 0 && cut > 0) ? '<span class="tdot">·</span>' : '';
+    return `<span class="hero-title-line" data-text="${esc(t)}">${esc(t)}${dot}</span>`;
+  }).join('');
   /* 挤出层是伪元素，会被读屏重复念三遍；标题只保留一份可读名称 */
   const titleWrap = $('#heroTitleWrap');
   if (titleWrap) titleWrap.setAttribute('aria-label', title);
@@ -1999,9 +2010,70 @@ function initHero3D() {
   onMotionGateChange(apply);
 }
 
+/* ══ 马灯：全剧的火种，随指针转面 ═══════════════════════
+   灯身是八面纸屏绕轴拼成的柱体，所以只能绕竖轴转。
+   幅度压在 ±13°：再大就转成风车，庄重感全丢。            */
+function initLantern3D() {
+  const slot = $('#heroLanternSlot');
+  const body = $('#lanternBody');
+  if (!slot || !body) return;
+  if (slot.dataset.motif && slot.dataset.motif !== 'lantern') { slot.remove(); return; }
+
+  const MAX = 13;
+  let raf = 0, bound = false;
+
+  const onMove = (e) => {
+    if (raf) return;
+    raf = requestAnimationFrame(() => {
+      raf = 0;
+      const r = slot.getBoundingClientRect();
+      if (!r.width || !r.height) return;
+      const px = (e.clientX - r.left) / r.width - .5;
+      const py = (e.clientY - r.top) / r.height - .5;
+      body.style.setProperty('--ly', (px * MAX * 2).toFixed(2) + 'deg');
+      body.style.setProperty('--lx', (-py * MAX * .6).toFixed(2) + 'deg');
+    });
+  };
+  const onLeave = () => {
+    body.style.setProperty('--ly', '0deg');
+    body.style.setProperty('--lx', '0deg');
+  };
+  const attach = () => {
+    if (bound) return;
+    window.addEventListener('pointermove', onMove, { passive: true });
+    bound = true;
+  };
+  const detach = () => {
+    if (bound) return;
+    window.removeEventListener('pointermove', onMove);
+    bound = false;
+    onLeave();
+  };
+  const apply = () => { if (motionOk()) attach(); else detach(); };
+  apply();
+  onMotionGateChange(apply);
+}
+
+/* ══ 火种时间轴：滚进视野就点亮，火光沿连线走过去 ══════ */
+function initSpineFlame() {
+  const spine = $('.spine');
+  if (!spine) return;
+  if (!('IntersectionObserver' in window)) { spine.classList.add('lit'); return; }
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (!e.isIntersecting) continue;
+      e.target.classList.add('lit');
+      io.unobserve(e.target);
+    }
+  }, { threshold: 0.3 });
+  io.observe(spine);
+}
+
 function boot() {
   renderHero();
   renderSpine();
+  initLantern3D();
+  initSpineFlame();
   renderFront();
   renderActs();
   renderSongWall();

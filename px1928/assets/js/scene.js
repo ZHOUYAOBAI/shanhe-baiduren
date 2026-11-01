@@ -95,8 +95,9 @@ export function readPalette(root = document.documentElement) {
     paper,
     paper2: get('--paper-2', '#5C5245'),
     paper3: get('--paper-3', '#756A5B'),
-    accent: get('--accent', '#C8102E'),
+    accent: get('--accent', '#A62B1E'),
     accent2,
+    accent3: get('--accent-3', '#3B4C68'),
     line: get('--line', 'rgba(43,36,28,.13)'),
     light,
     sky:  light ? '#FFFFFF' : '#000000',
@@ -283,9 +284,9 @@ function sceneFire(rand) {
       /* 马灯洒下的一圈暖光 */
       const radius = Math.max(w, h) * 0.62;
       const glow = ctx.createRadialGradient(fx, fy, 0, fx, fy, radius);
-      glow.addColorStop(0, rgba(pal.accent2, 0.24));
-      glow.addColorStop(0.20, rgba(pal.accent, 0.13));
-      glow.addColorStop(0.50, rgba(pal.accent, 0.05));
+      glow.addColorStop(0, rgba(pal.accent2, 0.13));
+      glow.addColorStop(0.20, rgba(pal.accent, 0.07));
+      glow.addColorStop(0.50, rgba(pal.accent, 0.028));
       glow.addColorStop(1, 'rgba(0,0,0,0)');
       ctx.fillStyle = glow;
       ctx.fillRect(0, 0, w, h);
@@ -298,8 +299,8 @@ function sceneFire(rand) {
         const tx = bx + Math.cos(ang) * len;
         const ty = fy + Math.sin(ang) * len;
         const g = ctx.createLinearGradient(bx, fy, tx, ty);
-        g.addColorStop(0, rgba(pal.accent, 0.26));
-        g.addColorStop(0.4, rgba(pal.accent2, 0.22));
+        g.addColorStop(0, rgba(pal.accent, 0.15));
+        g.addColorStop(0.4, rgba(pal.accent2, 0.13));
         g.addColorStop(1, 'rgba(0,0,0,0)');
         ctx.strokeStyle = g;
         ctx.lineWidth = 3.5;
@@ -312,11 +313,11 @@ function sceneFire(rand) {
 
       /* 灯芯：一小团跳动的高光，藏在画面下缘 */
       const flick = 1 + Math.sin(t * 3.1) * 0.07 + Math.sin(t * 7.3) * 0.03;
-      const coreR = h * 0.075 * flick;
+      const coreR = h * 0.055 * flick;
       const core = ctx.createRadialGradient(fx, fy, 0, fx, fy, coreR);
-      core.addColorStop(0, rgba('#FFFFFF', pal.light ? 0.55 : 0.34));
-      core.addColorStop(0.3, rgba(pal.accent2, 0.34));
-      core.addColorStop(0.72, rgba(pal.accent, 0.14));
+      core.addColorStop(0, rgba('#FFFFFF', pal.light ? 0.26 : 0.34));
+      core.addColorStop(0.3, rgba(pal.accent2, 0.16));
+      core.addColorStop(0.72, rgba(pal.accent, 0.07));
       core.addColorStop(1, 'rgba(0,0,0,0)');
       ctx.fillStyle = core;
       ctx.beginPath();
@@ -326,9 +327,16 @@ function sceneFire(rand) {
       /* 台口地光：把画面下缘托起来，避免中间空 */
       const floor = ctx.createLinearGradient(0, h * 0.72, 0, h);
       floor.addColorStop(0, 'rgba(0,0,0,0)');
-      floor.addColorStop(1, rgba(pal.accent, pal.light ? 0.05 : 0.12));
+      floor.addColorStop(1, rgba(pal.accent, pal.light ? 0.035 : 0.12));
       ctx.fillStyle = floor;
       ctx.fillRect(0, h * 0.72, w, h * 0.28);
+
+      /* 台口的冷影：靛青压底，暖光才浮得起来 */
+      const cool = ctx.createLinearGradient(0, h * 0.55, 0, h);
+      cool.addColorStop(0, 'rgba(0,0,0,0)');
+      cool.addColorStop(1, rgba(pal.accent3, pal.light ? 0.05 : 0.12));
+      ctx.fillStyle = cool;
+      ctx.fillRect(0, h * 0.55, w, h * 0.45);
 
       /* 火星 */
       for (const e of embers) {

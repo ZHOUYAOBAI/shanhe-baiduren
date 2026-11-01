@@ -274,13 +274,20 @@ button { font: inherit; color: inherit; }
 }
 .hero-title {
   font-family: var(--serif);
-  font-size: clamp(42px, 9vw, 104px);
+  font-size: clamp(40px, 8vw, 96px);
   font-weight: 400; line-height: 1.12;
   letter-spacing: .06em; margin: 0 0 20px;
-  display: flex; align-items: flex-start; gap: 18px; flex-wrap: wrap;
+  display: flex;
+  align-items: flex-end;
+  gap: .16em;
+  flex-wrap: nowrap;
   text-shadow: var(--title-shadow);
 }
+.hero-title-3d { flex: 0 1 auto; min-width: 0; }
 .hero-title .seal {
+  display: inline-block;
+  flex: 0 0 auto;
+  margin-bottom: .12em;
   font-size: .3em; letter-spacing: 0;
   color: var(--on-accent);
   border: 2px solid var(--accent);
@@ -288,7 +295,6 @@ button { font: inherit; color: inherit; }
   padding: .2em .32em .24em;
   border-radius: 2px;
   line-height: 1;
-  margin-top: .2em;
   box-shadow: 0 8px 26px -10px var(--accent);
   position: relative;
 }
@@ -1803,11 +1809,11 @@ body.focus-mode .hero { min-height: 78vh; }
 .hero {
   background:
     linear-gradient(to bottom,
-      color-mix(in srgb, var(--bg-2) 92%, transparent) 0%,
-      color-mix(in srgb, var(--bg-2) 55%, transparent) 34%,
+      color-mix(in srgb, var(--bg-2) 72%, transparent) 0%,
+      color-mix(in srgb, var(--bg-2) 34%, transparent) 34%,
       transparent 68%),
-    radial-gradient(120% 78% at 50% -12%,
-      rgba(255, 253, 246, .82) 0%, rgba(255, 253, 246, .30) 46%, transparent 68%);
+    radial-gradient(96% 64% at 22% -14%,
+      rgba(255, 252, 244, .46) 0%, rgba(255, 252, 244, .16) 48%, transparent 70%);
 }
 
 /* ── 二、毛笔立体标题 ───────────────────────────────────── */
@@ -1827,16 +1833,32 @@ body.focus-mode .hero { min-height: 78vh; }
   will-change: transform;
   transition: transform .22s cubic-bezier(.2, .75, .3, 1);
 }
-/* 两层挤出：像刻进纸里的墨，边缘有厚度 */
-.hero-title-3d::before, .hero-title-3d::after {
+/* 两层挤出：像刻进纸里的墨，边缘有厚度。
+   挤出层挂在「行」上而不是整个标题上 —— 标题排成两行时，
+   整块挤出会跟正文的断行错位，一眼假。 */
+.hero-title-line {
+  display: block; position: relative; transform-style: preserve-3d;
+  white-space: nowrap;   /* 行由 JS 显式断好，绝不允许在行内再断 */
+}
+/* 间隔号：宋体的点，朱砂色，落在第一行末尾 */
+.hero-title .tdot {
+  font-family: var(--serif);
+  font-size: .46em;
+  vertical-align: .04em;
+  margin-left: .06em;
+  color: var(--accent);
+  text-shadow: none;
+}
+.hero-title-line::before, .hero-title-line::after {
   content: attr(data-text);
   position: absolute; left: 0; top: 0;
   color: var(--ink-3d);
   pointer-events: none;
   z-index: -1;
+  white-space: pre;
 }
-.hero-title-3d::before { transform: translateZ(-10px) translateY(6px);  opacity: .62; }
-.hero-title-3d::after  { transform: translateZ(-20px) translateY(12px); opacity: .32; }
+.hero-title-line::before { transform: translateZ(-10px) translateY(6px);  opacity: .74; }
+.hero-title-line::after  { transform: translateZ(-20px) translateY(12px); opacity: .40; }
 
 /* 墨韵：笔画边缘微微洇开 */
 .hero-title-3d {
@@ -1893,14 +1915,14 @@ body.focus-mode .hero { min-height: 78vh; }
 @media (prefers-reduced-motion: reduce) {
   .tilt3d, .tilt3d > *, .hero-title-3d, .rail-item { transition: none !important; }
   .tilt3d:hover { transform: none; }
-  .hero-title-3d::before, .hero-title-3d::after { display: none; }
+  .hero-title-line::before, .hero-title-line::after { display: none; }
 }
 
 /* 窄屏：3D 会挤字，退回平面 */
 @media (max-width: 720px) {
   .tilt3d > * { transform: none; }
-  .hero-title-3d::before { transform: translateZ(-6px) translateY(4px); }
-  .hero-title-3d::after { display: none; }
+  .hero-title-line::before { transform: translateZ(-6px) translateY(4px); }
+  .hero-title-line::after { display: none; }
   .book-gutter { width: 26px; }
 }
 
@@ -2173,8 +2195,391 @@ body.mode-stage .front-band { display: none; }
     transform: none !important;
     transition: none !important;
   }
+  /* 马灯：摇摆、火焰跳动、光晕呼吸全部停掉 */
+  .lantern-body, .lantern-flame, .lantern-halo {
+    animation: none !important;
+    transition: none !important;
+  }
   .song.open .song-body > * { animation: none; }
 }
+
+
+/* ══════════════════════════════════════════════════════════
+   增强层 · 六：灯下九十六年
+   ------------------------------------------------------------
+   一、HERO 两栏：文字在左，火种在右，右半不再空着
+   二、马灯：八面纸屏绕轴转面，是全站唯一光源
+   三、灯幡：竖排剧名从「红底立牌」改成素纸挂幡（更庄重）
+   四、纸层卡片：不是玻璃卡片，是一页纸被掀起
+   五、火种时间轴：光沿着连线走过去
+   六、墨骨：表头 / 章节编号 / 幕次轨重新给重量
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── 一、HERO 两栏 ─────────────────────────────────────── */
+
+.hero-inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  gap: 40px;
+}
+.hero-text { min-width: 0; }
+
+/* 灯位：宽屏落在 HERO 右侧的三分点 */
+.hero-lantern-slot {
+  position: relative;
+  display: none;
+  align-self: stretch;
+  min-height: 500px;
+}
+
+/* ── 二、马灯 ───────────────────────────────────────────── */
+
+.hero-lantern {
+  position: absolute;
+  left: 54%; top: 47%;
+  width: 240px; height: 320px;
+  margin: -164px 0 0 -120px;
+  perspective: 1000px;
+  perspective-origin: 50% 44%;
+  pointer-events: none;
+  transform-style: preserve-3d;
+}
+.lantern-cord {
+  position: absolute; left: 50%; top: 0;
+  width: 1px; height: 36px; margin-left: -.5px;
+  background: linear-gradient(var(--paper-3), color-mix(in srgb, var(--paper-3) 30%, transparent));
+}
+.lantern-ring {
+  position: absolute; left: 50%; top: 32px;
+  width: 20px; height: 20px; margin-left: -10px;
+  border: 1.5px solid color-mix(in srgb, var(--accent-2) 72%, var(--paper));
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(60,34,10,.3);
+}
+.lantern-cap {
+  position: absolute; left: 50%; top: 52px;
+  width: 92px; height: 16px; margin-left: -46px;
+  border-radius: 50% 50% 40% 40% / 60% 60% 40% 40%;
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--accent-2) 62%, var(--paper)) 0%,
+    color-mix(in srgb, var(--accent-2) 96%, var(--paper)) 100%);
+  box-shadow: 0 4px 9px rgba(58,32,8,.34);
+}
+.lantern-body {
+  position: absolute; left: 50%; top: 66px;
+  width: 200px; height: 186px; margin-left: -100px;
+  transform-style: preserve-3d;
+  transform: rotateY(var(--ly, 0deg)) rotateX(var(--lx, 0deg));
+  transition: transform .55s cubic-bezier(.2, .75, .3, 1);
+  animation: lantern-sway 8.5s ease-in-out infinite;
+}
+@keyframes lantern-sway {
+  0%, 100% { transform: rotateY(calc(var(--ly, 0deg) - 2.4deg)) rotateX(var(--lx, 0deg)); }
+  50%      { transform: rotateY(calc(var(--ly, 0deg) + 2.4deg)) rotateX(var(--lx, 0deg)); }
+}
+.lantern-panel {
+  position: absolute; left: 50%; top: 0;
+  width: 92px; height: 186px; margin-left: -46px;
+  /* 侧边几乎不圆（纸屏是直的），只在上下收口 —— 否则每片面都鼓成蛋 */
+  border-radius: 10% 10% 12% 12% / 24% 24% 28% 28%;
+  transform: rotateY(calc(var(--i) * 45deg)) translateZ(96px);
+  backface-visibility: hidden;
+  /* 每片纸屏按所处角度给不同的暗度 —— 八片一样亮就成了折屏，
+     有了明暗梯度才读得出是圆柱。 */
+  background-color: color-mix(in srgb, var(--paper) var(--shade, 0%), transparent);
+  background-image:
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--accent-2) 26%, transparent) 0%,
+      color-mix(in srgb, var(--accent) 9%, transparent) 44%,
+      color-mix(in srgb, var(--accent-2) 30%, transparent) 100%);
+  box-shadow:
+    inset 0 0 46px color-mix(in srgb, var(--accent-2) 46%, transparent),
+    inset 0 0 5px color-mix(in srgb, var(--paper) 34%, transparent);
+}
+/* 竖骨：每面纸屏的竹骨 */
+.lantern-panel::before {
+  content: ""; position: absolute; left: 50%; top: 4%; bottom: 4%;
+  width: 1px; margin-left: -.5px;
+  background: linear-gradient(transparent,
+    color-mix(in srgb, var(--paper) 34%, transparent) 12%,
+    color-mix(in srgb, var(--paper) 34%, transparent) 88%, transparent);
+}
+.lantern-panel:nth-child(1) { --i: 0; --shade: 0%; }
+.lantern-panel:nth-child(2) { --i: 1; --shade: 13%; }
+.lantern-panel:nth-child(3) { --i: 2; --shade: 28%; }
+.lantern-panel:nth-child(4) { --i: 3; --shade: 40%; }
+.lantern-panel:nth-child(5) { --i: 4; --shade: 46%; }
+.lantern-panel:nth-child(6) { --i: 5; --shade: 40%; }
+.lantern-panel:nth-child(7) { --i: 6; --shade: 28%; }
+.lantern-panel:nth-child(8) { --i: 7; --shade: 13%; }
+/* 灯焰：藏在纸屏后面的一点火 */
+/* 灯焰：放在纸屏之前、screen 混合 —— 纸被从里面照亮 */
+.lantern-flame {
+  position: absolute; left: 50%; top: 50%;
+  width: 150px; height: 168px; margin: -84px 0 0 -75px;
+  border-radius: 50%;
+  background:
+    radial-gradient(closest-side,
+      rgba(255, 252, 244, .88) 0%,
+      color-mix(in srgb, var(--accent-2) 78%, #FFF6E2) 20%,
+      color-mix(in srgb, var(--accent-2) 62%, transparent) 44%,
+      color-mix(in srgb, var(--accent) 18%, transparent) 64%,
+      transparent 80%);
+  filter: blur(5px);
+  mix-blend-mode: screen;
+  transform: translateZ(6px);
+  animation: flame-flicker 2.6s ease-in-out infinite;
+}
+@keyframes flame-flicker {
+  0%, 100% { opacity: .78; transform: translateZ(6px) scale(1); }
+  38%      { opacity: .96; transform: translateZ(6px) scale(1.06); }
+  64%      { opacity: .86; transform: translateZ(6px) scale(.97); }
+}
+.lantern-foot {
+  position: absolute; left: 50%; top: 244px;
+  width: 64px; height: 14px; margin-left: -32px;
+  border-radius: 40% 40% 50% 50% / 40% 40% 60% 60%;
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--accent-2) 96%, var(--paper)),
+    color-mix(in srgb, var(--accent-2) 58%, var(--paper)));
+  box-shadow: 0 5px 12px rgba(58,32,8,.3);
+}
+/* 流苏 */
+.lantern-tassel {
+  position: absolute; left: 50%; top: 254px;
+  width: 2px; height: 40px; margin-left: -1px;
+  background: linear-gradient(color-mix(in srgb, var(--accent) 70%, transparent), transparent);
+}
+.lantern-tassel::after {
+  content: ""; position: absolute; left: 50%; top: 34px;
+  width: 7px; height: 12px; margin-left: -3.5px;
+  border-radius: 0 0 50% 50%;
+  background: color-mix(in srgb, var(--accent) 78%, var(--accent-2));
+}
+/* 灯下的光：整站唯一光源，暖光落在纸上 */
+.lantern-halo {
+  position: absolute; left: 54%; top: 47%;
+  width: 760px; height: 760px;
+  margin: -380px 0 0 -380px;
+  pointer-events: none;
+  background:
+    radial-gradient(closest-side,
+      color-mix(in srgb, var(--accent-2) 30%, transparent) 0%,
+      color-mix(in srgb, var(--accent-2) 16%, transparent) 28%,
+      color-mix(in srgb, var(--accent) 9%, transparent) 50%,
+      transparent 76%);
+  animation: halo-breathe 6.5s ease-in-out infinite;
+}
+@keyframes halo-breathe {
+  0%, 100% { opacity: .92; transform: scale(1); }
+  50%      { opacity: 1;   transform: scale(1.035); }
+}
+
+/* ── 三、灯幡：素纸挂幡替掉红底立牌 ────────────────────── */
+
+.hero-placard {
+  position: absolute; left: 2%; top: 47%;
+  transform: translateY(-50%);
+  z-index: 4;
+  width: 56px;
+  display: flex; flex-direction: column; align-items: stretch;
+  filter: drop-shadow(0 20px 34px rgba(74, 44, 16, .22));
+  opacity: 0;
+  animation: placard-in 1s cubic-bezier(.2, .7, .3, 1) .85s forwards;
+}
+@keyframes placard-in {
+  from { opacity: 0; transform: translateY(calc(-50% + 18px)); }
+  to   { opacity: 1; transform: translateY(-50%); }
+}
+.placard-cap {
+  height: 13px; border-radius: 2px 2px 0 0;
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--accent-2) 72%, var(--paper)),
+    color-mix(in srgb, var(--accent-2) 94%, var(--paper)));
+  box-shadow: inset 0 -1px 0 rgba(255, 255, 255, .2);
+}
+.placard-body {
+  flex: 1;
+  background: linear-gradient(172deg,
+    color-mix(in srgb, var(--bg-2) 90%, var(--accent-2)) 0%,
+    color-mix(in srgb, var(--bg-2) 88%, var(--accent-2)) 52%,
+    color-mix(in srgb, var(--bg-2) 78%, var(--accent-2)) 100%);
+  border-left: 1px solid color-mix(in srgb, var(--paper) 24%, transparent);
+  border-right: 1px solid color-mix(in srgb, var(--paper) 24%, transparent);
+  padding: 20px 0 24px;
+  display: grid; place-items: center;
+  box-shadow: inset 0 0 22px color-mix(in srgb, var(--accent-2) 16%, transparent);
+}
+.placard-title {
+  writing-mode: vertical-rl;
+  font-family: var(--brush);
+  font-size: 23px; letter-spacing: .2em;
+  color: var(--paper);
+  text-shadow: 0 1px 0 color-mix(in srgb, var(--bg-2) 70%, transparent);
+  max-height: 44vh;
+  overflow: hidden;
+}
+.placard-foot {
+  height: 27px;
+  display: grid; place-items: center;
+  background: linear-gradient(0deg,
+    color-mix(in srgb, var(--accent-2) 94%, var(--paper)),
+    color-mix(in srgb, var(--accent-2) 70%, var(--paper)));
+  border-radius: 0 0 2px 2px;
+}
+.placard-seal {
+  font-family: var(--serif); font-size: 14px; letter-spacing: .06em;
+  color: #FBEEDC;
+  background: var(--accent);
+  padding: 1px 6px 2px; border-radius: 1px;
+}
+
+/* ── 四、纸层卡片：一页纸被掀起 ─────────────────────────── */
+
+.tilt3d { position: relative; }
+.tilt3d::before {
+  content: ""; position: absolute; inset: 0;
+  border-radius: inherit; z-index: -1;
+  background: var(--paper-edge);
+  opacity: 0;
+  transform: translate3d(0, 0, -4px);
+  transition: opacity .45s ease, transform .45s cubic-bezier(.2, .75, .3, 1);
+}
+@media (hover: hover) and (pointer: fine) {
+  .tilt3d:hover {
+    transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateZ(16px);
+    box-shadow:
+      0 2px 0 color-mix(in srgb, var(--paper-edge) 70%, transparent),
+      var(--shadow-warm),
+      var(--shadow-cool);
+    border-color: color-mix(in srgb, var(--accent) 46%, var(--line-2));
+  }
+  .tilt3d:hover::before { opacity: 1; transform: translate3d(-3px, 4px, -6px); }
+  /* 指针高光改从灯那边来：偏上偏右的暖光，不是居中的白光 */
+  .tilt3d::after {
+    background:
+      radial-gradient(300px circle at var(--mx, 50%) var(--my, 50%),
+        rgba(255, 251, 238, .52) 0%,
+        color-mix(in srgb, var(--accent-2) 16%, transparent) 40%,
+        transparent 68%);
+  }
+  .tilt3d:hover::after { opacity: 1; }
+}
+
+/* ── 五、火种时间轴：光沿着连线走过去 ──────────────────── */
+
+.spine-line {
+  position: absolute; left: 0; right: 0; top: 7px; height: 1px;
+  background: linear-gradient(to right, transparent, var(--line-2) 8%, var(--line-2) 92%, transparent);
+}
+.spine-line::after {
+  content: ""; position: absolute; left: 0; top: -1px; height: 3px;
+  width: 34%;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent,
+    color-mix(in srgb, var(--accent-2) 72%, transparent) 40%,
+    color-mix(in srgb, var(--accent-2) 88%, transparent) 60%, transparent);
+  filter: blur(.4px);
+  opacity: 0;
+  transition: opacity .6s ease;
+}
+.spine.lit .spine-line::after {
+  opacity: 1;
+  animation: flame-travel 6.5s cubic-bezier(.45, .05, .55, .95) infinite;
+}
+@keyframes flame-travel {
+  0%   { transform: translateX(-40%); opacity: 0; }
+  14%  { opacity: 1; }
+  86%  { opacity: 1; }
+  100% { transform: translateX(330%); opacity: 0; }
+}
+.spine-dot {
+  position: absolute; top: 3px; left: 0;
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--bg); border: 1px solid var(--accent-2);
+  transition: background .3s, transform .3s, box-shadow .4s;
+}
+.spine-item:hover .spine-dot,
+.spine.lit .spine-dot {
+  background: var(--accent-2);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-2) 20%, transparent),
+              0 0 12px color-mix(in srgb, var(--accent-2) 48%, transparent);
+}
+.spine-item:hover .spine-dot { transform: scale(1.3); }
+
+/* ── 六、墨骨：给结构重量 ───────────────────────────────── */
+
+/* 章节编号：朱砂底的小印，不再是一根细线 */
+.sec-num { color: var(--accent); }
+.sec-num::before {
+  height: 1px;
+  background: linear-gradient(to right, var(--accent), color-mix(in srgb, var(--accent) 22%, transparent));
+}
+.sec-num::after {
+  width: 7px; height: 7px;
+  background: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 14%, transparent);
+}
+.sec-title::after {
+  background: linear-gradient(to right, var(--accent), transparent);
+}
+
+/* 表头：实色深一档的纸，不再是半透明 */
+.song-table th, .front-table th {
+  background: color-mix(in srgb, var(--bg-3) 88%, var(--accent-2)) !important;
+  color: var(--paper);
+  border-bottom: 1px solid color-mix(in srgb, var(--paper) 26%, transparent);
+  font-weight: 600; letter-spacing: .06em;
+}
+
+/* 幕次轨：给一道墨底 */
+.rail {
+  background:
+    linear-gradient(to right,
+      color-mix(in srgb, var(--paper) 82%, var(--accent)) 0%,
+      color-mix(in srgb, var(--paper) 62%, var(--accent-2)) 46%,
+      color-mix(in srgb, var(--paper) 30%, transparent) 88%,
+      transparent 100%);
+  border-right: 1px solid color-mix(in srgb, var(--paper) 30%, transparent);
+}
+.rail-item { color: color-mix(in srgb, var(--bg-2) 74%, var(--paper-3)); }
+.rail-item:hover { color: var(--bg-2); }
+.rail-item.active { color: var(--bg-2); }
+.rail-item.active::before {
+  background: linear-gradient(to bottom, transparent, var(--accent) 18%, var(--accent) 82%, transparent);
+  width: 2px;
+}
+.rail-item.active::after {
+  background: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 26%, transparent),
+              0 0 10px color-mix(in srgb, var(--accent) 52%, transparent);
+}
+
+/* 主按钮：朱砂印 */
+.hero-cta {
+  background: linear-gradient(168deg,
+    color-mix(in srgb, var(--accent) 88%, #E0573F) 0%,
+    var(--accent) 52%,
+    color-mix(in srgb, var(--accent) 84%, #000000) 100%);
+  box-shadow: 0 14px 28px -14px color-mix(in srgb, var(--accent) 62%, transparent),
+              inset 0 1px 0 rgba(255, 246, 234, .22);
+}
+.hero-cta:hover {
+  box-shadow: 0 18px 34px -14px color-mix(in srgb, var(--accent) 70%, transparent),
+              inset 0 1px 0 rgba(255, 246, 234, .28);
+}
+
+/* 标题：挤出层加深，加一圈暖背光 */
+.hero-title-3d {
+  text-shadow:
+    0 1px 0 color-mix(in srgb, var(--paper) 58%, transparent),
+    0 2px 0 color-mix(in srgb, var(--paper) 26%, transparent),
+    0 0 26px color-mix(in srgb, var(--paper) 40%, transparent),
+    0 0 74px color-mix(in srgb, var(--accent-2) 26%, transparent);
+}
+.hero-title-3d::before { opacity: .74; }
+.hero-title-3d::after  { opacity: .40; }
 
 /* ══════════════════════════════════════════════════════════
    响应式补丁（放在文件末尾）
@@ -2359,6 +2764,52 @@ body.mode-stage .front-band { display: none; }
   .rail-item { padding: 14px 9px; }
 }
 
+/* 宽屏：HERO 变两栏 —— 文字在左，火种在右 */
+@media (min-width: 1001px) {
+  .hero-inner {
+    grid-template-columns: minmax(0, 1.1fr) minmax(280px, 400px);
+    gap: 52px;
+  }
+  .hero-lantern-slot { display: block; }
+  .hero-placard { display: flex; }
+}
+@media (max-width: 1000px) {
+  /* 窄屏没有右栏：灯改挂在标题上方，像海报顶上的一盏。
+     用文档流而不是绝对定位 —— HERO 的高度会随剧目变，
+     绝对定位的灯迟早会压到字上。 */
+  .hero-lantern-slot {
+    display: block;
+    position: relative;
+    order: -1;
+    height: 168px;
+    min-height: 0;
+    pointer-events: none;
+  }
+  .hero-lantern {
+    left: 50%;
+    top: 0;
+    /* 基础规则带 margin-top: -164px（把灯心对到槽中心），
+       这里必须整条 margin 重写 —— 只改 margin-left 会把负的上边距留下来，
+       灯就被顶到画面外裁掉了。 */
+    margin: 0 0 0 -120px;
+    transform: scale(.46);
+    transform-origin: 50% 0;
+  }
+  .lantern-halo {
+    left: 50%;
+    top: -26px;
+    margin: 0 0 0 -380px;
+    transform: scale(.46);
+    transform-origin: 50% 0;
+  }
+  .hero-placard { display: none; }
+}
+@media (max-width: 480px) {
+  .hero-lantern-slot { height: 146px; }
+  .hero-lantern { transform: scale(.40); }
+  .lantern-halo { transform: scale(.40); }
+}
+
 /* ══════════════════════════════════════════════════════════
    窄屏 3D 全退平面（必须放在文件最后）
    ------------------------------------------------------------
@@ -2370,6 +2821,13 @@ body.mode-stage .front-band { display: none; }
 @media (max-width: 720px) {
   .tilt3d, .tilt3d > *, .tilt3d:hover { transform: none; }
   .tilt3d::after, .tilt3d:hover::after { display: none; }
+  .tilt3d::before { display: none; }
   .front-card, .front-card:hover { transform: none; }
-  .hero-title-3d { transform: none; }
+  .hero-title-3d, .hero-title-line { transform: none; }
+  /* 马灯同理：窄屏不转面、不摇摆。
+     注意别把 .hero-lantern 一起写进去 —— 它身上带的是窄屏的缩放，
+     一起清掉灯就变回全尺寸，压住标题。 */
+  .lantern-body, .lantern-body:hover { transform: none; animation: none; }
+  .lantern-panel { transform: rotateY(calc(var(--i) * 45deg)) translateZ(96px); }
+  .lantern-flame { animation: none; }
 }
