@@ -1,0 +1,50 @@
+/* site palette (written by build from site_meta.palette) */
+/* theme: light */
+:root {
+  --bg: #F7F2E6;
+  --bg-2: #FCF9F1;
+  --bg-3: #EDE2CB;
+  --paper: #231A13;
+  --paper-2: #544738;
+  --paper-3: #7C6C57;
+  --accent: #BE1E2D;
+  --accent-2: #886818;
+  --on-accent: #FFF6EA;
+  --line:      rgba(35,26,19,0.13);
+  --line-2:    rgba(35,26,19,0.26);
+  --surface-top:      rgba(255, 255, 255, .76);
+  --surface-top-soft: rgba(255, 255, 255, .34);
+  --surface-rail:     rgba(255, 255, 255, .42);
+  --surface-modal:    rgba(250, 247, 240, .88);
+  --surface-band:     rgba(255, 255, 255, .50);
+  --surface-card:     rgba(255, 255, 255, .62);
+  --surface-card-hover: rgba(255, 255, 255, .95);
+  --surface-chip:     rgba(35,26,19,0.06);
+  --surface-chip-hover: rgba(35,26,19,0.04);
+  --surface-sheen:    rgba(255, 255, 255, .92);
+  --vignette-1:       rgba(35,26,19,0.1);
+  --vignette-2:       rgba(35,26,19,0.08);
+  --title-shadow:     0 4px 30px rgba(255, 255, 255, .85);
+  --grain-blend:      multiply;
+  --grain-opacity:    .05;
+  --shadow:           0 18px 48px -24px rgba(35,26,19,0.3);
+}
+
+[data-theme="dark"] {
+  --surface-top:      rgba(111,109,103,0.9);
+  --surface-top-soft: rgba(111,109,103,0.52);
+  --surface-rail:     rgba(111,109,103,0.55);
+  --surface-modal:    rgba(6, 5, 4, .86);
+  --surface-band:     rgba(0, 0, 0, .22);
+  --surface-card:     rgba(255, 255, 255, .02);
+  --surface-card-hover: rgba(255, 255, 255, .05);
+  --surface-chip:     rgba(255, 255, 255, .06);
+  --surface-chip-hover: rgba(255, 255, 255, .04);
+  --surface-sheen:    rgba(255, 255, 255, .14);
+  --vignette-1:       rgba(0, 0, 0, .50);
+  --vignette-2:       rgba(0, 0, 0, .42);
+  --title-shadow:     0 4px 40px rgba(0, 0, 0, .60);
+  --grain-blend:      overlay;
+  --grain-opacity:    .05;
+  --shadow:           0 18px 48px -20px rgba(0, 0, 0, .85);
+}

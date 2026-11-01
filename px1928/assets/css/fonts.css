@@ -1,0 +1,25 @@
+@charset "UTF-8";
+/* ============================================================
+   剧本站 · 自托管字体子集（构建时生成，勿手改）
+   字体均为 SIL Open Font License，可自托管可商用。
+   ============================================================ */
+
+/* 毛笔楷书 · Ma Shan Zheng */
+@font-face {
+  font-family: "Ma Shan Zheng";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../fonts/brush-0.woff2") format("woff2");
+  unicode-range: U+30-34, U+38-39, U+4e00, U+4e09, U+4e8c, U+4e91, U+4ece, U+4fa0, U+51ac, U+521b, U+5230, U+524d, U+5267, U+5357, U+539f, U+53e9, U+5411, U+56de, U+571f, U+58f0, U+5b50, U+5b59, U+5c4b, U+5c9a, U+5e55, U+5e74, U+5e8f, U+5f6d, U+65f6, U+661f, U+6653, U+672c, U+6b4c, U+6c38, U+6d32, U+706b, U+706f, U+71ce, U+751f, U+767d-767e, U+76cf, U+7834, U+79cb, U+79cd, U+7a7a, U+7a7f, U+7b2c, U+7ea2, U+7ec8, U+8000, U+8272, U+8305, U+8840, U+8a93, U+8bed, U+8de8, U+94f8, U+95ee, U+9896, U+9a6c, U+9b42, U+ff08-ff09, U+ff0c, U+ff1a;
+}
+
+/* 标题体 · ZCOOL XiaoWei */
+@font-face {
+  font-family: "ZCOOL XiaoWei";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../fonts/xiao-0.woff2") format("woff2");
+  unicode-range: U+30-34, U+38-39, U+3001-3002, U+300a-300b, U+4e00, U+4e07, U+4e09-4e0b, U+4e16, U+4e2a, U+4e2d, U+4e3a-4e3b, U+4e4b, U+4e5d, U+4e5f, U+4e66, U+4e8c, U+4e91, U+4e94, U+4eba, U+4ece, U+4ed6, U+4f0f, U+4f17, U+4f4d, U+4f59, U+4f5c, U+4f60, U+4f9d, U+4fa0, U+5149, U+5165, U+5168, U+516b, U+516d, U+5173, U+5176, U+518d, U+51ac, U+51dd, U+51fa-51fb, U+5200, U+5211, U+521b, U+5230, U+5236, U+524d, U+5267, U+526f, U+52a8, U+5317, U+5341, U+5355, U+5357, U+5370, U+539f, U+53d7, U+53e9-53ea, U+53f0, U+53f7, U+5401, U+540c, U+540e, U+5411, U+542f, U+5434, U+5458, U+5468, U+547c, U+548c, U+54c1, U+54cd, U+5531, U+55d3, U+56db, U+56de, U+56fd, U+571f, U+5728, U+5730, U+573a, U+5750, U+58eb, U+58f0, U+590d, U+591a, U+591c, U+5927, U+5973, U+59b9, U+5b50, U+5b57, U+5b59, U+5b88, U+5b8c, U+5b98, U+5b9a, U+5bc6, U+5c0f, U+5c11, U+5c3c, U+5c3e, U+5c4b, U+5c55, U+5c9a, U+5e03, U+5e55, U+5e74, U+5e8f, U+5f00, U+5f0f, U+5f20, U+5f55, U+5f6d, U+5fb7, U+5fc3, U+5ff5, U+603b, U+620f, U+6211, U+6218, U+6253, U+62e9, U+63a5, U+64c2, U+652f, U+6536, U+653e, U+6574, U+6587, U+6597, U+65b9, U+65f6, U+6606, U+660e, U+661f, U+662f, U+6653, U+66f2, U+66f4, U+672c, U+674e, U+6751, U+6761, U+6765, U+67e5, U+67f1, U+6811, U+6838, U+68c0, U+6a21, U+6b21, U+6b4c, U+6b63, U+6bb5, U+6c38, U+6c89, U+6d32, U+6d78, U+6e38, U+6e90, U+6f0f, U+6f14, U+6f84, U+706b, U+706f, U+70b9, U+7167, U+71ce, U+7262, U+7269, U+72f1, U+738b, U+751f, U+754c, U+767b, U+767d-767e, U+7684, U+76ae, U+76cf, U+76ee, U+76f8, U+770b, U+7801, U+7834, U+786e, U+79cb, U+79cd, U+7a7a, U+7a7f, U+7ad9, U+7b14, U+7b2c, U+7d22, U+7ea2, U+7ea6, U+7eaa, U+7eb2, U+7ebf, U+7ec7-7ec8, U+7ecf, U+7ee2, U+7ee7, U+7eed, U+7f16, U+7f29, U+8000-8001, U+804c, U+805a, U+81ea, U+81f3, U+8272, U+82b7, U+82cf, U+82e6, U+8305, U+8427, U+843d, U+8499, U+8840, U+884c, U+8868, U+89c2, U+89d2, U+89e3, U+8a93, U+8bcd, U+8bd5, U+8bed, U+8bef, U+8bfb, U+8d77, U+8de8, U+8df3, U+8f6c, U+8f7d, U+8f93, U+8fb0, U+8fd4, U+8fd9, U+9009, U+9057, U+90ca, U+90e8, U+91cd, U+94f8, U+94fe, U+9501, U+9519-951a, U+957f, U+95ed-95ee, U+9605, U+961f, U+963f, U+9645, U+9648, U+9876, U+9896-9897, U+9986, U+9996, U+9a6c, U+9b42, U+9f13, U+ff08-ff09, U+ff0c, U+ff1a;
+}
