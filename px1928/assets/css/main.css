@@ -468,7 +468,7 @@ button { font: inherit; color: inherit; }
 }
 .act-mood li::before {
   content: ""; position: absolute; left: 0; top: .82em;
-  width: 6px; height: 1px; background: var(--accent-2);
+  width: 6px; height: 1px; background: var(--accent);
 }
 
 /* 场次标题 */
@@ -490,7 +490,7 @@ button { font: inherit; color: inherit; }
 }
 .body-note button {
   background: none; border: 0; cursor: pointer;
-  color: var(--accent-2); text-decoration: underline; padding: 0;
+  color: var(--accent); text-decoration: underline; padding: 0;
   font-size: 14px;
 }
 
@@ -580,12 +580,12 @@ button { font: inherit; color: inherit; }
 .song-body p { margin: 10px 0; line-height: 1.95; }
 .song-sec {
   font-family: var(--serif); font-size: 13px; letter-spacing: .2em;
-  color: var(--accent-2); margin: 18px 0 8px !important;
+  color: var(--accent); margin: 18px 0 8px !important;
 }
 .song-part { font-size: 13px; color: var(--paper-3); margin: 8px 0 !important; }
 .song-stage { color: var(--paper-3); font-style: italic; font-size: 14px; }
 .song-body .who {
-  font-family: var(--serif); color: var(--accent-2);
+  font-family: var(--serif); color: var(--accent);
   letter-spacing: .08em; margin-right: .5em; font-size: 14px;
 }
 .song-body .cue {
@@ -637,7 +637,7 @@ button { font: inherit; color: inherit; }
 .song-table tbody tr:hover { background: var(--surface-chip-hover); }
 .song-table tbody tr:last-child td { border-bottom: 0; }
 .song-table .st-no { font-family: var(--mono); font-size: 12px; color: var(--paper-3); cursor: pointer; }
-.song-table .st-no:hover { color: var(--accent-2); }
+.song-table .st-no:hover { color: var(--accent); }
 .song-table .st-name { font-family: var(--serif); letter-spacing: .04em; }
 .song-table .st-act { color: var(--paper-3); font-size: 13px; }
 
@@ -698,7 +698,7 @@ button { font: inherit; color: inherit; }
 .cast-name {
   font-family: var(--serif); font-size: 19px; letter-spacing: .1em; margin: 0;
 }
-.cast-role { font-size: 12px; color: var(--accent-2); letter-spacing: .1em; }
+.cast-role { font-size: 12px; color: var(--accent); letter-spacing: .1em; }
 .cast-desc { font-size: 14px; color: var(--paper-2); line-height: 1.9; margin: 0; }
 
 /* ── 伏笔 ─────────────────────────────────────────────── */
@@ -724,7 +724,7 @@ button { font: inherit; color: inherit; }
 }
 .thread dl { margin: 0; display: grid; gap: 10px; }
 .thread dt {
-  font-size: 11px; letter-spacing: .24em; color: var(--accent-2);
+  font-size: 11px; letter-spacing: .24em; color: var(--accent);
   margin-bottom: 3px;
 }
 .thread dd { margin: 0; font-size: 14px; color: var(--paper-2); line-height: 1.85; }
@@ -768,7 +768,7 @@ button { font: inherit; color: inherit; }
   transition: filter .25s;
 }
 .gate-btn:hover { filter: brightness(1.12); }
-.gate-msg { min-height: 1.6em; margin: 16px 0 0; font-size: 13px; color: var(--accent-2); }
+.gate-msg { min-height: 1.6em; margin: 16px 0 0; font-size: 13px; color: var(--accent); }
 .gate-msg.err { color: #E8705A; }
 .gate-tip { margin: 18px 0 0; font-size: 12px; color: var(--paper-3); letter-spacing: .06em; }
 
@@ -818,11 +818,11 @@ button { font: inherit; color: inherit; }
 .modal-sub { font-size: 12px; color: var(--paper-3); letter-spacing: .08em; margin-bottom: 22px; }
 .modal-body p { margin: 10px 0; line-height: 1.95; }
 .modal-body .ly { color: var(--paper); }
-.modal-body .who { font-family: var(--serif); color: var(--accent-2); margin-right: .5em; font-size: 14px; }
+.modal-body .who { font-family: var(--serif); color: var(--accent); margin-right: .5em; font-size: 14px; }
 .modal-body .cue { color: var(--paper-3); font-size: 13px; font-style: italic; margin-right: .4em; }
 .modal-body .song-sec {
   font-family: var(--serif); font-size: 13px; letter-spacing: .2em;
-  color: var(--accent-2); margin: 20px 0 8px !important;
+  color: var(--accent); margin: 20px 0 8px !important;
 }
 .modal-body .song-part { font-size: 13px; color: var(--paper-3); }
 .modal-body .song-stage { color: var(--paper-3); font-style: italic; font-size: 14px; }
@@ -1278,13 +1278,13 @@ html { font-size: calc(16px * var(--fs-scale)); }
   font-family: var(--serif); font-size: 15px; letter-spacing: .06em;
   cursor: pointer; transition: border-color .2s, background .2s, opacity .2s;
 }
-.map-chip b { font-family: var(--mono); font-size: 11px; font-weight: 400; color: var(--accent-2); }
+.map-chip b { font-family: var(--mono); font-size: 11px; font-weight: 400; color: var(--accent); }
 .map-chip.on { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, var(--surface-card)); }
 .map-chip.dim { opacity: .38; }
 .map-node { cursor: pointer; }
 .map-node circle {
   fill: var(--bg);
-  stroke: var(--accent-2);
+  stroke: color-mix(in srgb, var(--accent) 62%, transparent);
   stroke-width: 1.2;
   transition: fill .25s, stroke .25s, r .25s;
 }
@@ -1294,7 +1294,7 @@ html { font-size: calc(16px * var(--fs-scale)); }
   transition: fill .25s;
   pointer-events: none;
 }
-.map-node:hover circle { fill: var(--accent-2); stroke: var(--accent-2); }
+.map-node:hover circle { fill: var(--accent); stroke: var(--accent); }
 .map-node:hover text { fill: var(--paper); }
 .map-node.on circle { fill: var(--accent); stroke: var(--accent); r: 11; }
 .map-node.on text { fill: var(--paper); font-weight: 600; }
@@ -1591,8 +1591,8 @@ button.song-perf:hover { color: var(--accent); border-color: var(--accent); }
   color: var(--accent);
 }
 .mf-form {
-  font-size: 11px; letter-spacing: .18em; color: var(--accent-2);
-  border: 1px solid color-mix(in srgb, var(--accent-2) 42%, transparent);
+  font-size: 11px; letter-spacing: .18em; color: var(--accent);
+  border: 1px solid color-mix(in srgb, var(--accent) 42%, transparent);
   padding: 2px 8px; border-radius: 2px;
 }
 .mf-name { margin: 2px 0 0; font-family: var(--serif); font-size: 19px; letter-spacing: .06em; }
@@ -1611,7 +1611,7 @@ button.song-perf:hover { color: var(--accent); border-color: var(--accent); }
 }
 .mf-sec {
   margin: 0; font-family: var(--serif); font-size: 12px;
-  letter-spacing: .18em; color: var(--accent-2);
+  letter-spacing: .18em; color: var(--accent);
 }
 .mf-line {
   margin: 0; font-family: var(--serif); font-size: 14px;
@@ -1852,20 +1852,20 @@ body.focus-mode .hero { min-height: 78vh; }
 .hero-title-line::before, .hero-title-line::after {
   content: attr(data-text);
   position: absolute; left: 0; top: 0;
-  color: var(--ink-3d);
+  color: color-mix(in srgb, var(--accent-deep) 84%, var(--paper));
   pointer-events: none;
   z-index: -1;
   white-space: pre;
 }
-.hero-title-line::before { transform: translateZ(-10px) translateY(6px);  opacity: .74; }
-.hero-title-line::after  { transform: translateZ(-20px) translateY(12px); opacity: .40; }
+.hero-title-line::before { transform: translateZ(-7px) translateY(4px);   opacity: .56; }
+.hero-title-line::after  { transform: translateZ(-14px) translateY(9px);  opacity: .26; }
 
-/* 墨韵：笔画边缘微微洇开 */
+/* 墨韵：笔画边缘微微洇开（朱砂题则是一圈暖光） */
 .hero-title-3d {
   text-shadow:
-    0 1px 0 color-mix(in srgb, var(--paper) 55%, transparent),
-    0 0 22px color-mix(in srgb, var(--paper) 42%, transparent),
-    0 0 60px color-mix(in srgb, var(--accent) 10%, transparent);
+    0 1px 0 color-mix(in srgb, var(--accent-deep) 54%, transparent),
+    0 0 24px color-mix(in srgb, var(--accent) 34%, transparent),
+    0 0 66px color-mix(in srgb, var(--accent) 22%, transparent);
 }
 
 /* 幕名、竖牌、页脚题名也用毛笔 */
@@ -2399,9 +2399,9 @@ body.mode-stage .front-band { display: none; }
 .placard-cap {
   height: 13px; border-radius: 2px 2px 0 0;
   background: linear-gradient(180deg,
-    color-mix(in srgb, var(--accent-2) 72%, var(--paper)),
-    color-mix(in srgb, var(--accent-2) 94%, var(--paper)));
-  box-shadow: inset 0 -1px 0 rgba(255, 255, 255, .2);
+    color-mix(in srgb, var(--accent) 74%, #E05A3E) 0%,
+    var(--accent-deep) 100%);
+  box-shadow: inset 0 -2px 0 color-mix(in srgb, var(--accent-2) 58%, #F0D79A);
 }
 .placard-body {
   flex: 1;
@@ -2428,9 +2428,10 @@ body.mode-stage .front-band { display: none; }
   height: 27px;
   display: grid; place-items: center;
   background: linear-gradient(0deg,
-    color-mix(in srgb, var(--accent-2) 94%, var(--paper)),
-    color-mix(in srgb, var(--accent-2) 70%, var(--paper)));
+    color-mix(in srgb, var(--accent-deep) 88%, #000),
+    var(--accent-deep) 62%);
   border-radius: 0 0 2px 2px;
+  box-shadow: inset 0 2px 0 color-mix(in srgb, var(--accent-2) 58%, #F0D79A);
 }
 .placard-seal {
   font-family: var(--serif); font-size: 14px; letter-spacing: .06em;
@@ -2574,16 +2575,322 @@ body.mode-stage .front-band { display: none; }
               inset 0 1px 0 rgba(255, 246, 234, .28);
 }
 
-/* 标题：挤出层加深，加一圈暖背光 */
+/* 标题：朱砂题 —— 挤出层压深红，外圈一圈暖背光 */
 .hero-title-3d {
   text-shadow:
-    0 1px 0 color-mix(in srgb, var(--paper) 58%, transparent),
-    0 2px 0 color-mix(in srgb, var(--paper) 26%, transparent),
-    0 0 26px color-mix(in srgb, var(--paper) 40%, transparent),
-    0 0 74px color-mix(in srgb, var(--accent-2) 26%, transparent);
+    0 1px 0 color-mix(in srgb, var(--accent-deep) 58%, transparent),
+    0 2px 0 color-mix(in srgb, var(--accent-deep) 26%, transparent),
+    0 0 28px color-mix(in srgb, var(--accent) 38%, transparent),
+    0 0 78px color-mix(in srgb, var(--accent) 26%, transparent);
 }
 .hero-title-3d::before { opacity: .74; }
 .hero-title-3d::after  { opacity: .40; }
+
+/* ══════════════════════════════════════════════════════════
+   增强层 · 七：朱砂为骨
+   ------------------------------------------------------------
+   红色歌剧，红必须是结构色，不是点缀。
+   上一版的中性色偏土黄（卡其底 / 沙色深块 / 暗金描边），
+   整体读起来是「旧」，不是「红歌剧」。这一版：
+     · 中性色挪回暖红宣纸，避开土黄绿调
+     · 朱砂从「点缀」升级为「骨架」
+     · 大面积实底（深朱砂）只给三处 —— 幕次轨 / 表头 / 界栏
+       其余靠线、靠印、靠眉标，避免铺红发闷
+     · 灯油金只做灯火与描边，靛青只做冷投影 —— 都退回配角
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── 一、幕次轨 = 深朱砂书脊 ─────────────────────────────── */
+
+.rail {
+  background:
+    linear-gradient(to right,
+      color-mix(in srgb, var(--accent-deep) 90%, #000) 0%,
+      var(--accent-deep) 44%,
+      color-mix(in srgb, var(--accent-deep) 72%, var(--accent)) 82%,
+      transparent 100%);
+  border-right: 1px solid color-mix(in srgb, var(--accent-deep) 76%, #000);
+  box-shadow: 7px 0 28px -14px color-mix(in srgb, var(--accent-deep) 76%, transparent);
+}
+.rail-item { color: color-mix(in srgb, var(--on-accent) 60%, var(--accent-deep)); }
+.rail-item:hover { color: var(--on-accent); }
+.rail-item.active { color: var(--on-accent); }
+.rail-item.active::before {
+  background: linear-gradient(to bottom, transparent,
+    var(--accent-2) 16%, var(--accent-2) 84%, transparent);
+  width: 2px;
+}
+.rail-item.active::after {
+  background: var(--accent-2);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-2) 24%, transparent),
+              0 0 12px color-mix(in srgb, var(--accent-2) 64%, transparent);
+}
+/* 装订线：红布面上的金线 */
+.rail::after {
+  background:
+    repeating-linear-gradient(to bottom,
+      transparent 0 16px,
+      color-mix(in srgb, var(--accent-2) 44%, transparent) 16px 17px,
+      transparent 17px 34px),
+    linear-gradient(to left, rgba(58, 18, 12, .30), transparent);
+}
+
+/* ── 二、章节方印 = 朱砂实底 ─────────────────────────────── */
+
+.sec-num {
+  display: inline-flex; align-items: center; gap: 10px;
+  color: var(--on-accent);
+  background: linear-gradient(158deg,
+    color-mix(in srgb, var(--accent) 88%, #E05A3E) 0%,
+    var(--accent) 44%,
+    var(--accent-deep) 100%);
+  border-radius: 2px;
+  padding: 5px 16px 6px 13px;
+  font-size: 12px; letter-spacing: .44em;
+  box-shadow: 0 9px 20px -12px color-mix(in srgb, var(--accent-deep) 84%, transparent);
+  text-shadow: 0 1px 0 color-mix(in srgb, #000 22%, transparent);
+}
+.sec-num::before {
+  content: ""; display: inline-block; flex: none;
+  width: 6px; height: 6px;
+  background: color-mix(in srgb, var(--on-accent) 88%, transparent);
+  transform: rotate(45deg);
+}
+.sec-num::after { content: none; }
+
+/* 幕次眉标：红菱印 + 红引线 */
+.act-no { color: var(--accent); }
+.act-no::before {
+  content: ""; flex: none;
+  width: 9px; height: 9px;
+  background: var(--accent);
+  transform: rotate(45deg);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 14%, transparent);
+}
+.act-no::after {
+  background: linear-gradient(to right,
+    color-mix(in srgb, var(--accent) 62%, transparent), transparent);
+}
+
+/* ── 三、表头 = 朱砂实底 + 米白字 ────────────────────────── */
+
+/* 权重必须压过基础层的 .song-table thead th（0,1,2）——
+   否则字色会退回暗金，暗金字压深朱砂底几乎看不见。 */
+.song-table th, .front-table th,
+.song-table thead th, .front-table thead th {
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--accent) 86%, #000) 0%,
+    var(--accent-deep) 100%) !important;
+  color: var(--on-accent);
+  border-bottom: 1px solid color-mix(in srgb, var(--accent-deep) 78%, #000);
+  font-weight: 600; letter-spacing: .06em;
+  text-shadow: 0 1px 0 color-mix(in srgb, #000 24%, transparent);
+}
+
+/* ── 四、幕题 = 朱砂毛笔 ─────────────────────────────────── */
+
+.act-title {
+  color: var(--accent);
+  text-shadow:
+    0 1px 0 color-mix(in srgb, var(--accent-deep) 58%, transparent),
+    0 2px 0 color-mix(in srgb, var(--accent-deep) 38%, transparent),
+    0 3px 0 color-mix(in srgb, var(--accent-deep) 22%, transparent),
+    0 7px 3px color-mix(in srgb, var(--accent-deep) 18%, transparent);
+}
+.act-title::before {
+  width: 4px;
+  background: linear-gradient(to bottom, var(--accent-deep), var(--accent));
+}
+
+/* ── 五、界栏 = 朱丝栏 ───────────────────────────────────── */
+
+.page::before, .page::after {
+  background: linear-gradient(to bottom,
+    transparent 0%,
+    color-mix(in srgb, var(--accent) 42%, transparent) 5%,
+    color-mix(in srgb, var(--accent) 42%, transparent) 95%,
+    transparent 100%);
+}
+.page::before { box-shadow: 5px 0 0 -3px color-mix(in srgb, var(--accent) 22%, transparent); }
+.page::after  { box-shadow: -5px 0 0 -3px color-mix(in srgb, var(--accent) 22%, transparent); }
+
+/* ── 六、HERO：戏单抬头 ─────────────────────────────────── */
+
+/* 双线朱丝框：两道红线之间夹着纸 */
+.hero-text {
+  position: relative;
+  padding: 32px 34px 34px;
+}
+.hero-text::before {
+  content: ""; position: absolute; inset: 0;
+  border: 1px solid color-mix(in srgb, var(--accent) 52%, transparent);
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent) 24%, transparent);
+  pointer-events: none;
+}
+/* 四角金括：戏单的角记 */
+.hero-text::after {
+  content: ""; position: absolute; inset: -13px;
+  --kc: color-mix(in srgb, var(--accent) 88%, transparent);
+  background:
+    linear-gradient(var(--kc), var(--kc)) left top     / 22px 2px no-repeat,
+    linear-gradient(var(--kc), var(--kc)) left top     / 2px 22px no-repeat,
+    linear-gradient(var(--kc), var(--kc)) right top    / 22px 2px no-repeat,
+    linear-gradient(var(--kc), var(--kc)) right top    / 2px 22px no-repeat,
+    linear-gradient(var(--kc), var(--kc)) left bottom  / 22px 2px no-repeat,
+    linear-gradient(var(--kc), var(--kc)) left bottom  / 2px 22px no-repeat,
+    linear-gradient(var(--kc), var(--kc)) right bottom / 22px 2px no-repeat,
+    linear-gradient(var(--kc), var(--kc)) right bottom / 2px 22px no-repeat;
+  pointer-events: none;
+}
+
+/* 眉标与题下的印章 */
+.hero-kicker { color: var(--accent); }
+/* 主标题：朱砂毛笔 —— 红色歌剧的第一眼就该是红的 */
+.hero-title {
+  color: var(--accent);
+  text-shadow: none;
+}
+.hero-kicker::before { background: var(--accent); }
+.hero-title .seal {
+  background: linear-gradient(160deg,
+    color-mix(in srgb, var(--accent) 86%, #E05A3E) 0%,
+    var(--accent) 44%,
+    var(--accent-deep) 100%);
+  border-color: color-mix(in srgb, var(--accent-deep) 72%, #000);
+  box-shadow: 0 10px 30px -12px color-mix(in srgb, var(--accent-deep) 78%, transparent);
+}
+
+/* ── 七、马灯：红纸透光 ───────────────────────────────────── */
+
+/* 红纸要透光。三层叠加缺一不可：
+   ① 圆心金光 —— 灯焰从纸背后透出来
+   ② 横向收边 —— 每片纸屏是卷在骨架上的，两侧必须暗，
+      否则八片一样亮就成了折扇，看不出是圆柱
+   ③ 上下收口 —— 灯笼上下有木盖，光到不了 */
+.lantern-panel {
+  background-color: color-mix(in srgb, var(--accent) var(--shade), transparent);
+  background-image:
+    radial-gradient(56% 42% at 50% 56%,
+      color-mix(in srgb, var(--accent-2) 86%, transparent) 0%,
+      color-mix(in srgb, var(--accent) 34%, transparent) 56%,
+      transparent 84%),
+    linear-gradient(90deg,
+      color-mix(in srgb, var(--accent-deep) 52%, transparent) 0%,
+      transparent 19%, transparent 81%,
+      color-mix(in srgb, var(--accent-deep) 52%, transparent) 100%),
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--accent-deep) 46%, transparent) 0%,
+      transparent 30%,
+      color-mix(in srgb, var(--accent-deep) 40%, transparent) 100%);
+  box-shadow:
+    inset 0 0 26px color-mix(in srgb, var(--accent-deep) 30%, transparent),
+    inset 0 0 4px color-mix(in srgb, var(--accent-deep) 44%, transparent);
+}
+.lantern-panel:nth-child(1) { --i: 0; --shade: 54%; }
+.lantern-panel:nth-child(2) { --i: 1; --shade: 48%; }
+.lantern-panel:nth-child(3) { --i: 2; --shade: 41%; }
+.lantern-panel:nth-child(4) { --i: 3; --shade: 34%; }
+.lantern-panel:nth-child(5) { --i: 4; --shade: 29%; }
+.lantern-panel:nth-child(6) { --i: 5; --shade: 34%; }
+.lantern-panel:nth-child(7) { --i: 6; --shade: 41%; }
+.lantern-panel:nth-child(8) { --i: 7; --shade: 48%; }
+/* 灯焰：红纸里的金芯，不再是白芯 */
+.lantern-flame {
+  background:
+    radial-gradient(closest-side,
+      rgba(255, 250, 236, .92) 0%,
+      color-mix(in srgb, var(--accent-2) 92%, #FFF6E2) 16%,
+      color-mix(in srgb, var(--accent-2) 86%, transparent) 34%,
+      color-mix(in srgb, var(--accent) 52%, transparent) 58%,
+      color-mix(in srgb, var(--accent) 24%, transparent) 76%,
+      transparent 88%);
+}
+/* 顶盖与底座：朱漆木盖 + 一道金箍。
+   暗金直接用会发橄榄绿，必须掺亮金；红漆更贴「红灯笼」。 */
+.lantern-cap {
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--accent) 74%, #E05A3E) 0%,
+    var(--accent-deep) 58%,
+    color-mix(in srgb, var(--accent-deep) 86%, #000) 100%);
+  box-shadow: 0 4px 9px rgba(58, 32, 8, .34),
+              inset 0 -2px 0 color-mix(in srgb, var(--accent-2) 58%, #F0D79A);
+}
+.lantern-foot {
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--accent-deep) 86%, #000),
+    var(--accent-deep) 52%,
+    color-mix(in srgb, var(--accent) 70%, #E05A3E) 100%);
+  box-shadow: inset 0 2px 0 color-mix(in srgb, var(--accent-2) 58%, #F0D79A);
+}
+.lantern-ring { border-color: color-mix(in srgb, var(--accent-2) 52%, #F0D79A); }
+.lantern-halo {
+  background:
+    radial-gradient(closest-side,
+      color-mix(in srgb, var(--accent-2) 26%, transparent) 0%,
+      color-mix(in srgb, var(--accent) 16%, transparent) 30%,
+      color-mix(in srgb, var(--accent) 8%, transparent) 52%,
+      transparent 78%);
+}
+
+/* ── 八、其余红色落点 ───────────────────────────────────── */
+
+/* 曲序：朱砂小印（歌单卡用的是 .sc-no，两处都要）
+   歌单卡是 flex column —— 不写 align-self 的话红条会被拉满整卡宽，
+   二十六张卡一排红条就成了色块墙，必须缩成小方印。 */
+.song-no,
+.song-card .sc-no {
+  font-family: var(--mono); font-size: 11px;
+  color: var(--on-accent);
+  background: var(--accent);
+  border-radius: 2px;
+  padding: 2px 5px 3px;
+  text-align: center;
+  text-shadow: 0 1px 0 color-mix(in srgb, #000 24%, transparent);
+}
+.song-card .sc-no {
+  align-self: flex-start;
+  display: inline-block;
+  width: auto;
+  min-width: 24px;
+}
+/* hover 时基础层把字色改成朱砂，红底红字会糊 —— 按住米白 */
+.song-card:hover .sc-no, .song-card:hover .sc-no { color: var(--on-accent); }
+/* 曲目所属幕次也改朱砂 */
+.song-card .sc-act { color: var(--accent); }
+/* 品牌旁的钤印 */
+.brand em {
+  color: var(--on-accent);
+  background: linear-gradient(160deg,
+    color-mix(in srgb, var(--accent) 88%, #E05A3E) 0%,
+    var(--accent-deep) 100%);
+  border-color: transparent;
+  box-shadow: 0 5px 14px -8px color-mix(in srgb, var(--accent-deep) 80%, transparent);
+}
+/* 进度条 */
+.progress i {
+  background: linear-gradient(to right,
+    var(--accent-deep), var(--accent) 58%,
+    color-mix(in srgb, var(--accent) 62%, var(--accent-2)));
+}
+.progress-tick { background: color-mix(in srgb, var(--accent-deep) 55%, transparent); }
+/* 伏笔卡：红边红条 */
+.thread::before {
+  width: 4px;
+  background: linear-gradient(to bottom,
+    var(--tc, var(--accent)) 0%,
+    color-mix(in srgb, var(--tc, var(--accent)) 42%, transparent) 100%);
+}
+.thread:hover { border-color: color-mix(in srgb, var(--accent) 46%, var(--line-2)); }
+.thread-name i {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--tc, var(--accent)) 16%, transparent);
+}
+/* 分节的红线 */
+.band + .band { border-top: 1px solid color-mix(in srgb, var(--accent) 16%, var(--line)); }
+/* 页脚题名 */
+.foot-title { color: var(--paper); }
+.foot-line {
+  width: 52px; height: 2px;
+  background: linear-gradient(to right, transparent, var(--accent), transparent);
+}
 
 /* ══════════════════════════════════════════════════════════
    响应式补丁（放在文件末尾）
@@ -2613,14 +2920,25 @@ body.mode-stage .front-band { display: none; }
     background: var(--bg-2); box-shadow: 1px 0 0 var(--line);
     white-space: nowrap;
   }
-  .song-table thead th:first-child { z-index: 3; }
+  /* 表头首列同样朱砂底 —— 吸附时不能退回纸色，红要成结构 */
+  .song-table thead th:first-child {
+    z-index: 3;
+    background: linear-gradient(180deg,
+      color-mix(in srgb, var(--accent) 86%, #000) 0%,
+      var(--accent-deep) 100%) !important;
+  }
   .front-table th:first-child, .front-table td:first-child {
     position: sticky; left: 0; z-index: 2;
     background: color-mix(in srgb, var(--bg-3) 84%, var(--bg-2));
     box-shadow: 1px 0 0 var(--line);
     white-space: nowrap;
   }
-  .front-table thead th:first-child { z-index: 3; }
+  .front-table thead th:first-child {
+    z-index: 3;
+    background: linear-gradient(180deg,
+      color-mix(in srgb, var(--accent) 86%, #000) 0%,
+      var(--accent-deep) 100%) !important;
+  }
 
   /* 同台图降级：图换成徽章列表 */
   .map-stage { display: none; }
@@ -2693,6 +3011,11 @@ body.mode-stage .front-band { display: none; }
   .hero { padding-top: calc(var(--topbar-h) + 28px); min-height: 84svh; }
   .hero-title { gap: 10px; }
   .hero-title .seal { font-size: .42em; }
+
+  /* 戏单框在窄屏收紧：内边距与角括都要缩，否则框压住标题 */
+  .hero-text { padding: 22px 16px 24px; }
+  .hero-text::after { inset: -8px; }
+  .sec-num { font-size: 11px; letter-spacing: .34em; padding: 5px 12px 6px 10px; }
   .drag-hint { display: none; }
   .song-body { padding-left: 18px; }
   .song-perf { display: none; }

@@ -1,40 +1,41 @@
 /* site palette (written by build from site_meta.palette) */
 /* theme: light */
 :root {
-  --bg: #EFE7D3;
-  --bg-2: #FAF5E7;
-  --bg-3: #E1D3B2;
-  --paper: #1D150E;
-  --paper-2: #4A3E2C;
-  --paper-3: #6E5F47;
-  --accent: #A62B1E;
-  --accent-2: #7E5A10;
-  --accent-3: #3B4C68;
+  --bg: #EFE5D8;
+  --bg-2: #FBF6EE;
+  --bg-3: #E2D3C2;
+  --paper: #241811;
+  --paper-2: #574235;
+  --paper-3: #755E4E;
+  --accent: #B22D1D;
+  --accent-2: #806010;
+  --accent-3: #33486B;
+  --accent-deep: #8A1E13;
   --on-accent: #FFF6EA;
-  --line:      rgba(29,21,14,0.13);
-  --line-2:    rgba(29,21,14,0.26);
-  --surface-top:      rgba(250,245,231,0.82);
-  --surface-top-soft: rgba(250,245,231,0.4);
-  --surface-rail:     rgba(250,245,231,0.46);
-  --surface-modal:    rgba(250,245,231,0.92);
-  --surface-band:     rgba(250,245,231,0.52);
-  --surface-card:     rgba(250,245,231,0.7);
-  --surface-card-hover: rgba(250,245,231,0.96);
-  --surface-chip:     rgba(29,21,14,0.06);
-  --surface-chip-hover: rgba(29,21,14,0.04);
+  --line:      rgba(36,24,17,0.13);
+  --line-2:    rgba(36,24,17,0.26);
+  --surface-top:      rgba(251,246,238,0.82);
+  --surface-top-soft: rgba(251,246,238,0.4);
+  --surface-rail:     rgba(251,246,238,0.46);
+  --surface-modal:    rgba(251,246,238,0.92);
+  --surface-band:     rgba(251,246,238,0.52);
+  --surface-card:     rgba(251,246,238,0.7);
+  --surface-card-hover: rgba(251,246,238,0.96);
+  --surface-chip:     rgba(36,24,17,0.06);
+  --surface-chip-hover: rgba(36,24,17,0.04);
   --surface-sheen:    rgba(255, 255, 255, .92);
-  --vignette-1:       rgba(29,21,14,0.1);
-  --vignette-2:       rgba(29,21,14,0.08);
+  --vignette-1:       rgba(36,24,17,0.1);
+  --vignette-2:       rgba(36,24,17,0.08);
   --title-shadow:     0 4px 30px rgba(255, 255, 255, .85);
   --grain-blend:      multiply;
   --grain-opacity:    .05;
-  --shadow:           0 18px 48px -24px rgba(29,21,14,0.3);
+  --shadow:           0 18px 48px -24px rgba(36,24,17,0.3);
 }
 
 [data-theme="dark"] {
-  --surface-top:      rgba(108,104,95,0.9);
-  --surface-top-soft: rgba(108,104,95,0.52);
-  --surface-rail:     rgba(108,104,95,0.55);
+  --surface-top:      rgba(108,103,97,0.9);
+  --surface-top-soft: rgba(108,103,97,0.52);
+  --surface-rail:     rgba(108,103,97,0.55);
   --surface-modal:    rgba(6, 5, 4, .86);
   --surface-band:     rgba(0, 0, 0, .22);
   --surface-card:     rgba(255, 255, 255, .02);
