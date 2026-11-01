@@ -1,0 +1,13 @@
+{
+  "slug": "changye",
+  "name": "长夜行",
+  "seal": "长",
+  "kicker": "音乐剧",
+  "description": "一个替人写信的邮差，与一封永远寄不到的信。",
+  "hub": {
+    "meta": "音乐剧 · 三幕 · 二五年首演",
+    "summary": "一个替人写信的邮差，与一封永远寄不到的信。",
+    "emblem": "assets/nocturne/svg/emblem-harp-ink.svg",
+    "order": 1
+  }
+}

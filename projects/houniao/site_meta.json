@@ -1,0 +1,13 @@
+{
+  "slug": "houniao",
+  "name": "候鸟",
+  "seal": "候",
+  "kicker": "歌剧",
+  "description": "一个人反复练习迁徙，直到忘了自己从未飞过。",
+  "hub": {
+    "meta": "歌剧 · 独幕 · 写作中",
+    "summary": "一个人反复练习迁徙，直到忘了自己从未飞过。",
+    "emblem": "assets/nocturne/svg/emblem-spot-ink.svg",
+    "order": 4
+  }
+}

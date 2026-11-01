@@ -6,8 +6,8 @@
      window.SCRIPT_SECRET 受限层（幕正文 + 全部歌词，AES-256-GCM 密文）
    解锁后由 mergeSecret() 把受限层并入，再重绘受影响的区块。
    ============================================================ */
-import { createStage, readPalette } from './scene.js?v=178432de';
-import { decryptSecret, isCryptoAvailable } from './crypto.js?v=178432de';
+import { createStage, readPalette } from './scene.js?v=0540e4e6';
+import { decryptSecret, isCryptoAvailable } from './crypto.js?v=0540e4e6';
 
 let D = window.SCRIPT || {};
 const SECRET = window.SCRIPT_SECRET || null;
@@ -2044,7 +2044,11 @@ function initLantern3D() {
     bound = true;
   };
   const detach = () => {
-    if (bound) return;
+    /* 注意：这里必须是 if (!bound) return;
+       写成 if (bound) return 的话，「已绑定」时反而直接返回 ——
+       监听器摘不掉，缩窗到 ≤720px 后马灯仍跟着指针转面。
+       initTilt / initHero3D 的 detach 都是 !bound，三处要一致。 */
+    if (!bound) return;
     window.removeEventListener('pointermove', onMove);
     bound = false;
     onLeave();

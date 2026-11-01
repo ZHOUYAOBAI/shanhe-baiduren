@@ -1,0 +1,13 @@
+{
+  "slug": "xishan",
+  "name": "西山不是山",
+  "seal": "西",
+  "kicker": "音乐剧",
+  "description": "一座一千二百米的岩层，被一眼看成了一个人。",
+  "hub": {
+    "meta": "音乐剧 · 十四场 · 七十八分钟 · 完整剧本公开",
+    "summary": "一座一千二百米的岩层，被一眼看成了一个人。",
+    "emblem": "assets/nocturne/svg/emblem-mountain-ink.svg",
+    "order": 5
+  }
+}

@@ -12,16 +12,16 @@
   "scene": "fire",
   "cta": "开演 · 序幕",
   "palette": {
-    "bg": "#EFE5D8",
-    "bg2": "#FBF6EE",
-    "bg3": "#E2D3C2",
+    "bg": "#F3EEE5",
+    "bg2": "#FBF9F4",
+    "bg3": "#E8E2D8",
     "paper": "#241811",
-    "paper2": "#574235",
-    "paper3": "#755E4E",
-    "accent": "#B22D1D",
-    "accent2": "#806010",
+    "paper2": "#5C4A3A",
+    "paper3": "#7A6A5C",
+    "accent": "#C12A1B",
+    "accent2": "#A07D1C",
     "accent3": "#33486B",
-    "accentDeep": "#8A1E13"
+    "accentDeep": "#9A2014"
   },
   "mainline": [
     "马灯照着一间茅屋",
@@ -205,5 +205,11 @@
     "tip": "密码由主创团队分发 · 公开页面仅展示剧目概况"
   },
   "note": "《百年星语·破晓1928》原创剧本，人物、机构与史实细节以主创团队修订稿为准。本站仅用于内部研读与展演筹备。",
-  "motif": "lantern"
+  "motif": "lantern",
+  "hub": {
+    "meta": "红色歌剧 · 五幕十一场 · 二十六首曲目 · 全本需密码",
+    "summary": "一盏马灯，从 1928 穿到 2024。",
+    "emblem": "assets/nocturne/svg/emblem-dawn-ink.svg",
+    "order": 6
+  }
 }

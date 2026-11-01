@@ -1,0 +1,13 @@
+{
+  "slug": "chaoxi",
+  "name": "潮汐书",
+  "seal": "潮",
+  "kicker": "歌剧",
+  "description": "一位抄书人抄录了整座海，也抄录了自己的亡妻。",
+  "hub": {
+    "meta": "歌剧 · 二幕 · 二三年首演",
+    "summary": "一位抄书人抄录了整座海，也抄录了自己的亡妻。",
+    "emblem": "assets/nocturne/svg/emblem-rings-ink.svg",
+    "order": 2
+  }
+}

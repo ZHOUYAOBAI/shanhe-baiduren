@@ -1,27 +1,27 @@
 /* site palette (written by build from site_meta.palette) */
 /* theme: light */
 :root {
-  --bg: #EFE5D8;
-  --bg-2: #FBF6EE;
-  --bg-3: #E2D3C2;
+  --bg: #F3EEE5;
+  --bg-2: #FBF9F4;
+  --bg-3: #E8E2D8;
   --paper: #241811;
-  --paper-2: #574235;
-  --paper-3: #755E4E;
-  --accent: #B22D1D;
-  --accent-2: #806010;
+  --paper-2: #5C4A3A;
+  --paper-3: #796a5c;
+  --accent: #C12A1B;
+  --accent-2: #86681a;
   --accent-3: #33486B;
-  --accent-deep: #8A1E13;
+  --accent-deep: #9A2014;
   --on-accent: #FFF6EA;
   --on-accent-deep: #FFF6EA;
   --line:      rgba(36,24,17,0.13);
   --line-2:    rgba(36,24,17,0.26);
-  --surface-top:      rgba(251,246,238,0.82);
-  --surface-top-soft: rgba(251,246,238,0.4);
-  --surface-rail:     rgba(251,246,238,0.46);
-  --surface-modal:    rgba(251,246,238,0.92);
-  --surface-band:     rgba(251,246,238,0.52);
-  --surface-card:     rgba(251,246,238,0.7);
-  --surface-card-hover: rgba(251,246,238,0.96);
+  --surface-top:      rgba(251,249,244,0.82);
+  --surface-top-soft: rgba(251,249,244,0.4);
+  --surface-rail:     rgba(251,249,244,0.46);
+  --surface-modal:    rgba(251,249,244,0.92);
+  --surface-band:     rgba(251,249,244,0.52);
+  --surface-card:     rgba(251,249,244,0.7);
+  --surface-card-hover: rgba(251,249,244,0.96);
   --surface-chip:     rgba(36,24,17,0.06);
   --surface-chip-hover: rgba(36,24,17,0.04);
   --surface-sheen:    rgba(255, 255, 255, .92);
@@ -34,9 +34,9 @@
 }
 
 [data-theme="dark"] {
-  --surface-top:      rgba(108,103,97,0.9);
-  --surface-top-soft: rgba(108,103,97,0.52);
-  --surface-rail:     rgba(108,103,97,0.55);
+  --surface-top:      rgba(109,107,103,0.9);
+  --surface-top-soft: rgba(109,107,103,0.52);
+  --surface-rail:     rgba(109,107,103,0.55);
   --surface-modal:    rgba(6, 5, 4, .86);
   --surface-band:     rgba(0, 0, 0, .22);
   --surface-card:     rgba(255, 255, 255, .02);

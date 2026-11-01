@@ -1,0 +1,13 @@
+{
+  "slug": "tongniao",
+  "name": "铜鸟",
+  "seal": "铜",
+  "kicker": "音乐剧",
+  "description": "铜制的鸟不会飞，却记得所有迁徙路线。",
+  "hub": {
+    "meta": "音乐剧 · 二幕 · 二六年首演",
+    "summary": "铜制的鸟不会飞，却记得所有迁徙路线。",
+    "emblem": "assets/nocturne/svg/emblem-wave-ink.svg",
+    "order": 3
+  }
+}

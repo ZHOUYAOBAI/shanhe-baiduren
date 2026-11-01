@@ -551,3 +551,46 @@ for (let pass = 0; pass < 5; pass++) { /* 逐条修 → 再看还剩哪条不合
 | 「金色会发绿」改法 | `SKILL.md` + `site-design.md` |
 | 朱砂为骨增强层（八小节） | `main.css` 增强层七（在「响应式补丁」之前） |
 | 窄屏戏单框收紧 + 表头首列朱砂 | `main.css`「响应式补丁」节内 |
+
+---
+
+## 六、接管健康审查（2026-11-02）
+
+> 背景：用户把 px1928 站点交来接管。本轮不做大改，只做健康核查 + 顺手修两个真 bug。
+> 取证：本地复用 `tools/script-site` 工具链，从源 docx 全量重建到 `outputs/px1928-fix` 与 `px1928/`，用 Chromium 实测（视口 390×844 与 1440×900）。
+
+### 1. 部署一致性（✅ 干净）
+- 线上 `github.io/shanhe-baiduren/px1928` 与仓库 `px1928/` 逐字节一致（sha256 比对 11 个核心文件全绿）。
+- 模板 `tools/script-site/assets/template/` 与产物除资源指纹外逐字节一致 —— 可复现性完美。
+- 重建产物与线上仅差 `data.js` 的随机 IV（AES-GCM 每次不同，解密无误）。
+
+### 2. 工具链可复现（✅）
+- 从源 docx 重建：源段落 **2094 ／ 命中 2094 ／ 缺失 0**；对比度九项全过（正文 13.90 … 深朱砂反白 8.62）。
+- 密码门：`px1928` 解锁出 5 幕 26 曲 416 歌词行；错误密码回「密码不正确，请重试。」且正文保持锁定。
+
+### 3. 功能核验（✅）
+全剧检索 ⌘K（跨台词/舞台/人物，实测「吴澄」命中 40 条）· 台本模式 · 字号 ± · 吸顶表头（滚到表头下方 `th.top === topbar.bottom === 58`）· 时间轴竖排圆点与竖线对齐 · 续读定位 · 同曲异形 · 伏笔结构 —— 全部正常。
+
+### 4. 修复的两个真 bug
+
+**B1 · 马灯 3D 门控 `detach` 早退判断反向（initLantern3D）**
+- 现象：缩窗到 ≤720px（或运行时切 `prefers-reduced-motion`）后，马灯仍跟随指针改写 `--ly/--lx` —— 监听器没被摘除。
+- 根因：`detach()` 写成 `if (bound) return;`（应为 `if (!bound) return;`）。`bound=true` 时已绑定，反而直接返回，监听器永远摘不掉。`initTilt` / `initHero3D` 的 `detach` 写法是 `!bound`，三处应一致。
+- 修：改 `if (!bound) return;`，并补注释。`onMotionGateChange` 在 `(hover:hover)...` / `(prefers-reduced-motion)` / `(max-width:720px)` / `resize` 任一变化即重跑 `apply()`。
+- 验证：1440 移指针 `--ly=-8.19deg`；缩窗 390 后 `--ly` 被 `onLeave` 归零为 `0deg`，再移动指针仍保持 `0deg`（旧 buggy 行为会跟成 0.37deg）。
+
+**B2 · 窄屏角色徽章 `.map-chip` 触控高度不足**
+- 现象：≤720px 下 26 枚角色徽章实高 43.75px（< 44px 触控下限），且未列入「触控目标补齐」清单。
+- 修：在 `@media (max-width:720px)` 补 `.map-chip { min-height: 44px; }`。
+- 验证：26 枚全部 44px（`allGe44: true`）。
+
+### 5. 历史记录校正
+- REVIEW 中「手机时间轴圆点 x=44」为旧值；现圆点 `x=19`、竖线 `x=23 w=1`，圆心 23.5 与竖线中心 23.5 **完全对齐** —— 渲染正确，仅记录过时。
+- 上一轮「触控目标 badCount: 0」未覆盖 `.map-chip`（其 43.75px 低于 44），本次 B2 已补。
+
+### 6. 本轮落点
+| 改动 | 文件 |
+|---|---|
+| `detach` 早退反向修正 + 注释 | `tools/script-site/assets/template/assets/js/main.js`（initLantern3D） |
+| `.map-chip` 窄屏 44px | `tools/script-site/assets/template/assets/css/main.css`（响应式补丁节） |
+| 以上经 `rebuild-px1928.sh` 重新生成 `px1928/` | — |

@@ -63,7 +63,7 @@ button { font: inherit; color: inherit; }
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-.page { position: relative; z-index: 3; padding-left: var(--rail); }
+.page { position: relative; z-index: 3; padding-left: var(--rail); padding-right: var(--rail); }
 
 /* ── 顶栏 ─────────────────────────────────────────────── */
 .topbar {
@@ -485,7 +485,7 @@ button { font: inherit; color: inherit; }
 /* 剧本正文（公开层为空时提示解锁） */
 .body-note {
   font-family: var(--serif); font-size: 14px; color: var(--paper-3);
-  border: 1px dashed var(--line-2); border-radius: var(--r);
+  border: 1px solid var(--line-2); border-radius: var(--r);
   padding: 16px 18px; margin: 14px 0 26px;
 }
 .body-note button {
@@ -828,7 +828,7 @@ button { font: inherit; color: inherit; }
 .modal-body .song-stage { color: var(--paper-3); font-style: italic; font-size: 14px; }
 .modal-lock {
   font-family: var(--serif); color: var(--paper-3);
-  border: 1px dashed var(--line-2); padding: 18px; border-radius: var(--r);
+  border: 1px solid var(--line-2); padding: 18px; border-radius: var(--r);
   text-align: center;
 }
 
@@ -1007,6 +1007,13 @@ body.role-filter .dialogue[data-hit] .dlg-who {
     animation-iteration-count: 1 !important;
     transition-duration: .01ms !important;
     scroll-behavior: auto !important;
+  }
+  /* 减少动态时，所有「入场起始隐藏」的内容直接呈现终态，避免文字不可见（无障碍） */
+  .hero-kicker, .hero-title, .hero-sub, .hero-meta, .hero-credits,
+  .hero-cta, .hero-ghost, .hero-resume,
+  .sec-head, .sec-head > *, .reveal, .revealed,
+  .act-title, .act-sub, .front-lead, .front-lead > * {
+    opacity: 1 !important; transform: none !important;
   }
 }
 
@@ -1425,7 +1432,7 @@ html { font-size: calc(16px * var(--fs-scale)); }
 /* ══ 唱段卡：表演者可点，联动角色筛选 ═════════════════ */
 .song-perf {
   border: 0; background: transparent; padding: 0; cursor: pointer;
-  border-bottom: 1px dashed color-mix(in srgb, var(--paper-3) 60%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--paper-3) 60%, transparent);
   transition: color .25s, border-color .25s;
 }
 button.song-perf:hover { color: var(--accent); border-color: var(--accent); }
@@ -1446,7 +1453,7 @@ button.song-perf:hover { color: var(--accent); border-color: var(--accent); }
 .song-perf-row {
   display: flex; align-items: center; flex-wrap: wrap; gap: 7px;
   padding: 12px 0 14px; margin-bottom: 6px;
-  border-bottom: 1px dashed var(--line);
+  border-bottom: 1px solid var(--line);
 }
 .spr-label {
   font-family: var(--serif); font-size: 11.5px; letter-spacing: .26em;
@@ -1671,7 +1678,7 @@ button.song-perf:hover { color: var(--accent); border-color: var(--accent); }
 .cast-stat {
   font-family: var(--mono); font-size: 11px; letter-spacing: .08em;
   color: var(--paper-3);
-  border-top: 1px dashed var(--line);
+  border-top: 1px solid var(--line);
   padding-top: 10px;
 }
 
@@ -1949,7 +1956,7 @@ body.focus-mode .hero { min-height: 78vh; }
 .front-lead p {
   margin: 0 0 8px;
   font-family: var(--serif);
-  font-size: 15px; line-height: 1.95;
+  font-size: 16px; line-height: 1.95;
   color: var(--paper-2);
   letter-spacing: .04em;
 }
@@ -2108,7 +2115,7 @@ body.focus-mode .hero { min-height: 78vh; }
   grid-column: 1 / -1;
   display: grid; justify-items: center; gap: 14px;
   padding: 46px 24px;
-  border: 1px dashed color-mix(in srgb, var(--accent) 28%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
   border-radius: var(--r);
   background: color-mix(in srgb, var(--accent) 3%, transparent);
 }
@@ -3081,6 +3088,9 @@ body.mode-stage .front-band { display: none; }
 
   /* 角色筛选条 */
   .role-bar .rb-clear { min-height: 44px; padding: 8px 14px; }
+
+  /* 同台图降级后的角色徽章：基础层 min-height:40px，实测 43.75px，差一点 */
+  .map-chip { min-height: 44px; }
 
   /* 回到顶部 */
   .to-top { width: 44px; height: 44px; }

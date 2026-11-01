@@ -2044,7 +2044,11 @@ function initLantern3D() {
     bound = true;
   };
   const detach = () => {
-    if (bound) return;
+    /* 注意：这里必须是 if (!bound) return;
+       写成 if (bound) return 的话，「已绑定」时反而直接返回 ——
+       监听器摘不掉，缩窗到 ≤720px 后马灯仍跟着指针转面。
+       initTilt / initHero3D 的 detach 都是 !bound，三处要一致。 */
+    if (!bound) return;
     window.removeEventListener('pointermove', onMove);
     bound = false;
     onLeave();
