@@ -340,6 +340,10 @@ READ_PASS='你的密码' node $SK/scripts/build-site.mjs \
 
 审查与历轮改动记录见 `projects/px1928/REVIEW.md`。
 
+> 重建后 `data.js` 一定会有 diff —— 加密的 IV 每次随机生成，这是对的。
+> 其余文件（`index.html` / `main.css` / `palette.css` …）在同源同密码下逐字节一致，
+> 所以两台机器构建出来的站点可以直接对拍。
+
 ---
 
 ## 仓库结构
