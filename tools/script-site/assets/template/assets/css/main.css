@@ -350,7 +350,8 @@ button { font: inherit; color: inherit; }
 .scroll-hint {
   position: absolute; left: 50%; bottom: 30px; transform: translateX(-50%);
   z-index: 3; display: flex; flex-direction: column; align-items: center; gap: 8px;
-  font-size: 11px; letter-spacing: .3em; color: var(--paper-3);
+  /* 原先是 --paper-3，压在带纤维的底上几乎看不见，形同噪点 */
+  font-size: 11px; letter-spacing: .3em; color: var(--paper-2);
 }
 .scroll-hint i { display: block; width: 1px; height: 44px; background: linear-gradient(var(--paper-3), transparent); animation: drip 2.4s ease-in-out infinite; }
 @keyframes drip { 0%,100% { opacity: .3; transform: scaleY(.5); transform-origin: top; } 50% { opacity: 1; transform: scaleY(1); } }
@@ -358,8 +359,8 @@ button { font: inherit; color: inherit; }
 .drag-hint {
   position: absolute; right: var(--gut); bottom: 34px; z-index: 3;
   display: flex; align-items: center; gap: 10px;
-  font-size: 11px; letter-spacing: .2em; color: var(--paper-3);
-  opacity: .8;
+  font-size: 11px; letter-spacing: .2em; color: var(--paper-2);
+  opacity: .85;
 }
 .drag-hint svg { animation: nudge 2.6s ease-in-out infinite; }
 @keyframes nudge { 0%,100% { transform: translateX(0); } 50% { transform: translateX(6px); } }
@@ -1736,23 +1737,25 @@ body.focus-mode .hero { min-height: 78vh; }
 
 /* ── 一、旧纸 ───────────────────────────────────────────── */
 
-/* 纸纤维：细颗粒 + 长纤维两层湍流 + 手工纸的帘纹，multiply 叠在宣纸上 */
+/* 纸纤维：帘纹 + 长纤维两层，multiply 叠在宣纸上。
+   原先还叠了一层高频噪点（baseFrequency .85），它和 .grain 是两重颗粒，
+   压上茶渍后整张纸读成「发霉的旧报纸」而不是温润宣纸 —— 已去掉。
+   年头感交给长纤维的走向和茶渍，不交给颗粒。 */
 .paper-fibers {
   position: fixed; inset: 0; z-index: 2; pointer-events: none;
-  opacity: .46; mix-blend-mode: multiply;
+  opacity: .30; mix-blend-mode: multiply;
   background-image:
     repeating-linear-gradient(to right,
-      rgba(122, 96, 58, .038) 0 1px,
+      rgba(122, 96, 58, .030) 0 1px,
       transparent 1px 23px),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='560' height='560'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.008 0.46' numOctaves='4' seed='11'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='560' height='560' filter='url(%23f)' opacity='0.46'/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' seed='5'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23g)' opacity='0.34'/%3E%3C/svg%3E");
-  background-size: auto, 560px 560px, 300px 300px;
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='560' height='560'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.008 0.46' numOctaves='4' seed='11'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='560' height='560' filter='url(%23f)' opacity='0.34'/%3E%3C/svg%3E");
+  background-size: auto, 560px 560px;
 }
 
-/* 霉斑：几处茶渍，让纸有年头 */
+/* 茶渍：让纸有年头。整层收到 38% —— 全强度时斑点会读成霉点。 */
 .foxing {
   position: fixed; inset: 0; z-index: 1; pointer-events: none;
-  mix-blend-mode: multiply; opacity: 1;
+  mix-blend-mode: multiply; opacity: .38;
   background:
     radial-gradient(40% 30% at 7% 13%,  rgba(146, 100, 48, .13), transparent 72%),
     radial-gradient(32% 24% at 93% 24%, rgba(138,  94, 44, .115), transparent 74%),
@@ -1765,34 +1768,35 @@ body.focus-mode .hero { min-height: 78vh; }
     radial-gradient(20% 16% at 44% 92%, rgba(138,  96, 46, .065), transparent 74%);
 }
 
-/* 纸边：旧纸四边泛黄发暗 */
+/* 纸边：旧纸四边泛黄发暗。原先左右 .16/.13 会把四角压成脏角，减半。 */
 .paper-edge {
   position: fixed; inset: 0; z-index: 1; pointer-events: none;
   mix-blend-mode: multiply;
   background:
-    linear-gradient(to right, rgba(150, 108, 54, .16), transparent 12%),
-    linear-gradient(to left,  rgba(150, 108, 54, .13), transparent 10%),
-    linear-gradient(to bottom, rgba(146, 104, 52, .11), transparent 9%),
-    linear-gradient(to top,   rgba(146, 104, 52, .12), transparent 9%);
+    linear-gradient(to right, rgba(150, 108, 54, .085), transparent 12%),
+    linear-gradient(to left,  rgba(150, 108, 54, .070), transparent 10%),
+    linear-gradient(to bottom, rgba(146, 104, 52, .060), transparent 9%),
+    linear-gradient(to top,   rgba(146, 104, 52, .065), transparent 9%);
 }
 
-/* 书口：右侧一叠纸的厚度 —— 细密的页边线 + 装订暗影 */
+/* 书口：右侧一叠纸的厚度 —— 细密的页边线 + 装订暗影。
+   它压在 .paper-edge 的右侧泛黄之上，两层叠出一条「脏边」，故整体减淡。 */
 .book-gutter {
   position: fixed; top: 0; bottom: 0; right: 0; width: 58px; z-index: 2;
   pointer-events: none;
   background:
     repeating-linear-gradient(to left,
-      rgba(126, 96, 52, .085) 0 1px,
+      rgba(126, 96, 52, .060) 0 1px,
       rgba(255, 252, 244, .10) 1px 2px,
       transparent 2px 5px),
     linear-gradient(270deg,
-      rgba(92, 60, 24, .26) 0%, rgba(92, 60, 24, .12) 34%,
-      rgba(92, 60, 24, .04) 66%, transparent 100%);
+      rgba(92, 60, 24, .17) 0%, rgba(92, 60, 24, .08) 34%,
+      rgba(92, 60, 24, .03) 66%, transparent 100%);
 }
 .book-gutter::after {
   content: ""; position: absolute; top: 0; bottom: 0; right: 0; width: 1px;
   background: linear-gradient(to bottom,
-    transparent 0%, rgba(92, 60, 24, .40) 14%, rgba(92, 60, 24, .40) 86%, transparent 100%);
+    transparent 0%, rgba(92, 60, 24, .30) 14%, rgba(92, 60, 24, .30) 86%, transparent 100%);
 }
 
 /* 版框：旧书版心的双边界线（外粗内细） */
@@ -2232,6 +2236,23 @@ body.mode-stage .front-band { display: none; }
 }
 .hero-text { min-width: 0; }
 
+/* 灯下的落地光：光池是圆的，落到纸面该有一摊椭圆的暖光。
+   没有它，灯就是悬在空纸里——右下半区永远填不满。 */
+.hero-lantern-slot::after {
+  content: ""; position: absolute;
+  left: 54%; bottom: 7%;
+  width: 360px; height: 92px; margin-left: -180px;
+  border-radius: 50%;
+  background: radial-gradient(closest-side,
+    color-mix(in srgb, var(--accent-2) 46%, transparent) 0%,
+    color-mix(in srgb, var(--accent-2) 24%, transparent) 38%,
+    color-mix(in srgb, var(--accent-2) 9%, transparent) 62%,
+    transparent 82%);
+  filter: blur(7px);
+  pointer-events: none;
+  z-index: 0;
+}
+
 /* 灯位：宽屏落在 HERO 右侧的三分点 */
 .hero-lantern-slot {
   position: relative;
@@ -2248,13 +2269,18 @@ body.mode-stage .front-band { display: none; }
 
 .hero-lantern {
   position: absolute;
-  left: 54%; top: 47%;
+  left: 54%; top: 53%;
   width: 240px; height: 320px;
   margin: -164px 0 0 -120px;
   perspective: 1000px;
   perspective-origin: 50% 44%;
   pointer-events: none;
   transform-style: preserve-3d;
+  /* 右栏原本一大片真空：灯只有 240px 宽，孤零零浮在纸上。
+     灯身各部件是绝对定位的 px 值，改容器尺寸不会带着它们缩 ——
+     只能整只 scale。1.18 倍 + 下移到 52%，让灯心对上左侧标题的视觉重心。 */
+  transform: scale(1.18);
+  transform-origin: 50% 44%;
 }
 .lantern-cord {
   position: absolute; left: 50%; top: 0;
@@ -2369,18 +2395,23 @@ body.mode-stage .front-band { display: none; }
 }
 /* 老马灯无流苏：红灯笼的流苏已去除 */
 
-/* 灯下的光：整站唯一光源，暖光落在纸上 */
+/* 灯下的光：整站唯一光源，暖光落在纸上。
+   放大到 1120px 铺满右半区，否则右栏只剩一盏孤灯悬在空纸里。
+   z-index: 0 是必须的 —— halo 在 DOM 里排在 .hero-text 之后，
+   同层无 z-index 时这层暖光会压在副标题上，把字糊掉（光越铺越大就越明显）。 */
 .lantern-halo {
-  position: absolute; left: 54%; top: 47%;
-  width: 760px; height: 760px;
-  margin: -380px 0 0 -380px;
+  position: absolute; left: 54%; top: 53%;
+  width: 1120px; height: 1120px;
+  margin: -560px 0 0 -560px;
   pointer-events: none;
+  z-index: 0;
   background:
     radial-gradient(closest-side,
-      color-mix(in srgb, var(--accent-2) 30%, transparent) 0%,
-      color-mix(in srgb, var(--accent-2) 16%, transparent) 28%,
-      color-mix(in srgb, var(--accent) 9%, transparent) 50%,
-      transparent 76%);
+      color-mix(in srgb, var(--accent-2) 32%, transparent) 0%,
+      color-mix(in srgb, var(--accent-2) 19%, transparent) 22%,
+      color-mix(in srgb, var(--accent-2) 10%, transparent) 40%,
+      color-mix(in srgb, var(--accent-2) 5%, transparent) 58%,
+      transparent 82%);
   animation: halo-breathe 6.5s ease-in-out infinite;
 }
 @keyframes halo-breathe {
@@ -2390,8 +2421,10 @@ body.mode-stage .front-band { display: none; }
 
 /* ── 三、灯幡：素纸挂幡替掉红底立牌 ────────────────────── */
 
+/* 灯幡原本 left:2%，离灯身只剩 10px，几乎贴边；
+   左移到 -7% 让幡与灯各占一股，右半区才是「灯 + 幡」两件而不是挤成一团。 */
 .hero-placard {
-  position: absolute; left: 2%; top: 47%;
+  position: absolute; left: -7%; top: 52%;
   transform: translateY(-50%);
   z-index: 4;
   width: 56px;
@@ -2723,9 +2756,11 @@ body.mode-stage .front-band { display: none; }
 
 /* ── 六、HERO：戏单抬头 ─────────────────────────────────── */
 
-/* 双线朱丝框：两道红线之间夹着纸 */
+/* 双线朱丝框：两道红线之间夹着纸。
+   z-index: 1 —— 要让文字始终浮在马灯光池（.lantern-halo）之上 */
 .hero-text {
   position: relative;
+  z-index: 1;
   padding: 32px 34px 34px;
 }
 .hero-text::before {
@@ -3159,6 +3194,8 @@ body.mode-stage .front-band { display: none; }
     min-height: 0;
     pointer-events: none;
   }
+  /* 窄屏灯挂在标题上方，下面没有「地面」，落地光会变成一团无来由的黄斑 */
+  .hero-lantern-slot::after { display: none; }
   .hero-lantern {
     left: 50%;
     top: 0;

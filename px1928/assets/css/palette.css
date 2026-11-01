@@ -6,7 +6,7 @@
   --bg-3: #E8E2D8;
   --paper: #241811;
   --paper-2: #5C4A3A;
-  --paper-3: #796a5c;
+  --paper-3: #6A5849;
   --accent: #C12A1B;
   --accent-2: #86681a;
   --accent-3: #33486B;
@@ -25,8 +25,8 @@
   --surface-chip:     rgba(36,24,17,0.06);
   --surface-chip-hover: rgba(36,24,17,0.04);
   --surface-sheen:    rgba(255, 255, 255, .92);
-  --vignette-1:       rgba(36,24,17,0.1);
-  --vignette-2:       rgba(36,24,17,0.08);
+  --vignette-1:       rgba(36,24,17,0.085);
+  --vignette-2:       rgba(36,24,17,0.06);
   --title-shadow:     0 4px 30px rgba(255, 255, 255, .85);
   --grain-blend:      multiply;
   --grain-opacity:    .05;
