@@ -88,3 +88,4 @@ echo "     《西山不是山》　：https://zhouyaobai.github.io/shanhe-baidur
 echo "     《百年星语·破晓1928》：https://zhouyaobai.github.io/shanhe-baiduren/px1928/"
 echo "   Cloudflare Pages 镜像（更快，配乐首选）："
 echo "     《山河摆渡人》　：https://shanhe-baiduren.pages.dev/shanhe/"
+echo "     《百年星语·破晓1928》：https://shanhe-baiduren.pages.dev/px1928/"

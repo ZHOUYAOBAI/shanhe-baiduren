@@ -18,6 +18,8 @@ yarn-error.log*
 # wrangler 部署缓存（本地产物，不入库）
 .wrangler/
 
-# 剧本明文（构建中间产物）——绝不入库
+# 剧本明文（构建中间产物）——新站绝不入库
+# 注意：xishan/working/ 是历史已跟踪文件（《西山不是山》本就全文公开），
+# .gitignore 只管未跟踪文件，不影响它继续发布。
 */working/
 working/
