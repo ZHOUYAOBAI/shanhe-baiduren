@@ -11,10 +11,10 @@
 <meta property="og:description" content="《百年星语·破晓1928》完整剧本在线读。序幕至终幕五幕十一场、二十六首曲目，从 1928 年蒙自芷村的茅屋，到 1930 年昆明北郊的地台刑场，再回到 2024 年查尼皮纪念馆的一盏马灯。">
 <meta property="og:locale" content="zh_CN">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="assets/css/tokens.css?v=0540e4e6">
-<link rel="stylesheet" href="assets/css/palette.css?v=0540e4e6">
-<link rel="stylesheet" href="assets/css/fonts.css?v=0540e4e6">
-<link rel="stylesheet" href="assets/css/main.css?v=0540e4e6">
+<link rel="stylesheet" href="assets/css/tokens.css?v=c5d6e7f8">
+<link rel="stylesheet" href="assets/css/palette.css?v=c5d6e7f8">
+<link rel="stylesheet" href="assets/css/fonts.css?v=c5d6e7f8">
+<link rel="stylesheet" href="assets/css/main.css?v=c5d6e7f8">
 </head>
 <body>
 
@@ -46,6 +46,10 @@
     <span class="tool-sep" aria-hidden="true"></span>
     <button class="tool tool-size" id="fontDown" type="button" aria-label="缩小字号" title="缩小字号">A<span class="tiny">−</span></button>
     <button class="tool tool-size" id="fontUp" type="button" aria-label="放大字号" title="放大字号">A<span class="tiny">＋</span></button>
+    <span class="tool-sep" aria-hidden="true"></span>
+    <button class="tool tool-rt" id="rtToggle" type="button" aria-pressed="false" aria-controls="rtRoom" title="研读现场 · 实时协作">
+      <span class="rt-dot" aria-hidden="true"></span><span>研读</span>
+    </button>
   </div>
 </header>
 
@@ -79,6 +83,7 @@
         <div class="hero-lantern" id="heroLantern" aria-hidden="true">
           <div class="lantern-cord"></div>
           <div class="lantern-ring"></div>
+          <div class="lantern-bail"></div>
           <div class="lantern-cap"></div>
           <div class="lantern-body" id="lanternBody">
             <div class="lantern-panel" data-i="0"></div>
@@ -92,7 +97,7 @@
             <div class="lantern-flame"></div>
           </div>
           <div class="lantern-foot"></div>
-          <div class="lantern-tassel"></div>
+          <div class="lantern-hoop"></div>
         </div>
         <aside class="hero-placard" id="heroPlacard" aria-hidden="true">
           <div class="placard-cap"></div>
@@ -314,6 +319,21 @@
 <!-- ══ 轻提示 ══ -->
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
+<!-- ══ 研读现场 · 实时协作面板 ══ -->
+<aside class="rt-room" id="rtRoom" aria-hidden="true" aria-label="研读现场 · 实时协作">
+  <header class="rt-head">
+    <span class="rt-title">研读现场</span>
+    <span class="rt-status"><i class="rt-live" aria-hidden="true"></i><span id="rtStatusText">连接中…</span></span>
+    <button class="rt-close" id="rtClose" type="button" aria-label="收起研读现场">×</button>
+  </header>
+  <div class="rt-presence">
+    <strong id="rtOnline">–</strong> 人在线研读
+    <span class="rt-reading" id="rtReading">– 人正在读</span>
+  </div>
+  <ul class="rt-feed" id="rtFeed"></ul>
+  <footer class="rt-foot" id="rtFoot">演示数据 · 接入实时后端后即为真实协作</footer>
+</aside>
+
 <audio id="player" preload="none"></audio>
 
 <script>
@@ -327,7 +347,8 @@
       'promise: ' + String((e.reason && e.reason.message) || e.reason));
   });
 </script>
-<script src="assets/js/data.js?v=0540e4e6"></script>
-<script type="module" src="assets/js/main.js?v=0540e4e6"></script>
+<script src="assets/js/data.js?v=c5d6e7f8"></script>
+<script src="assets/js/realtime.js?v=c5d6e7f8"></script>
+<script type="module" src="assets/js/main.js?v=c5d6e7f8"></script>
 </body>
 </html>

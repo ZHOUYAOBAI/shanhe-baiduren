@@ -2262,11 +2262,23 @@ body.mode-stage .front-band { display: none; }
   background: linear-gradient(var(--paper-3), color-mix(in srgb, var(--paper-3) 30%, transparent));
 }
 .lantern-ring {
-  position: absolute; left: 50%; top: 32px;
-  width: 20px; height: 20px; margin-left: -10px;
-  border: 1.5px solid color-mix(in srgb, var(--accent-2) 72%, var(--paper));
+  position: absolute; left: 50%; top: 0;
+  width: 18px; height: 18px; margin-left: -9px;
+  border: 2px solid color-mix(in srgb, var(--paper-2) 76%, var(--accent-2));
   border-radius: 50%;
-  box-shadow: 0 1px 3px rgba(60,34,10,.3);
+  box-shadow: 0 1px 3px rgba(0,0,0,.4);
+}
+/* 提梁：马灯的标志。金属弧柄从灯顶两侧兜上来 —— 它和红灯笼最不同的地方 */
+.lantern-bail {
+  position: absolute; left: 50%; top: 8px;
+  width: 190px; height: 56px; margin-left: -95px;
+  border: 5px solid color-mix(in srgb, var(--paper-2) 76%, var(--accent-2));
+  border-bottom: none;
+  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+  box-shadow: inset 0 3px 0 color-mix(in srgb, var(--accent-2) 52%, transparent),
+              inset 0 1px 0 color-mix(in srgb, var(--accent-2) 70%, #fff),
+              0 1px 3px rgba(0,0,0,.4);
+  z-index: 1;
 }
 .lantern-cap {
   position: absolute; left: 50%; top: 52px;
@@ -2308,13 +2320,13 @@ body.mode-stage .front-band { display: none; }
     inset 0 0 46px color-mix(in srgb, var(--accent-2) 46%, transparent),
     inset 0 0 5px color-mix(in srgb, var(--paper) 34%, transparent);
 }
-/* 竖骨：每面纸屏的竹骨 */
+/* 竖骨：金属棱，玻璃门的接缝 */
 .lantern-panel::before {
-  content: ""; position: absolute; left: 50%; top: 4%; bottom: 4%;
-  width: 1px; margin-left: -.5px;
+  content: ""; position: absolute; left: 50%; top: 3%; bottom: 3%;
+  width: 2px; margin-left: -1px;
   background: linear-gradient(transparent,
-    color-mix(in srgb, var(--paper) 34%, transparent) 12%,
-    color-mix(in srgb, var(--paper) 34%, transparent) 88%, transparent);
+    color-mix(in srgb, var(--accent-2) 66%, transparent) 14%,
+    color-mix(in srgb, var(--accent-2) 66%, transparent) 86%, transparent);
 }
 .lantern-panel:nth-child(1) { --i: 0; --shade: 0%; }
 .lantern-panel:nth-child(2) { --i: 1; --shade: 13%; }
@@ -2332,20 +2344,19 @@ body.mode-stage .front-band { display: none; }
   border-radius: 50%;
   background:
     radial-gradient(closest-side,
-      rgba(255, 252, 244, .88) 0%,
+      rgba(255, 252,244, .88) 0%,
       color-mix(in srgb, var(--accent-2) 78%, #FFF6E2) 20%,
       color-mix(in srgb, var(--accent-2) 62%, transparent) 44%,
       color-mix(in srgb, var(--accent) 18%, transparent) 64%,
       transparent 80%);
-  filter: blur(5px);
-  mix-blend-mode: screen;
-  transform: translateZ(6px);
+  filter: blur(3px);
+  transform: translateZ(110px);
   animation: flame-flicker 2.6s ease-in-out infinite;
 }
 @keyframes flame-flicker {
-  0%, 100% { opacity: .78; transform: translateZ(6px) scale(1); }
-  38%      { opacity: .96; transform: translateZ(6px) scale(1.06); }
-  64%      { opacity: .86; transform: translateZ(6px) scale(.97); }
+  0%, 100% { opacity: .82; transform: translateZ(110px) scale(1); }
+  38%      { opacity: 1; transform: translateZ(110px) scale(1.06); }
+  64%      { opacity: .9; transform: translateZ(110px) scale(.97); }
 }
 .lantern-foot {
   position: absolute; left: 50%; top: 244px;
@@ -2356,18 +2367,8 @@ body.mode-stage .front-band { display: none; }
     color-mix(in srgb, var(--accent-2) 58%, var(--paper)));
   box-shadow: 0 5px 12px rgba(58,32,8,.3);
 }
-/* 流苏 */
-.lantern-tassel {
-  position: absolute; left: 50%; top: 254px;
-  width: 2px; height: 40px; margin-left: -1px;
-  background: linear-gradient(color-mix(in srgb, var(--accent) 70%, transparent), transparent);
-}
-.lantern-tassel::after {
-  content: ""; position: absolute; left: 50%; top: 34px;
-  width: 7px; height: 12px; margin-left: -3.5px;
-  border-radius: 0 0 50% 50%;
-  background: color-mix(in srgb, var(--accent) 78%, var(--accent-2));
-}
+/* 老马灯无流苏：红灯笼的流苏已去除 */
+
 /* 灯下的光：整站唯一光源，暖光落在纸上 */
 .lantern-halo {
   position: absolute; left: 54%; top: 47%;
@@ -2773,25 +2774,22 @@ body.mode-stage .front-band { display: none; }
    ② 横向收边 —— 每片纸屏是卷在骨架上的，两侧必须暗，
       否则八片一样亮就成了折扇，看不出是圆柱
    ③ 上下收口 —— 灯笼上下有木盖，光到不了 */
+/* 清透玻璃罩：冷调微透，左右收边显圆柱，中央不再有暖色径向晕（那是红灯笼感来源） */
 .lantern-panel {
-  background-color: color-mix(in srgb, var(--accent) var(--shade), transparent);
+  background-color: rgba(216, 226, 232, .07);
   background-image:
-    radial-gradient(56% 42% at 50% 56%,
-      color-mix(in srgb, var(--accent-2) 86%, transparent) 0%,
-      color-mix(in srgb, var(--accent) 34%, transparent) 56%,
-      transparent 84%),
     linear-gradient(90deg,
-      color-mix(in srgb, var(--accent-deep) 52%, transparent) 0%,
-      transparent 19%, transparent 81%,
-      color-mix(in srgb, var(--accent-deep) 52%, transparent) 100%),
+      rgba(0,0,0,.18) 0%, rgba(0,0,0,0) 32%,
+      rgba(0,0,0,0) 68%, rgba(0,0,0,.18) 100%),
     linear-gradient(180deg,
-      color-mix(in srgb, var(--accent-deep) 46%, transparent) 0%,
-      transparent 30%,
-      color-mix(in srgb, var(--accent-deep) 40%, transparent) 100%);
-  box-shadow:
-    inset 0 0 26px color-mix(in srgb, var(--accent-deep) 30%, transparent),
-    inset 0 0 4px color-mix(in srgb, var(--accent-deep) 44%, transparent);
+      color-mix(in srgb, var(--paper-2) 12%, transparent) 0%,
+      transparent 16%, transparent 84%,
+      color-mix(in srgb, var(--paper-2) 16%, transparent) 100%);
+  border: 1.5px solid color-mix(in srgb, var(--paper-2) 38%, var(--accent-2));
+  box-shadow: inset 0 0 12px rgba(0,0,0,.16);
 }
+/* 透明玻璃圆筒本无可见接缝：去掉每片中央的金属竖骨，否则像分片灯笼 */
+.lantern-panel::before { display: none; }
 .lantern-panel:nth-child(1) { --i: 0; --shade: 54%; }
 .lantern-panel:nth-child(2) { --i: 1; --shade: 48%; }
 .lantern-panel:nth-child(3) { --i: 2; --shade: 41%; }
@@ -2800,42 +2798,81 @@ body.mode-stage .front-band { display: none; }
 .lantern-panel:nth-child(6) { --i: 5; --shade: 34%; }
 .lantern-panel:nth-child(7) { --i: 6; --shade: 41%; }
 .lantern-panel:nth-child(8) { --i: 7; --shade: 48%; }
-/* 灯焰：红纸里的金芯，不再是白芯 */
+/* 灯焰：纯灯油金，无朱砂红；外缘透明收尾，光晕才不泛红 */
 .lantern-flame {
   background:
     radial-gradient(closest-side,
-      rgba(255, 250, 236, .92) 0%,
-      color-mix(in srgb, var(--accent-2) 92%, #FFF6E2) 16%,
-      color-mix(in srgb, var(--accent-2) 86%, transparent) 34%,
-      color-mix(in srgb, var(--accent) 52%, transparent) 58%,
-      color-mix(in srgb, var(--accent) 24%, transparent) 76%,
-      transparent 88%);
+      rgba(255, 253, 248, 1) 0%,
+      color-mix(in srgb, var(--accent-2) 98%, #FFF6E2) 14%,
+      color-mix(in srgb, var(--accent-2) 82%, transparent) 34%,
+      color-mix(in srgb, var(--accent-2) 40%, transparent) 58%,
+      transparent 82%);
+  filter: blur(.6px);
+}
+/* 焰芯：玻璃里那一点明确的火，泪滴焰形、底亮顶收 */
+.lantern-flame::after {
+  content: ""; position: absolute; left: 50%; top: 44%;
+  width: 24px; height: 66px; margin: -33px 0 0 -12px;
+  border-radius: 50% 50% 46% 46% / 72% 72% 34% 34%;
+  background: radial-gradient(50% 60% at 50% 68%,
+    #FFFDF4 0%,
+    color-mix(in srgb, var(--accent-2) 90%, #fff) 42%,
+    color-mix(in srgb, var(--accent-2) 70%, transparent) 78%,
+    transparent 100%);
+  filter: blur(.4px);
 }
 /* 顶盖与底座：朱漆木盖 + 一道金箍。
    暗金直接用会发橄榄绿，必须掺亮金；红漆更贴「红灯笼」。 */
 .lantern-cap {
-  background: linear-gradient(180deg,
-    color-mix(in srgb, var(--accent) 74%, #E05A3E) 0%,
-    var(--accent-deep) 58%,
-    color-mix(in srgb, var(--accent-deep) 86%, #000) 100%);
-  box-shadow: 0 4px 9px rgba(58, 32, 8, .34),
-              inset 0 -2px 0 color-mix(in srgb, var(--accent-2) 58%, #F0D79A);
+  width: 158px; height: 18px; top: 50px; margin-left: -79px;
+  background-color: color-mix(in srgb, var(--accent-2) 72%, var(--paper));
+  background-image:
+    repeating-linear-gradient(90deg, transparent 0 6px,
+      color-mix(in srgb, var(--accent-2) 70%, #2a1d05) 6px 8px);
+  border-radius: 46% 46% 36% 36% / 72% 72% 40% 40%;
+  box-shadow: 0 3px 8px rgba(0,0,0,.32),
+              inset 0 2px 0 color-mix(in srgb, var(--accent-2) 62%, #fff),
+              inset 0 -2px 0 color-mix(in srgb, var(--accent-2) 46%, transparent);
+}
+/* 顶钮：马灯通风顶上的小盖钮 */
+.lantern-cap::after {
+  content: ""; position: absolute; left: 50%; top: -9px;
+  width: 12px; height: 12px; margin-left: -6px; border-radius: 50%;
+  background: radial-gradient(circle at 38% 32%,
+    color-mix(in srgb, var(--accent-2) 80%, #fff), var(--paper) 90%);
+  box-shadow: 0 1px 2px rgba(0,0,0,.4);
 }
 .lantern-foot {
+  width: 150px; height: 26px; top: 232px; margin-left: -75px;
   background: linear-gradient(180deg,
-    color-mix(in srgb, var(--accent-deep) 86%, #000),
-    var(--accent-deep) 52%,
-    color-mix(in srgb, var(--accent) 70%, #E05A3E) 100%);
-  box-shadow: inset 0 2px 0 color-mix(in srgb, var(--accent-2) 58%, #F0D79A);
+    color-mix(in srgb, var(--accent-2) 85%, #fff) 0%,
+    var(--accent-2) 40%,
+    color-mix(in srgb, var(--accent-2) 58%, #1c1304) 100%);
+  border-radius: 30% 30% 46% 46% / 26% 26% 70% 70%;
+  box-shadow: 0 7px 14px rgba(0,0,0,.4),
+              inset 0 2px 0 rgba(255,255,255,.5),
+              inset 0 -3px 6px rgba(0,0,0,.4);
 }
-.lantern-ring { border-color: color-mix(in srgb, var(--accent-2) 52%, #F0D79A); }
+.lantern-ring { border-color: color-mix(in srgb, var(--paper-2) 76%, var(--accent-2)); }
+/* 灯圈环：玻璃顶口的铜环（灯圈），不再横穿焰心 */
+.lantern-hoop {
+  position: absolute; left: 50%; top: 100px;
+  width: 200px; height: 11px; margin-left: -100px;
+  border-radius: 50%;
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--accent-2) 88%, #fff) 0%,
+    var(--accent-2) 46%,
+    color-mix(in srgb, var(--accent-2) 62%, #1c1304) 100%);
+  box-shadow: 0 1px 3px rgba(0,0,0,.5),
+              inset 0 1px 0 rgba(255,255,255,.5);
+  z-index: 2;
+}
 .lantern-halo {
   background:
     radial-gradient(closest-side,
-      color-mix(in srgb, var(--accent-2) 26%, transparent) 0%,
-      color-mix(in srgb, var(--accent) 16%, transparent) 30%,
-      color-mix(in srgb, var(--accent) 8%, transparent) 52%,
-      transparent 78%);
+      color-mix(in srgb, var(--accent-2) 38%, transparent) 0%,
+      color-mix(in srgb, var(--accent-2) 22%, transparent) 32%,
+      transparent 74%);
 }
 
 /* ── 八、其余红色落点 ───────────────────────────────────── */
@@ -3155,6 +3192,138 @@ body.mode-stage .front-band { display: none; }
    鼠标一划卡片照样翘起来 —— 「窄屏退回平面」就成了空话。
    放在最后 + 权重相同，后者胜出。
    ══════════════════════════════════════════════════════════ */
+
+/* ════════════════════════════════════════════════════════════
+   研读现场 · 实时协作面板
+   ------------------------------------------------------------
+   传输无关：默认 MockChannel（无需服务器，演示时屏幕「活」着）。
+   视觉上走全站同款的「宣纸浮层 + 描边」语言，克制不喧宾夺主。
+   ════════════════════════════════════════════════════════════ */
+
+/* 顶栏开关（position:relative 是给未读小红点定位用的，
+   否则 ::after 会锚到顶栏而不是按钮本身） */
+.tool-rt { gap: 6px; position: relative; }
+.tool-rt .rt-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--paper-3); flex: none;
+  transition: background .3s;
+}
+.tool-rt.live .rt-dot {
+  background: var(--accent-2);
+  box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent-2) 60%, transparent);
+  animation: rt-pulse 1.8s ease-out infinite;
+}
+.tool-rt.has-unseen::after {
+  content: ""; position: absolute; top: 4px; right: 6px;
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent); box-shadow: 0 0 0 2px var(--bg-2);
+}
+
+/* 面板：锚在右下角（悬浮协作面板的常规位置，且在「回到顶部」之上）。
+   不放在右上角 —— 英雄区的马灯在垂直中部偏右，右上会挡住灯身，
+   那盏灯是全站唯一光源，不能被遮。 */
+.rt-room {
+  position: fixed; right: 20px; bottom: 82px; z-index: 60;
+  width: 292px; max-width: calc(100vw - 36px);
+  max-height: min(44vh, calc(100vh - 110px));
+  display: flex; flex-direction: column;
+  border: 1px solid var(--line-2);
+  border-radius: 12px;
+  background: var(--surface-modal);
+  backdrop-filter: blur(14px) saturate(1.1);
+  -webkit-backdrop-filter: blur(14px) saturate(1.1);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  opacity: 0; transform: translateY(10px) scale(.985);
+  pointer-events: none;
+  transition: opacity .3s ease, transform .3s cubic-bezier(.2, .8, .3, 1);
+}
+.rt-room.open { opacity: 1; transform: none; pointer-events: auto; }
+
+.rt-head {
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 14px; border-bottom: 1px solid var(--line);
+}
+.rt-title {
+  font-family: var(--serif); font-size: 15px;
+  letter-spacing: .14em; color: var(--paper);
+}
+.rt-status {
+  margin-left: auto; display: flex; align-items: center; gap: 6px;
+  font-family: var(--mono); font-size: 10.5px; color: var(--paper-3);
+}
+.rt-live {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--paper-3); flex: none;
+}
+.rt-room.live .rt-live {
+  background: var(--accent-2);
+  box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent-2) 60%, transparent);
+  animation: rt-pulse 1.8s ease-out infinite;
+}
+@keyframes rt-pulse {
+  0%   { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent-2) 60%, transparent); }
+  70%  { box-shadow: 0 0 0 7px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+.rt-close {
+  border: none; background: none; color: var(--paper-3);
+  font-size: 18px; line-height: 1; cursor: pointer;
+  padding: 2px 5px; border-radius: 5px;
+}
+.rt-close:hover { color: var(--paper); background: var(--surface-chip); }
+
+.rt-presence {
+  padding: 9px 14px; font-size: 12px; color: var(--paper-2);
+  border-bottom: 1px solid var(--line);
+}
+.rt-presence strong {
+  font-family: var(--mono); font-size: 15px;
+  color: var(--accent-2); margin-right: 2px;
+}
+.rt-reading { margin-left: 8px; color: var(--paper-3); }
+
+.rt-feed {
+  list-style: none; margin: 0; padding: 8px 10px;
+  overflow-y: auto; flex: 1;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.rt-item {
+  padding: 9px 11px; border-radius: 9px;
+  background: var(--surface-card);
+  border: 1px solid var(--line);
+  animation: rt-in .35s ease;
+}
+@keyframes rt-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+.rt-item .rt-meta {
+  display: flex; align-items: center; gap: 6px;
+  margin-bottom: 5px; flex-wrap: wrap;
+}
+.rt-role {
+  font-family: var(--mono); font-size: 10px; letter-spacing: .03em;
+  color: var(--on-accent); background: var(--accent-deep);
+  padding: 1px 6px; border-radius: 3px;
+}
+.rt-act { font-size: 11px; color: var(--accent-2); }
+.rt-who {
+  margin-left: auto; font-family: var(--mono);
+  font-size: 10.5px; color: var(--paper-3);
+}
+.rt-text { font-size: 13px; line-height: 1.55; color: var(--paper); }
+.rt-item.join .rt-text { font-size: 12px; color: var(--paper-2); }
+.rt-item.join .rt-role { background: var(--accent-2); color: #fff; }
+.rt-foot {
+  padding: 8px 14px; font-size: 10.5px; color: var(--paper-3);
+  border-top: 1px solid var(--line); letter-spacing: .01em;
+}
+
+@media (max-width: 720px) {
+  .rt-room { right: 12px; left: 12px; bottom: 76px; top: auto; width: auto; max-width: none; }
+}
+
 @media (max-width: 720px) {
   .tilt3d, .tilt3d > *, .tilt3d:hover { transform: none; }
   .tilt3d::after, .tilt3d:hover::after { display: none; }
