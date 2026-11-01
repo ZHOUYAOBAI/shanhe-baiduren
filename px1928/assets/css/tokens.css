@@ -35,7 +35,8 @@
   /* ── 语义层 · 亮色 ────────────────────────────────────── */
   --line:             rgba(35, 26, 19, .14);
   --line-2:           rgba(35, 26, 19, .28);
-  --on-accent:        #FFF7EE;
+  --on-accent:        #FFF7EE;   /* 朱砂底上的反白 */
+  --on-accent-deep:   #FFF6EA;   /* 深朱砂底上的反白（单独算，不借用上面那个） */
   --surface-top:      rgba(255, 255, 255, .76);
   --surface-top-soft: rgba(255, 255, 255, .34);
   --surface-rail:     rgba(255, 255, 255, .42);
