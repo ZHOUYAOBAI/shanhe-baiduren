@@ -6,8 +6,8 @@
      window.SCRIPT_SECRET 受限层（幕正文 + 全部歌词，AES-256-GCM 密文）
    解锁后由 mergeSecret() 把受限层并入，再重绘受影响的区块。
    ============================================================ */
-import { createStage, readPalette } from './scene.js?v=17f90ea3';
-import { decryptSecret, isCryptoAvailable } from './crypto.js?v=17f90ea3';
+import { createStage, readPalette } from './scene.js?v=c68ef202';
+import { decryptSecret, isCryptoAvailable } from './crypto.js?v=c68ef202';
 
 let D = window.SCRIPT || {};
 const SECRET = window.SCRIPT_SECRET || null;

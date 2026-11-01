@@ -2233,6 +2233,10 @@ body.mode-stage .front-band { display: none; }
   min-height: 500px;
 }
 
+/* 不要这盏灯时：用 CSS 挡掉，不等 JS。
+   JS 的 slot.remove() 发生在首屏之后，只靠它会闪一下空灯。 */
+.hero-lantern-slot[data-motif="none"] { display: none !important; }
+
 /* ── 二、马灯 ───────────────────────────────────────────── */
 
 .hero-lantern {
