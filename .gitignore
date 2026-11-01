@@ -23,3 +23,13 @@ yarn-error.log*
 # .gitignore 只管未跟踪文件，不影响它继续发布。
 */working/
 working/
+
+# 本机构建输出（含 working/ 剧本明文，绝不入库）
+outputs/
+
+# 阅读密码（保险起见）
+.readpass
+
+# 建站工具链的字体缓存（构建时生成，产物已进 px1928/assets/fonts/）
+.cache/
+tools/script-site/.cache/

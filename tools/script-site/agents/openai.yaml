@@ -1,0 +1,3 @@
+interface:
+  display_name: "剧本站 Script Site"
+  short_description: "把剧本做成可发布的阅读站：建站、本地预览、上 GitHub Pages"

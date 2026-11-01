@@ -2,7 +2,7 @@
 
 > 铜版画蚀刻 × 幕布正红 —— 一套为音乐剧／歌剧剧本展演而生的视觉系统
 
-本仓库收录两套同源的剧目站点，共用「手绘钢笔排线 + 真 3D 几何体」的技术路线。
+本仓库收录四套同源的剧目站点，共用「手绘钢笔排线 + 真 3D 几何体」的技术路线。
 
 ## 线上地址
 
@@ -10,6 +10,108 @@
 |---|---|
 | **NOCTURNE 剧作集**（首页） | https://zhouyaobai.github.io/shanhe-baiduren/ |
 | 《山河摆渡人》 | https://zhouyaobai.github.io/shanhe-baiduren/shanhe/ |
+| 《西山不是山》 | https://zhouyaobai.github.io/shanhe-baiduren/xishan/ |
+| **《百年星语·破晓1928》** | https://zhouyaobai.github.io/shanhe-baiduren/px1928/ |
+
+---
+
+## 零、换电脑继续做
+
+仓库是**自包含**的：站点产物、建站工具链、每个剧本的内容源都跟着 GitHub 走。
+换一台电脑，三步。
+
+### ① 把仓库拿过来
+
+```bash
+git clone git@github.com:ZHOUYAOBAI/shanhe-baiduren.git
+cd shanhe-baiduren
+```
+
+没有 SSH 密钥就先建一把：
+
+```bash
+ssh-keygen -t ed25519 -C "你的邮箱"
+cat ~/.ssh/id_ed25519.pub      # 贴到 github.com/settings/keys
+ssh -T git@github.com          # 测通再往下走
+```
+
+### ② 跑引导脚本
+
+```bash
+bash scripts/bootstrap.sh
+```
+
+它依次做四件事，每一步缺什么都会把该敲的命令**直接打印出来**：
+
+1. 检查 Node（≥18）与 git；
+2. 把仓库里的建站工具链 `tools/script-site/` 装到 `~/.codex/skills/script-site/`；
+3. 检查 GitHub 凭据（SSH 能不能推上去）；
+4. 检查部署凭据（`gh` / `wrangler`）。
+
+### ③ 剧本源文件 —— 唯一要手动搬的东西
+
+**剧本 docx 不在仓库里。** 里面有全剧正文和全部歌词，是明文，绝不能进公开仓库。
+换机前把它放进 **iCloud Drive**，新机登录同一账号后自动同步：
+
+```
+~/Library/Mobile Documents/com~apple~CloudDocs/剧本/《百年星语·破晓1928》云南本土红色歌剧.docx
+```
+
+然后重建：
+
+```bash
+bash scripts/rebuild-px1928.sh                       # 不带参数会自动在 iCloud / Downloads / 剧本 目录里找
+bash scripts/rebuild-px1928.sh "/路径/剧本.docx"      # 或者直接给路径
+```
+
+脚本会：解析 docx → 映射成 `data.js`（正文与歌词 AES-256-GCM 加密）→
+注入模板 → **校验「剧本每一段文字都在站点上」**（缺失必须为 0）→
+同步进 `px1928/`。跑完记得看一眼那行「缺失 0」。
+
+### ④ 上线
+
+```bash
+bash scripts/deploy-site.sh
+```
+
+= 校验文件 → 检查暂存区无明文 → 提交推送（GitHub Pages，1–2 分钟生效）
+→ 同步 Cloudflare 镜像（国内线路更快，配乐靠它才流畅）。
+
+### 什么在哪 · 换机对照表
+
+| 东西 | 在哪 | 换机会丢吗 |
+|---|---|---|
+| 四个站点的全部产物 | 仓库 `index.html` `shanhe/` `xishan/` `px1928/` | 不会，跟着 GitHub 走 |
+| 建站工具链（skill） | 仓库 `tools/script-site/` | 不会（`bootstrap.sh` 会自动装） |
+| 剧本内容源（人物/歌单/伏笔/时间轴） | 仓库 `projects/px1928/site_meta.json` | 不会 |
+| 设计与审查记录 | 仓库 `projects/px1928/REVIEW.md` | 不会 |
+| 一键脚本 | 仓库 `scripts/` | 不会 |
+| **剧本体（正文 + 歌词）** | **iCloud Drive**（仓库外） | 要手动同步 |
+| 阅读密码 | `~/.config/script-site/readpass`（仓库外） | 要重新记一次 |
+| 字体子集 / 音频素材 | 仓库 `assets/fonts/` `shanhe/assets/audio/` | 不会 |
+
+### 新机凭据清单
+
+| 凭据 | 换机后要做 | 不做会怎样 |
+|---|---|---|
+| GitHub SSH 密钥 | 生成 → 贴到 GitHub → `ssh -T` 测通 | 推不上去 |
+| Cloudflare `wrangler` | `npx wrangler login` | 镜像失效（GitHub Pages 不受影响，只是慢） |
+| `gh` CLI | `gh auth login`（只在**新建**仓库时需要） | 没法建新仓；给已有仓库加子目录不需要 |
+| 阅读密码 | 跑 `rebuild-px1928.sh` 时输入一次，之后记在 `~/.config/script-site/readpass` | 重建会退化成**不加密**站点 —— 脚本会拦下 |
+
+> 密码绝不入库。仓库里能公开的只有「公开层」：剧目概况、人物小传、歌单目录、
+> 伏笔结构、时间轴 —— 和站点上没设密码时看到的一模一样。
+
+### 绝对不能进仓库的东西
+
+`deploy.sh` 在提交前会扫暂存区，发现 `working/` 明文就中止提交并回滚。
+以下由 `.gitignore` 兜底：
+
+```gitignore
+*/working/      # 构建中间产物，含剧本明文
+outputs/        # 本机构建输出
+.readpass       # 阅读密码
+```
 
 ---
 
@@ -194,12 +296,58 @@ READ_PASS=你的密码 python3 audit_sync.py "/路径/…·定稿.docx" ../asset
 
 ---
 
+## 三、《百年星语·破晓1928》剧本站
+
+云南本土原创红色歌剧，五幕十一场，二十六首曲目，从 1928 年蒙自芷村的茅屋
+到 2024 年查尼皮纪念馆的一盏马灯。
+
+### 这一套是 Node 工具链（与《山河摆渡人》的 Python 工具链并存，互不干扰）
+
+```
+剧本.docx
+  └─ tools/script-site/scripts/parse-script.mjs ──→ working/script_struct.json   （解析层）
+       └─ tools/script-site/scripts/build-data.mjs ──→ data.js（公开层 + AES-GCM 密文）
+            └─ tools/script-site/scripts/build-site.mjs ──→ 注入模板 + 对比度校验 + 漏字校验
+                 └─ tools/script-site/scripts/audit.mjs ──→ 「剧本每一段文字都在站点上」
+```
+
+**分层不许合并。** 解析层只管「文档 → 结构」，剧目资料卡、人物小传、伏笔、
+配色等人工内容全部放在 `projects/px1928/site_meta.json`（映射层读它）。
+
+### 一键重建
+
+```bash
+bash scripts/rebuild-px1928.sh "/路径/剧本.docx"
+```
+
+或用 skill 直接调（等价）：
+
+```bash
+SK=~/.codex/skills/script-site
+READ_PASS='你的密码' node $SK/scripts/build-site.mjs \
+  --script "/路径/剧本.docx" \
+  --meta projects/px1928/site_meta.json \
+  --out outputs/px1928
+```
+
+### 配色与 3D 的硬约束
+
+- **浅色宣纸底**（`bg #EFE5D8`），不搞暗色系；
+- **红色歌剧**：朱砂（`accent #B22D1D` / `accentDeep #8A1E13`）做结构，米金做阅读面；
+- 对比度 **≥4.5** 由构建时 `normalizePalette()` 强制，改色改坏了会直接构建失败；
+- 3D 分**三道门控**（CSS 媒体查询 + JS 特性检测 + 窄屏退平面），三道必须同时成立；
+- 窄屏（≤ 900px）3D 全退平面，移动端优先。
+
+审查与历轮改动记录见 `projects/px1928/REVIEW.md`。
+
+---
+
 ## 仓库结构
 
 ```
 index.html                      NOCTURNE 剧作集（首页）
 404.html                        NOCTURNE 风格 404 页
-deploy.sh                       一键提交推送脚本
+deploy.sh                       一键提交推送脚本（提交前扫暂存区，防明文入库）
 .nojekyll                       禁用 Jekyll
 assets/
 ├── css/main.css                《山河摆渡人》视觉系统
@@ -209,9 +357,20 @@ assets/
 shanhe/
 ├── index.html                  《山河摆渡人》主页
 ├── 404.html
+├── tools/                      旧 Python 工具链（解析 / 生成 / 校验）
 └── assets/                     同上
     ├── js/audio-engine.js      音频引擎（多源竞速 / 整曲预载 / 本地缓存）
     └── audio/*.web.mp3         网页版配乐（44.1kHz / 80kbps）
+xishan/                         《西山不是山》站点产物
+px1928/                         《百年星语·破晓1928》站点产物
+tools/script-site/              建站工具链（skill 本体，随仓库走，换机自动装）
+projects/px1928/
+├── site_meta.json              剧本内容源：人物 / 歌单 / 伏笔 / 时间轴 / 配色
+└── REVIEW.md                   设计与审查记录（历轮改动 + 回归数据）
+scripts/
+├── bootstrap.sh                新机一键引导
+├── rebuild-px1928.sh           重建《百年星语·破晓1928》
+└── deploy-site.sh              上线（封装根目录 deploy.sh）
 _headers                        Cloudflare Pages 配置（音频跨域 + 长缓存）
 ```
 

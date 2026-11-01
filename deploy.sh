@@ -67,12 +67,23 @@ if [ -d "px1928/working" ]; then
   echo "px1928/working/ 是剧本明文，不能入库"; exit 1
 fi
 
-echo "⑤ 提交并推送…"
+echo "⑤ 检查暂存区没有剧本明文…"
+git add -A
+if git diff --cached --name-only | grep -qE '(^|/)working/'; then
+  echo "   ✗ 暂存区出现 working/ 明文，已中止提交："
+  git diff --cached --name-only | grep -E '(^|/)working/' | sed 's/^/       /'
+  git reset -q
+  echo "   清理后请重新检查（.gitignore 里 outputs/ 与 */working/ 应已覆盖）。"
+  exit 1
+fi
+echo "   ✓ 暂存区无明文"
+
+echo "⑥ 提交并推送…"
 git add -A
 git commit -m "update: $(date '+%Y-%m-%d %H:%M')" || true
 git push origin main
 
-echo "⑥ 同步到 Cloudflare Pages 镜像（国内线路更快，配乐靠它才流畅）…"
+echo "⑦ 同步到 Cloudflare Pages 镜像（国内线路更快，配乐靠它才流畅）…"
 STAGE=$(mktemp -d /tmp/shanhe-pages-XXXX)
 cp -R index.html 404.html favicon.svg assets shanhe xishan px1928 _headers .nojekyll "$STAGE"/
 # shanhe/tools/ 是内部工具链（docx 解析与加密），不必发布到公网
@@ -80,7 +91,7 @@ rm -rf "$STAGE/shanhe/tools"
 npx wrangler pages deploy "$STAGE" --project-name shanhe-baiduren --branch main \
   || echo "   ⚠️ 镜像部署失败（不影响 GitHub Pages，只是会慢一些）"
 
-echo "⑦ 完成。"
+echo "⑧ 完成。"
 echo "   GitHub Pages（约 1-2 分钟）："
 echo "     NOCTURNE 剧作集：https://zhouyaobai.github.io/shanhe-baiduren/"
 echo "     《山河摆渡人》　：https://zhouyaobai.github.io/shanhe-baiduren/shanhe/"

@@ -1,0 +1,114 @@
+@charset "UTF-8";
+/* ============================================================
+   剧本站 · 设计令牌
+   ------------------------------------------------------------
+   分两层：
+     ① 结构性令牌 —— 字体、尺度、圆角，跨主题不变。
+     ② 颜色令牌   —— 默认「亮色（宣纸底）」。构建时 palette.css 会按
+                     site_meta.palette 重写色值，并依据底色明度自动
+                     挂 data-theme="light|dark" 切换语义层。
+
+   语义层（玻璃面、细线、暗角、投影）与原始色板分离，
+   因此深色剧目（如《山河摆渡人》）依然成立，而浅色剧目不会被压暗。
+   ============================================================ */
+:root {
+  /* ── 原始色板（默认亮色；palette.css 覆盖）────────────── */
+  /* 「朱砂为骨」配色：红色歌剧，红必须是结构色，不是点缀。
+     中性色一律往「暖红宣纸」偏，避开土黄 / 卡其（那是旧，不是红）。
+     两级纸色一拉开，卡片就浮起来了，不用靠阴影硬撑。
+     四个强调色各司其职：
+       accent      朱砂 —— 眉标 / 幕题 / 序号 / 按钮（结构）
+       accent-deep 深朱砂 —— 大面积实底（幕次轨 / 表头 / 界栏 / 印）
+       accent-2    灯油金 —— 只做灯火与描边，不承担小字
+       accent-3    靛青 —— 夜的冷投影，配角 */
+  --bg:        #EFE5D8;   /* 页面底色 · 陈旧暖白宣纸（偏中性，不粉不卡其） */
+  --bg-2:      #FBF6EE;   /* 卡片底色 · 亮纸，比底亮一档 */
+  --bg-3:      #E2D3C2;   /* 深一档的暖灰 · 深块 */
+  --paper:     #241811;   /* 正文墨色 */
+  --paper-2:   #574235;   /* 次级文字 */
+  --paper-3:   #755E4E;   /* 弱化文字 */
+  --accent:    #B22D1D;   /* 朱砂 · 印泥红，对 bg 5.01 */
+  --accent-deep: #8A1E13; /* 深朱砂 · 大面积实底，对 bg 7.24 / 反白 8.62 */
+  --accent-2:  #806010;   /* 灯油金 · 火种，对 bg 4.58 */
+  --accent-3:  #33486B;   /* 靛青 · 夜的冷光，对 bg 7.22 */
+
+  /* ── 语义层 · 亮色 ────────────────────────────────────── */
+  --line:             rgba(35, 26, 19, .14);
+  --line-2:           rgba(35, 26, 19, .28);
+  --on-accent:        #FFF7EE;   /* 朱砂底上的反白 */
+  --on-accent-deep:   #FFF6EA;   /* 深朱砂底上的反白（单独算，不借用上面那个） */
+  --surface-top:      rgba(255, 255, 255, .76);
+  --surface-top-soft: rgba(255, 255, 255, .34);
+  --surface-rail:     rgba(255, 255, 255, .42);
+  --surface-modal:    rgba(250, 247, 240, .88);
+  --surface-band:     rgba(255, 255, 255, .50);
+  --surface-card:     rgba(255, 255, 255, .62);
+  --surface-card-hover: rgba(255, 255, 255, .95);
+  --surface-chip:     rgba(35, 26, 19, .06);
+  --surface-chip-hover: rgba(190, 30, 45, .05);
+  --surface-sheen:    rgba(255, 255, 255, .92);
+  --vignette-1:       rgba(60, 30, 14, .13);
+  --vignette-2:       rgba(60, 30, 14, .09);
+  --title-shadow:     0 4px 30px rgba(255, 255, 255, .85);
+  --grain-blend:      multiply;
+  --grain-opacity:    .05;
+  --ink-3d:           color-mix(in srgb, var(--paper) 72%, #5A3418);
+
+  /* ── 灯位 ─────────────────────────────────────────────
+     全站唯一光源（马灯）的位置，百分比坐标。
+     canvas 的光池与 DOM 的灯身读同一组值 → 天然对齐，
+     改一个数，灯和它的影子一起挪。                          */
+  --light-x:          71%;
+  --light-y:          46%;
+
+  /* ── 旧书质感 ─────────────────────────────────────────
+     纤维 / 茶渍 / 边缘发黄 / 纸边厚度，四组可调旋钮。        */
+  --fibre-a:          .055;   /* 细纤维 */
+  --fibre-b:          .022;   /* 粗纤维 */
+  --foxing:           .055;   /* 茶渍 */
+  --edge-yellow:      .13;    /* 四边发黄 */
+  --paper-edge:       color-mix(in srgb, var(--paper) 22%, var(--bg-3));
+  --paper-lift:       14px;   /* 纸层抬起高度 */
+  --paper-tilt:       4.5deg; /* 纸层掀起角度 */
+  --shadow-warm:      0 26px 54px -26px color-mix(in srgb, var(--accent-2) 34%, transparent);
+  --shadow-cool:      0 30px 62px -30px color-mix(in srgb, var(--accent-3) 34%, transparent);
+
+  /* ── 字体 ─────────────────────────────────────────────── */
+  --serif: "Songti SC", "STSong", "SimSun", "Noto Serif SC",
+           "Source Han Serif SC", "Georgia", serif;
+  --sans:  "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+           "Noto Sans SC", -apple-system, system-ui, sans-serif;
+  --mono:  "SF Mono", "JetBrains Mono", ui-monospace, Menlo, monospace;
+  /* 自托管子集（构建时由 fetch-fonts.mjs 生成 fonts.css） */
+  --brush:  "Ma Shan Zheng", "STKaiti", "KaiTi", "STXingkai", var(--serif);
+  --display:"ZCOOL XiaoWei", var(--serif);
+  --ink-3d: color-mix(in srgb, var(--paper) 72%, #5A3418);
+
+  /* ── 尺度 ─────────────────────────────────────────────── */
+  --rail:      72px;      /* 左侧幕次轨宽 */
+  --measure:   42rem;     /* 正文栏宽 */
+  --gut:       24px;      /* 基础间距 */
+  --wrap:      1180px;    /* 内容最大宽 */
+  --r:         3px;       /* 圆角（小而克制） */
+  --shadow:    0 22px 56px -26px rgba(80, 40, 18, .34);
+  --topbar-h:  58px;
+}
+
+/* ── 语义层 · 暗色（深色底剧本自动启用）────────────────── */
+[data-theme="dark"] {
+  --surface-top:      rgba(14, 12, 10, .90);
+  --surface-top-soft: rgba(14, 12, 10, .52);
+  --surface-rail:     rgba(14, 12, 10, .55);
+  --surface-modal:    rgba(6, 5, 4, .86);
+  --surface-band:     rgba(0, 0, 0, .22);
+  --surface-card:     rgba(255, 255, 255, .02);
+  --surface-card-hover: rgba(255, 255, 255, .05);
+  --surface-chip:     rgba(255, 255, 255, .06);
+  --surface-chip-hover: rgba(255, 255, 255, .04);
+  --surface-sheen:    rgba(255, 255, 255, .14);
+  --vignette-1:       rgba(0, 0, 0, .50);
+  --vignette-2:       rgba(0, 0, 0, .42);
+  --title-shadow:     0 4px 40px rgba(0, 0, 0, .60);
+  --grain-blend:      overlay;
+  --shadow:           0 18px 48px -20px rgba(0, 0, 0, .85);
+}

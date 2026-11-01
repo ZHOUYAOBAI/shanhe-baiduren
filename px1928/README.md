@@ -5,7 +5,7 @@
 ## 本地预览
 
 ```bash
-python3 -m http.server 8000   # 或：node ../../../../.codex/skills/script-site/scripts/serve.mjs
+python3 -m http.server 8000   # 或：node ~/.codex/skills/script-site/scripts/serve.mjs
 ```
 
 打开 http://localhost:8000 。
