@@ -2355,3 +2355,18 @@ body.mode-stage .front-band { display: none; }
 @media (min-width: 1001px) {
   .rail-item { padding: 14px 9px; }
 }
+
+/* ══════════════════════════════════════════════════════════
+   窄屏 3D 全退平面（必须放在文件最后）
+   ------------------------------------------------------------
+   顺序是必须的：.tilt3d:hover 与 .front-card:hover 的选择器权重是
+   (0,2,0)，高于前面窄屏块里的 .tilt3d (0,1,0)。窄屏块写在前面，
+   鼠标一划卡片照样翘起来 —— 「窄屏退回平面」就成了空话。
+   放在最后 + 权重相同，后者胜出。
+   ══════════════════════════════════════════════════════════ */
+@media (max-width: 720px) {
+  .tilt3d, .tilt3d > *, .tilt3d:hover { transform: none; }
+  .tilt3d::after, .tilt3d:hover::after { display: none; }
+  .front-card, .front-card:hover { transform: none; }
+  .hero-title-3d { transform: none; }
+}

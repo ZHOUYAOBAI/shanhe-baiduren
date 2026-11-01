@@ -6,8 +6,8 @@
      window.SCRIPT_SECRET 受限层（幕正文 + 全部歌词，AES-256-GCM 密文）
    解锁后由 mergeSecret() 把受限层并入，再重绘受影响的区块。
    ============================================================ */
-import { createStage, readPalette } from './scene.js?v=38bbb9b4';
-import { decryptSecret, isCryptoAvailable } from './crypto.js?v=38bbb9b4';
+import { createStage, readPalette } from './scene.js?v=c1dc96f7';
+import { decryptSecret, isCryptoAvailable } from './crypto.js?v=c1dc96f7';
 
 let D = window.SCRIPT || {};
 const SECRET = window.SCRIPT_SECRET || null;
@@ -1875,18 +1875,49 @@ function castStatLine(key) {
 }
 
 /* ══ 启动 ═══════════════════════════════════════════════ */
-/* ══ 三维卡片：随指针微转 ═══════════════════════════════ */
+/* ══ 三维卡片：随指针微转 ═══════════════════════════════
+   三道门控，必须与 CSS 里的 @media 逐条对齐：
+     ① (hover: hover) and (pointer: fine) —— 只有真鼠标才挂监听
+     ② prefers-reduced-motion: reduce      —— 动效敏感者全静止
+     ③ 视口 > 720px                        —— 窄屏退回平面
+
+   以前这里只判 (hover: none)，比 CSS 宽：触摸屏笔记本同时满足
+   hover:hover 与 pointer:none，手指一划就把卡片转起来而不是滚动页面。
+   门控放宽 = 手机上「页面自己会动」，庄重感全无。
+
+   条件在运行时会变（窗口缩小、系统切到减少动效），所以监听要能摘能挂，
+   失效时把已经转起来的元素立刻放平 —— 不能等下次刷新。            */
+const motionOk = () =>
+  window.matchMedia('(hover: hover) and (pointer: fine)').matches
+  && !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  && window.innerWidth > 720;
+
+/* 三道门控任一变化就重跑 apply() */
+function onMotionGateChange(apply) {
+  ['(hover: hover) and (pointer: fine)',
+   '(prefers-reduced-motion: reduce)',
+   '(max-width: 720px)'].forEach((q) => {
+    const mq = window.matchMedia(q);
+    if (mq.addEventListener) mq.addEventListener('change', apply);
+  });
+  window.addEventListener('resize', apply, { passive: true });
+}
+
 function initTilt() {
-  if (window.matchMedia('(hover: none)').matches) return;
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   const MAX = 7;
   let cur = null;
+  let bound = false;
+
   const reset = (el) => {
     if (!el) return;
     el.style.setProperty('--rx', '0deg');
     el.style.setProperty('--ry', '0deg');
+    el.style.setProperty('--mx', '50%');
+    el.style.setProperty('--my', '50%');
+    if (cur === el) cur = null;
   };
-  document.addEventListener('pointermove', (e) => {
+
+  const onMove = (e) => {
     const el = e.target && e.target.closest ? e.target.closest('.tilt3d') : null;
     if (!el) return;
     if (cur && cur !== el) reset(cur);
@@ -1899,25 +1930,44 @@ function initTilt() {
     el.style.setProperty('--mx', ((px + .5) * 100).toFixed(1) + '%');
     el.style.setProperty('--my', ((py + .5) * 100).toFixed(1) + '%');
     cur = el;
-  }, { passive: true });
-  document.addEventListener('pointerout', (e) => {
+  };
+
+  const onOut = (e) => {
     const el = e.target && e.target.closest ? e.target.closest('.tilt3d') : null;
-    if (el && !(e.relatedTarget && el.contains(e.relatedTarget))) {
-      reset(el);
-      if (cur === el) cur = null;
-    }
-  }, { passive: true });
+    if (el && !(e.relatedTarget && el.contains(e.relatedTarget))) reset(el);
+  };
+
+  const attach = () => {
+    if (bound) return;
+    document.addEventListener('pointermove', onMove, { passive: true });
+    document.addEventListener('pointerout', onOut, { passive: true });
+    bound = true;
+  };
+  const detach = () => {
+    if (!bound) return;
+    document.removeEventListener('pointermove', onMove);
+    document.removeEventListener('pointerout', onOut);
+    bound = false;
+    reset(cur);
+  };
+
+  const apply = () => { if (motionOk()) attach(); else detach(); };
+  apply();
+  onMotionGateChange(apply);
 }
 
-/* ══ 主标题立体视差：随指针轻微转面 ═════════════════════ */
+/* ══ 主标题立体视差：随指针轻微转面 ═════════════════════
+   与 initTilt 共用同一套门控。标题的 transform 是写在行内样式上的，
+   权重压过任何 CSS 规则 —— 所以「窄屏退回平面」只能靠这里断开监听，
+   CSS 拦不住。                                                    */
 function initHero3D() {
   const hero = $('#hero');
   const title = $('#heroTitle');
   if (!hero || !title) return;
-  if (window.matchMedia('(hover: none)').matches) return;
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   let raf = 0;
-  hero.addEventListener('pointermove', (e) => {
+  let bound = false;
+
+  const onMove = (e) => {
     if (raf) return;
     raf = requestAnimationFrame(() => {
       raf = 0;
@@ -1927,8 +1977,26 @@ function initHero3D() {
       title.style.transform =
         'rotateY(' + (px * 9).toFixed(2) + 'deg) rotateX(' + (-py * 7).toFixed(2) + 'deg) translateZ(20px)';
     });
-  }, { passive: true });
-  hero.addEventListener('pointerleave', () => { title.style.transform = ''; });
+  };
+  const onLeave = () => { title.style.transform = ''; };
+
+  const attach = () => {
+    if (bound) return;
+    hero.addEventListener('pointermove', onMove, { passive: true });
+    hero.addEventListener('pointerleave', onLeave, { passive: true });
+    bound = true;
+  };
+  const detach = () => {
+    if (!bound) return;
+    hero.removeEventListener('pointermove', onMove);
+    hero.removeEventListener('pointerleave', onLeave);
+    bound = false;
+    title.style.transform = '';
+  };
+
+  const apply = () => { if (motionOk()) attach(); else detach(); };
+  apply();
+  onMotionGateChange(apply);
 }
 
 function boot() {
