@@ -1847,21 +1847,22 @@ body:not(.unlocked) .songcard .no::after {
 }
 
 /* ══ 彩蛋：呈昭通学院艺术学院 ═════════════════════════ */
-/* 入口：Hero 署名下方一枚低调的「呈」字落款 */
+/* 入口：Hero 居中一枚「呈」字落款题签（宋体加粗、字距疏朗） */
 .hero-easter {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   width: fit-content;
-  margin: 26px auto 0;
-  padding: 9px 22px 9px 12px;
+  margin: 30px auto 0;
+  padding: 11px 32px 11px 14px;
   background: none;
-  border: 1px solid rgba(247,240,226,.22);
+  border: 1px solid rgba(247,240,226,.26);
   border-radius: 4px;
-  color: rgba(247,240,226,.62);
+  color: rgba(247,240,226,.72);
   font-family: var(--serif);
-  font-size: 15px;
-  letter-spacing: .22em;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: .3em;
   cursor: pointer;
   transition: color .3s ease, border-color .3s ease, background .3s ease;
 }
@@ -1871,15 +1872,22 @@ body:not(.unlocked) .songcard .no::after {
   background: rgba(214,58,71,.06);
 }
 .hero-easter-seal {
-  width: 30px; height: 30px;
+  width: 34px; height: 34px;
   border: 1.5px solid currentColor;
   border-radius: 3px;
-  font-size: 17px;
-  line-height: 27px;
+  font-size: 19px;
+  line-height: 31px;
   text-align: center;
   color: var(--red);
+  flex: none;
 }
-.hero-easter-txt { font-family: var(--sans); font-size: 14px; letter-spacing: .14em; }
+.hero-easter-txt {
+  font-family: var(--serif);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: .3em;
+  white-space: nowrap;
+}
 
 /* 全屏信笺遮罩：暗红压场，信笺浮起 */
 .letter-mask {
