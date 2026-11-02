@@ -1828,3 +1828,162 @@ body:not(.unlocked) .songcard .no::after {
   #stage { animation: none; }
   * { scroll-behavior: auto !important; }
 }
+
+/* ══ 彩蛋：呈昭通学院艺术学院 ═════════════════════════ */
+/* 入口：Hero 署名下方一枚低调的「呈」字落款 */
+.hero-easter {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 2px 0 14px;
+  padding: 5px 12px 5px 8px;
+  background: none;
+  border: 1px solid rgba(247,240,226,.18);
+  border-radius: 3px;
+  color: rgba(247,240,226,.55);
+  font-family: var(--serif);
+  font-size: 12px;
+  letter-spacing: .22em;
+  cursor: pointer;
+  transition: color .3s ease, border-color .3s ease, background .3s ease;
+}
+.hero-easter:hover {
+  color: var(--red);
+  border-color: rgba(214,58,71,.55);
+  background: rgba(214,58,71,.06);
+}
+.hero-easter-seal {
+  width: 20px; height: 20px;
+  border: 1px solid currentColor;
+  border-radius: 2px;
+  font-size: 12px;
+  line-height: 18px;
+  text-align: center;
+  color: var(--red);
+}
+.hero-easter-txt { font-family: var(--sans); letter-spacing: .14em; }
+
+/* 全屏信笺遮罩：暗红压场，信笺浮起 */
+.letter-mask {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(31,12,10,.78);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  animation: letterFade .35s ease both;
+}
+.letter-mask[hidden] { display: none; }
+@keyframes letterFade { from { opacity: 0; } to { opacity: 1; } }
+
+/* 信笺本体：宣纸暖白 × 朱砂 × 墨字 */
+.letter {
+  position: relative;
+  width: min(680px, 92vw);
+  max-height: 88vh;
+  overflow-y: auto;
+  background: #f4ead6;            /* 宣纸暖白 */
+  background-image:
+    radial-gradient(ellipse at 18% 12%, rgba(214,58,71,.045), transparent 46%),
+    radial-gradient(ellipse at 82% 88%, rgba(184,139,58,.06), transparent 50%);
+  border: 1px solid rgba(120,82,40,.28);
+  border-radius: 4px;
+  box-shadow: 0 30px 80px rgba(0,0,0,.5);
+  padding: 44px 48px 40px;
+  animation: letterRise .5s cubic-bezier(.2,.7,.2,1) both;
+}
+@keyframes letterRise { from { opacity: 0; transform: translateY(26px) scale(.98); } to { opacity: 1; transform: none; } }
+
+.letter-close {
+  position: absolute;
+  top: 12px; right: 14px;
+  width: 30px; height: 30px;
+  border: 1px solid rgba(120,82,40,.35);
+  border-radius: 50%;
+  background: none;
+  color: rgba(120,82,40,.7);
+  font-size: 12px;
+  letter-spacing: .1em;
+  cursor: pointer;
+  transition: color .25s, border-color .25s, transform .25s;
+}
+.letter-close:hover { color: var(--red); border-color: var(--red); transform: rotate(90deg); }
+
+.letter-head { text-align: center; margin-bottom: 26px; }
+.letter-seal {
+  display: block;
+  width: 44px; height: 44px;
+  margin: 0 auto 14px;
+  border: 2px solid var(--red);
+  border-radius: 4px;
+  color: var(--red);
+  font-family: var(--serif);
+  font-size: 22px;
+  line-height: 40px;
+  text-align: center;
+  opacity: .92;
+}
+.letter-title {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 26px;
+  letter-spacing: .28em;
+  color: #4a2c1d;
+}
+.letter-sub {
+  margin: 10px 0 0;
+  font-size: 12px;
+  letter-spacing: .2em;
+  color: rgba(74,44,29,.6);
+}
+
+.letter-body {
+  font-family: var(--serif);
+  font-size: 16px;
+  line-height: 2.05;
+  color: #3d2a1c;
+  letter-spacing: .04em;
+}
+.letter-body p { margin: 0 0 14px; text-align: justify; }
+.letter-body .letter-bless {
+  margin-top: 8px;
+  font-size: 17px;
+  text-align: center;
+  letter-spacing: .18em;
+  color: #8a1f2c;
+}
+
+.letter-sign {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 28px;
+  padding-right: 6px;
+}
+.letter-sign-name {
+  font-family: var(--serif);
+  font-size: 14px;
+  letter-spacing: .16em;
+  color: rgba(74,44,29,.75);
+}
+.letter-stamp {
+  width: 34px; height: 34px;
+  border: 1.8px solid var(--red);
+  border-radius: 3px;
+  color: var(--red);
+  font-family: var(--serif);
+  font-size: 16px;
+  line-height: 30px;
+  text-align: center;
+  opacity: .85;
+}
+
+@media (max-width: 640px) {
+  .letter { padding: 34px 22px 30px; }
+  .letter-body { font-size: 15px; line-height: 1.95; }
+  .letter-title { font-size: 21px; }
+}

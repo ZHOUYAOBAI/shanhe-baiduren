@@ -1137,3 +1137,26 @@ function setupReveal() {
 }
 
 setupReveal();
+
+/* ============================================================
+   彩蛋：呈昭通学院艺术学院（致院长的信笺）
+   入口是 Hero 下方一枚低调的「呈」字落款；点击展开全屏信笺
+   ============================================================ */
+(() => {
+  const btn = $('#easterBtn');
+  const mask = $('#letterMask');
+  const close = $('#letterClose');
+  if (!btn || !mask) return;
+
+  const open = () => { mask.hidden = false; };
+  const closeLetter = () => { mask.hidden = true; };
+
+  btn.addEventListener('click', open);
+  if (close) close.addEventListener('click', closeLetter);
+  /* 点击遮罩空白处收起 */
+  mask.addEventListener('click', (e) => { if (e.target === mask) closeLetter(); });
+  /* Esc 收起 */
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !mask.hidden) closeLetter();
+  });
+})();
