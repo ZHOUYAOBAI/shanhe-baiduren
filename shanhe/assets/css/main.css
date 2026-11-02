@@ -1987,3 +1987,12 @@ body:not(.unlocked) .songcard .no::after {
   .letter-body { font-size: 15px; line-height: 1.95; }
   .letter-title { font-size: 21px; }
 }
+
+/* ── 页脚：初稿声明（常驻）──────────────────────────── */
+.foot-draft {
+  margin-top: -20px;
+  margin-bottom: 44px;
+  font-size: 12px;
+  letter-spacing: .12em;
+  color: rgba(247,240,226,.42);
+}
