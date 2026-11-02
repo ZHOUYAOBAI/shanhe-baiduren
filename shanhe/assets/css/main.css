@@ -121,7 +121,10 @@ a { color: inherit; text-decoration: none; }
   letter-spacing: .22em;
   color: var(--paper);
   white-space: nowrap;
+  cursor: pointer;
+  transition: color .3s ease;
 }
+.brand:hover { color: var(--red-lit); }
 .brand em {
   font-style: normal;
   color: var(--red-lit);
@@ -346,13 +349,27 @@ body.is-dawn .hero-inner::after { opacity: 1; }
 
 .hero-title {
   font-family: var(--serif);
-  font-size: clamp(52px, 11vw, 132px);
+  font-size: clamp(64px, 13vw, 176px);
   line-height: .96;
   letter-spacing: .1em;
   margin: 0;
   text-indent: .1em;
   text-shadow: 0 2px 40px rgba(46,18,20,.7);
+  cursor: pointer;
+  transition: color .3s ease, text-shadow .3s ease;
 }
+.hero-title:hover {
+  color: var(--red-lit);
+  text-shadow: 0 2px 46px rgba(214,58,71,.5);
+}
+.hero-title .seal {
+  width: 42px; height: 42px;
+  margin-left: 18px;
+  font-size: 21px;
+  line-height: 38px;
+  transition: transform .3s ease;
+}
+.hero-title:hover .seal { transform: scale(1.08); }
 
 .hero-sub {
   font-family: var(--serif);
