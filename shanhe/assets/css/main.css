@@ -2013,3 +2013,38 @@ body:not(.unlocked) .songcard .no::after {
   letter-spacing: .12em;
   color: rgba(247,240,226,.42);
 }
+
+/* ── 非完稿朱印（盖在 Hero 标题右上）────────────────── */
+.draft-stamp {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  width: 74px;
+  height: 74px;
+  margin: 6px 0 0 20px;
+  vertical-align: super;
+  border: 3px solid var(--red);
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px rgba(214,58,71,.4), inset 0 0 0 5px rgba(214,58,71,.18);
+  background: rgba(214,58,71,.08);
+  color: var(--red);
+  font-family: var(--serif);
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  line-height: 1;
+  transform: rotate(-7deg);
+  user-select: none;
+  pointer-events: none;
+  opacity: .92;
+}
+.draft-stamp i { font-style: normal; display: block; }
+/* 上下两字间留出呼吸感：中字略小以衬圆 */
+.draft-stamp i:nth-child(2) { font-size: 17px; opacity: .92; }
+
+@media (max-width: 560px) {
+  .draft-stamp { width: 52px; height: 52px; font-size: 14px; margin-left: 10px; }
+  .draft-stamp i:nth-child(2) { font-size: 12px; }
+}
