@@ -905,38 +905,42 @@ document.addEventListener('click', (e) => {
     ${i < D.acts.length - 1 ? '<div class="rail-sep" aria-hidden="true"></div>' : ''}`;
   }).join('');
 
-  const nav = $('#topnav');
-  nav.innerHTML = [
-    ['#mainline', '主线'],
-    ['#acts', '剧本'],
-    ['#songs', '歌单'],
-    ['#songtable', '曲目表'],
-    ['#scoring', 'DEMO'],
-    ['#cast', '人物'],
-    ['#threads', '伏笔'],
-  ].map(([h, t]) => `<a href="${h}" data-nav="${h}">${t}</a>`).join('');
-
   rail.addEventListener('click', (e) => {
     const b = e.target.closest('.rail-item');
     if (b) gotoAct(+b.dataset.act);
   });
 
-  // 滚动高亮：当前幕次 + 当前 section
-  // ⚠️ 观察的必须是**区块本身**（.band[id]），不是导航链接。
-  //    之前 data-nav 挂在 <a> 上，IntersectionObserver 观察 <a> 永远不会
-  //    命中区块 id，导致导航高亮从未生效。
-  const navLinks = $$('#topnav [data-nav]');
-  const sections = navLinks
-    .map(a => document.getElementById(a.dataset.nav.slice(1)))
-    .filter(Boolean);
-  const obs = new IntersectionObserver((entries) => {
-    entries.forEach(en => {
-      if (en.isIntersecting) {
-        navLinks.forEach(a => a.classList.toggle('on', a.dataset.nav === '#' + en.target.id));
-      }
-    });
-  }, { rootMargin: '-45% 0px -50% 0px' });
-  sections.forEach(s => obs.observe(s));
+  // 导航渲染 + 滚动高亮（可重入：解锁成功后重跑，剧本指向正文）
+  function renderTopNav() {
+    const nav = $('#topnav');
+    const unlocked = document.body.classList.contains('unlocked');
+    const scriptTarget = unlocked ? '#acts' : '#gate';
+    nav.innerHTML = [
+      ['#mainline', '主线'],
+      [scriptTarget, '剧本'],
+      ['#songs', '歌单'],
+      ['#songtable', '曲目表'],
+      ['#scoring', 'DEMO'],
+      ['#cast', '人物'],
+      ['#threads', '伏笔'],
+    ].map(([h, t]) => `<a href="${h}" data-nav="${h}">${t}</a>`).join('');
+
+    // 滚动高亮：观察的必须是**区块本身**（.band[id]），不是导航链接。
+    const navLinks = $$('#topnav [data-nav]');
+    const sections = navLinks
+      .map(a => document.getElementById(a.dataset.nav.slice(1)))
+      .filter(Boolean);
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(en => {
+        if (en.isIntersecting) {
+          navLinks.forEach(a => a.classList.toggle('on', a.dataset.nav === '#' + en.target.id));
+        }
+      });
+    }, { rootMargin: '-45% 0px -50% 0px' });
+    sections.forEach(s => obs.observe(s));
+  }
+  renderTopNav();
+  window.renderTopNav = renderTopNav;
 
   const acts = $$('.act');
   const railItems = $$('.rail-item');
@@ -1041,6 +1045,7 @@ window.addEventListener('beforeprint', () => {
       if (typeof setupReveal === 'function') setupReveal();
       body.classList.add('unlocked');
       try { sessionStorage.setItem(KEY, '1'); } catch {}
+      if (typeof renderTopNav === 'function') renderTopNav();
       showMsg('已解锁 · 全本剧本正文与歌词现已展开', true);
       setTimeout(() => showMsg(''), 2800);
       const first = document.querySelector('.act');
