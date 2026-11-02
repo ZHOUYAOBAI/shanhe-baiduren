@@ -344,6 +344,7 @@ renderSongTable();
     { file: '等你回来（乐思）.web.mp3', name: '等你回来（乐思）', dur: '3:28', v: '8e368e4798' },
     { file: '山河之光.web.mp3', name: '山河之光', dur: '3:19', v: 'f2d56c1c50' },
     { file: '红军是什么队伍.web.mp3', name: '红军是什么队伍', dur: '0:53', v: '807f16b982' },
+    { file: '扎西会议.web.mp3', name: '扎西会议', dur: '3:14', v: '33488830c0' },
   ];
 
   const fmt = (sec) => {
