@@ -337,14 +337,14 @@ renderSongTable();
     /* 文件名带 .web 后缀 = 网页压缩版（44.1kHz / 80kbps，体积比母版小 57%）。
        换文件名是为了绕开 CDN 与浏览器的旧缓存；母版仍在 git 历史里。
        v = 音频内容的 md5 前 10 位，改了音频必须同步改这里（见 AGENTS.md 缓存铁律）。 */
-    { file: '火塘恋.web.mp3', name: '火塘恋', dur: '3:22', v: '6610310549' },
+    { file: '扎西会议.web.mp3', name: '扎西会议', dur: '3:14', v: '33488830c0' },
     { file: '遇敌.web.mp3',     name: '遇敌',     dur: '3:08', v: 'f562f0d8ab' },
     { file: '渡江1.web.mp3',    name: '渡江 Ⅰ',   dur: '2:47', v: '2a0ea5df5e' },
     { file: '渡江2.web.mp3',    name: '渡江 Ⅱ',   dur: '2:52', v: '147f19ead3' },
     { file: '等你回来（乐思）.web.mp3', name: '等你回来（乐思）', dur: '3:28', v: '8e368e4798' },
     { file: '山河之光.web.mp3', name: '山河之光', dur: '3:19', v: 'f2d56c1c50' },
     { file: '红军是什么队伍.web.mp3', name: '红军是什么队伍', dur: '0:53', v: '807f16b982' },
-    { file: '扎西会议.web.mp3', name: '扎西会议', dur: '3:14', v: '33488830c0' },
+    { file: '火塘恋.web.mp3', name: '火塘恋', dur: '3:22', v: '6610310549' },
   ];
 
   const fmt = (sec) => {
