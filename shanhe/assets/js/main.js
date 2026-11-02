@@ -908,6 +908,7 @@ document.addEventListener('click', (e) => {
   const nav = $('#topnav');
   nav.innerHTML = [
     ['#mainline', '主线'],
+    ['#acts', '剧本'],
     ['#songs', '歌单'],
     ['#songtable', '曲目表'],
     ['#scoring', 'DEMO'],
