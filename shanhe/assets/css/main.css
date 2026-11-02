@@ -2014,17 +2014,18 @@ body:not(.unlocked) .songcard .no::after {
   color: rgba(247,240,226,.42);
 }
 
-/* ── 非完稿朱印（盖在 Hero 标题右上）────────────────── */
+/* ── 非完稿朱印（独立定位在 Hero 标题右上，不随标题字号变化）── */
 .draft-stamp {
-  display: inline-flex;
+  position: absolute;
+  top: 9%;
+  right: 12%;
+  display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 2px;
   width: 74px;
   height: 74px;
-  margin: 6px 0 0 20px;
-  vertical-align: super;
   border: 3px solid var(--red);
   border-radius: 50%;
   box-shadow: inset 0 0 0 1px rgba(214,58,71,.4), inset 0 0 0 5px rgba(214,58,71,.18);
@@ -2045,6 +2046,6 @@ body:not(.unlocked) .songcard .no::after {
 .draft-stamp i:nth-child(2) { font-size: 17px; opacity: .92; }
 
 @media (max-width: 560px) {
-  .draft-stamp { width: 52px; height: 52px; font-size: 14px; margin-left: 10px; }
+  .draft-stamp { width: 52px; height: 52px; font-size: 14px; top: 6%; right: 8%; }
   .draft-stamp i:nth-child(2) { font-size: 12px; }
 }
