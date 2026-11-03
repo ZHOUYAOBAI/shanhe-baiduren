@@ -1846,173 +1846,6 @@ body:not(.unlocked) .songcard .no::after {
   * { scroll-behavior: auto !important; }
 }
 
-/* ══ 彩蛋：呈昭通学院艺术学院 ═════════════════════════ */
-/* 入口：Hero 居中一枚「呈」字落款题签（宋体加粗、字距疏朗） */
-.hero-easter {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  width: fit-content;
-  margin: 32px auto 0;
-  padding: 13px 40px 13px 16px;
-  background: none;
-  border: 1px solid rgba(247,240,226,.26);
-  border-radius: 4px;
-  color: rgba(247,240,226,.72);
-  font-family: var(--serif);
-  font-size: 19px;
-  font-weight: 600;
-  letter-spacing: .3em;
-  cursor: pointer;
-  transition: color .3s ease, border-color .3s ease, background .3s ease;
-}
-.hero-easter:hover {
-  color: var(--red);
-  border-color: rgba(214,58,71,.55);
-  background: rgba(214,58,71,.06);
-}
-.hero-easter-seal {
-  width: 40px; height: 40px;
-  border: 1.5px solid currentColor;
-  border-radius: 3px;
-  font-size: 22px;
-  line-height: 37px;
-  text-align: center;
-  color: var(--red);
-  flex: none;
-}
-.hero-easter-txt {
-  font-family: var(--serif);
-  font-size: 19px;
-  font-weight: 600;
-  letter-spacing: .3em;
-  white-space: nowrap;
-}
-
-/* 全屏信笺遮罩：暗红压场，信笺浮起 */
-.letter-mask {
-  position: fixed;
-  inset: 0;
-  z-index: 1200;
-  display: grid;
-  place-items: center;
-  padding: 24px;
-  background: rgba(31,12,10,.78);
-  -webkit-backdrop-filter: blur(6px);
-  backdrop-filter: blur(6px);
-  animation: letterFade .35s ease both;
-}
-.letter-mask[hidden] { display: none; }
-@keyframes letterFade { from { opacity: 0; } to { opacity: 1; } }
-
-/* 信笺本体：宣纸暖白 × 朱砂 × 墨字 */
-.letter {
-  position: relative;
-  width: min(680px, 92vw);
-  max-height: 88vh;
-  overflow-y: auto;
-  background: #f4ead6;            /* 宣纸暖白 */
-  background-image:
-    radial-gradient(ellipse at 18% 12%, rgba(214,58,71,.045), transparent 46%),
-    radial-gradient(ellipse at 82% 88%, rgba(184,139,58,.06), transparent 50%);
-  border: 1px solid rgba(120,82,40,.28);
-  border-radius: 4px;
-  box-shadow: 0 30px 80px rgba(0,0,0,.5);
-  padding: 44px 48px 40px;
-  animation: letterRise .5s cubic-bezier(.2,.7,.2,1) both;
-}
-@keyframes letterRise { from { opacity: 0; transform: translateY(26px) scale(.98); } to { opacity: 1; transform: none; } }
-
-.letter-close {
-  position: absolute;
-  top: 12px; right: 14px;
-  width: 30px; height: 30px;
-  border: 1px solid rgba(120,82,40,.35);
-  border-radius: 50%;
-  background: none;
-  color: rgba(120,82,40,.7);
-  font-size: 12px;
-  letter-spacing: .1em;
-  cursor: pointer;
-  transition: color .25s, border-color .25s, transform .25s;
-}
-.letter-close:hover { color: var(--red); border-color: var(--red); transform: rotate(90deg); }
-
-.letter-head { text-align: center; margin-bottom: 26px; }
-.letter-seal {
-  display: block;
-  width: 44px; height: 44px;
-  margin: 0 auto 14px;
-  border: 2px solid var(--red);
-  border-radius: 4px;
-  color: var(--red);
-  font-family: var(--serif);
-  font-size: 22px;
-  line-height: 40px;
-  text-align: center;
-  opacity: .92;
-}
-.letter-title {
-  margin: 0;
-  font-family: var(--serif);
-  font-size: 26px;
-  letter-spacing: .28em;
-  color: #4a2c1d;
-}
-.letter-sub {
-  margin: 10px 0 0;
-  font-size: 12px;
-  letter-spacing: .2em;
-  color: rgba(74,44,29,.6);
-}
-
-.letter-body {
-  font-family: var(--serif);
-  font-size: 16px;
-  line-height: 2.05;
-  color: #3d2a1c;
-  letter-spacing: .04em;
-}
-.letter-body p { margin: 0 0 14px; text-align: justify; }
-.letter-body .letter-bless {
-  margin-top: 8px;
-  font-size: 17px;
-  text-align: center;
-  letter-spacing: .18em;
-  color: #8a1f2c;
-}
-
-.letter-sign {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 12px;
-  margin-top: 28px;
-  padding-right: 6px;
-}
-.letter-sign-name {
-  font-family: var(--serif);
-  font-size: 14px;
-  letter-spacing: .16em;
-  color: rgba(74,44,29,.75);
-}
-.letter-stamp {
-  width: 34px; height: 34px;
-  border: 1.8px solid var(--red);
-  border-radius: 3px;
-  color: var(--red);
-  font-family: var(--serif);
-  font-size: 16px;
-  line-height: 30px;
-  text-align: center;
-  opacity: .85;
-}
-
-@media (max-width: 640px) {
-  .letter { padding: 34px 22px 30px; }
-  .letter-body { font-size: 15px; line-height: 1.95; }
-  .letter-title { font-size: 21px; }
-}
 
 /* ── 页脚：初稿声明（常驻）──────────────────────────── */
 .foot-draft {
@@ -2057,4 +1890,114 @@ body:not(.unlocked) .songcard .no::after {
 @media (max-width: 560px) {
   .draft-stamp { width: 52px; height: 52px; font-size: 14px; top: 6%; right: 8%; }
   .draft-stamp i:nth-child(2) { font-size: 12px; }
+}
+
+/* ══ 整站访问密码门 ═══════════════════════════════════ */
+.site-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background:
+    radial-gradient(ellipse at 50% 38%, rgba(90,33,36,.55), transparent 60%),
+    var(--ink-deep);
+}
+.site-gate[hidden] { display: none; }
+
+.site-gate-card {
+  width: min(520px, 92vw);
+  text-align: center;
+  color: var(--paper);
+  animation: gateIn .5s cubic-bezier(.2,.7,.2,1) both;
+}
+@keyframes gateIn { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+
+.site-gate-mark {
+  width: 76px; height: 76px;
+  margin: 0 auto 22px;
+  border: 2px solid var(--red);
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px rgba(214,58,71,.4), inset 0 0 0 6px rgba(214,58,71,.14);
+  color: var(--red);
+  font-family: var(--serif);
+  font-size: 36px;
+  line-height: 72px;
+  text-align: center;
+  opacity: .94;
+}
+.site-gate-title {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: .22em;
+  text-indent: .22em;
+}
+.site-gate-desc {
+  margin: 14px 0 30px;
+  font-size: 13px;
+  letter-spacing: .18em;
+  color: rgba(247,240,226,.62);
+}
+
+.site-gate-form {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+}
+.site-gate-label {
+  font-size: 12px;
+  letter-spacing: .24em;
+  color: rgba(247,240,226,.55);
+}
+.site-gate-input {
+  width: 170px;
+  padding: 11px 14px;
+  background: rgba(46,18,20,.55);
+  border: 1px solid rgba(247,240,226,.26);
+  border-radius: 3px;
+  color: var(--paper);
+  font-size: 16px;
+  letter-spacing: .3em;
+  text-align: center;
+  outline: none;
+  transition: border-color .25s;
+}
+.site-gate-input:focus { border-color: var(--red); }
+.site-gate-input::placeholder { color: rgba(247,240,226,.35); letter-spacing: .2em; font-size: 13px; }
+
+.site-gate-btn {
+  padding: 11px 26px;
+  border: 1px solid rgba(247,240,226,.34);
+  border-radius: 3px;
+  background: rgba(90,33,36,.4);
+  color: var(--paper);
+  font-size: 13px;
+  letter-spacing: .3em;
+  cursor: pointer;
+  transition: background .22s, border-color .22s;
+}
+.site-gate-btn:hover { background: var(--red); border-color: var(--red); }
+
+.site-gate-msg {
+  min-height: 20px;
+  margin: 16px 0 0;
+  font-size: 13px;
+  letter-spacing: .12em;
+  color: var(--red-lit);
+}
+.site-gate-msg.ok { color: #8ec9a0; }
+.site-gate-tip {
+  margin: 14px 0 0;
+  font-size: 11px;
+  letter-spacing: .18em;
+  color: rgba(247,240,226,.4);
+}
+
+@media (max-width: 560px) {
+  .site-gate-form { flex-wrap: wrap; }
+  .site-gate-input { width: 100%; }
 }

@@ -17,6 +17,23 @@
 </head>
 <body>
 
+<!-- ══ 整站访问密码门（凭密码进入）══ -->
+<div class="site-gate" id="siteGate" hidden>
+  <div class="site-gate-card">
+    <div class="site-gate-mark" aria-hidden="true">渡</div>
+    <h2 class="site-gate-title">山河摆渡人 · 内部站点</h2>
+    <p class="site-gate-desc">本站为内部资料站点，凭访问密码进入。</p>
+    <form class="site-gate-form" id="siteGateForm" autocomplete="off">
+      <label class="site-gate-label" for="siteGateInput">访问密码</label>
+      <input class="site-gate-input" id="siteGateInput" type="password"
+             inputmode="numeric" placeholder="请输入密码" aria-label="访问密码">
+      <button class="site-gate-btn" type="submit">进 入</button>
+    </form>
+    <p class="site-gate-msg" id="siteGateMsg" role="status" aria-live="polite"></p>
+    <p class="site-gate-tip">密码由主创团队分发 · 暂不公开</p>
+  </div>
+</div>
+
 <canvas id="stage" aria-hidden="true"></canvas>
 <div class="vignette" aria-hidden="true"></div>
 
@@ -41,10 +58,6 @@
       <p class="hero-sub" id="heroSub">历史的回眸 · 巧渡金沙江</p>
       <div class="hero-meta" id="heroMeta"></div>
       <div class="hero-credits" id="heroCredits"></div>
-      <button class="hero-easter" id="easterBtn" type="button" aria-label="呈昭通学院艺术学院，展开致信">
-        <span class="hero-easter-seal" aria-hidden="true">呈</span>
-        <span class="hero-easter-txt">昭通学院艺术学院</span>
-      </button>
       <button class="hero-cta" data-goto="#act-0">开演 · 序幕</button>
     </div>
     <div class="scroll-hint" aria-hidden="true"><span>向下</span><i></i></div>
@@ -176,33 +189,6 @@
       <p class="foot-note foot-draft">本网站所示内容为创作初稿，非定稿文件，仅供内部交流。</p>
     </div>
   </footer>
-
-  <!-- ══ 彩蛋：呈昭通学院艺术学院 ══ -->
-  <div class="letter-mask" id="letterMask" hidden>
-    <div class="letter" role="dialog" aria-modal="true" aria-labelledby="letterTitle">
-      <button class="letter-close" id="letterClose" type="button" aria-label="收起来信">收</button>
-      <div class="letter-paper">
-        <div class="letter-head">
-          <span class="letter-seal" aria-hidden="true">呈</span>
-          <h3 class="letter-title" id="letterTitle">昭通学院艺术学院</h3>
-          <p class="letter-sub">《山河摆渡人》主创团队 · 敬呈</p>
-        </div>
-        <div class="letter-body">
-          <p>尊敬的院长：</p>
-          <p>感谢您拨冗审阅《山河摆渡人》剧本概览。</p>
-          <p>此剧系我团队"全国红色剧本创作工程"中扎根云南的重要篇章，以一九三五年巧渡金沙江之史实为骨，六幕四十曲，谨以此回望先辈渡江之壮举。</p>
-          <p>久闻白雪老师谈及院长对本土艺术事业的热忱与支持，情怀深重，令人感佩。正因如此，我们更希望这部作品能不负这片土地的厚重。</p>
-          <p>因团队目前正全力推进"全国红色剧本项目"的整体架构，眼前所见网站内容仅为阶段性节选，完本尚在保密打磨阶段，暂未公开，以防抄袭。今日主创又另有会议在身，未能亲赴昭通当面呈递，特托白雪老师代为操作，先将这份数字初稿奉上，聊表敬意。</p>
-          <p>他日得空，定当登门拜访，携完本当面聆听您的指教。</p>
-          <p class="letter-bless">山河无恙，星火永续。</p>
-        </div>
-        <div class="letter-sign">
-          <span class="letter-sign-name">《山河摆渡人》主创团队</span>
-          <span class="letter-stamp" aria-hidden="true">渡</span>
-        </div>
-      </div>
-    </div>
-  </div>
 
 </main>
 

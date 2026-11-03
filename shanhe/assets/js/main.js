@@ -1143,25 +1143,42 @@ function setupReveal() {
 
 setupReveal();
 
+
+
 /* ============================================================
-   彩蛋：呈昭通学院艺术学院（致院长的信笺）
-   入口是 Hero 下方一枚低调的「呈」字落款；点击展开全屏信笺
+   整站访问密码门
+   全站凭密码 985985 进入；会话内（sessionStorage）记住解锁态。
    ============================================================ */
 (() => {
-  const btn = $('#easterBtn');
-  const mask = $('#letterMask');
-  const close = $('#letterClose');
-  if (!btn || !mask) return;
+  const GATE_KEY = 'shb_site_pass';
+  const PASS = '985985';
+  const gate = $('#siteGate');
+  const form = $('#siteGateForm');
+  const input = $('#siteGateInput');
+  const msg = $('#siteGateMsg');
+  if (!gate || !form) return;
 
-  const open = () => { mask.hidden = false; };
-  const closeLetter = () => { mask.hidden = true; };
+  const unlockSite = () => {
+    gate.hidden = true;
+    try { sessionStorage.setItem(GATE_KEY, '1'); } catch {}
+  };
 
-  btn.addEventListener('click', open);
-  if (close) close.addEventListener('click', closeLetter);
-  /* 点击遮罩空白处收起 */
-  mask.addEventListener('click', (e) => { if (e.target === mask) closeLetter(); });
-  /* Esc 收起 */
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && !mask.hidden) closeLetter();
+  /* 已解锁过（本会话）→ 直接进入 */
+  let ok = false;
+  try { ok = sessionStorage.getItem(GATE_KEY) === '1'; } catch {}
+  if (ok) { unlockSite(); return; }
+
+  /* 未解锁 → 展示密码门 */
+  gate.hidden = false;
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const v = (input.value || '').trim();
+    if (v === PASS) {
+      if (msg) { msg.textContent = '欢迎进入《山河摆渡人》'; msg.classList.add('ok'); }
+      setTimeout(unlockSite, 420);
+    } else {
+      if (msg) { msg.textContent = '密码不正确，请向主创团队索取'; msg.classList.remove('ok'); }
+      if (input) { input.value = ''; input.focus(); }
+    }
   });
 })();
