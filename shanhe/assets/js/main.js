@@ -1145,40 +1145,4 @@ setupReveal();
 
 
 
-/* ============================================================
-   整站访问密码门
-   全站凭密码 985985 进入；会话内（sessionStorage）记住解锁态。
-   ============================================================ */
-(() => {
-  const GATE_KEY = 'shb_site_pass';
-  const PASS = '985985';
-  const gate = $('#siteGate');
-  const form = $('#siteGateForm');
-  const input = $('#siteGateInput');
-  const msg = $('#siteGateMsg');
-  if (!gate || !form) return;
 
-  const unlockSite = () => {
-    gate.hidden = true;
-    try { sessionStorage.setItem(GATE_KEY, '1'); } catch {}
-  };
-
-  /* 已解锁过（本会话）→ 直接进入 */
-  let ok = false;
-  try { ok = sessionStorage.getItem(GATE_KEY) === '1'; } catch {}
-  if (ok) { unlockSite(); return; }
-
-  /* 未解锁 → 展示密码门 */
-  gate.hidden = false;
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const v = (input.value || '').trim();
-    if (v === PASS) {
-      if (msg) { msg.textContent = '欢迎进入《山河摆渡人》'; msg.classList.add('ok'); }
-      setTimeout(unlockSite, 420);
-    } else {
-      if (msg) { msg.textContent = '密码不正确，请向主创团队索取'; msg.classList.remove('ok'); }
-      if (input) { input.value = ''; input.focus(); }
-    }
-  });
-})();
