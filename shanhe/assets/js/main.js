@@ -345,6 +345,7 @@ renderSongTable();
     { file: '山河之光.web.mp3', name: '山河之光', dur: '3:19', v: 'f2d56c1c50' },
     { file: '红军是什么队伍.web.mp3', name: '红军是什么队伍', dur: '0:53', v: '807f16b982' },
     { file: '火塘恋.web.mp3', name: '火塘恋', dur: '3:22', v: '6610310549' },
+    { file: '山河记得（尾曲）.web.mp3', name: '山河记得（尾曲）', dur: '2:39', v: 'af4e67e61c' },
   ];
 
   const fmt = (sec) => {
